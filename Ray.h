@@ -1,3 +1,6 @@
+#ifndef RAY_H
+#define RAY_H
+
 #include "Point.h"
 #include "Vector3.h"
 
@@ -13,3 +16,5 @@ class Ray
     Vector3 get_d();
     void set_params(Point* p0, Vector3* d);
 };
+
+#endif

@@ -4,6 +4,8 @@
 #include "Vector3.h"
 #include "Point.h"
 
+Vector3::Vector3(){ x_ = 0; y_ = 0; z_ = 0; }
+
 Vector3::Vector3(float x, float y, float z)
 {
   origin_ = Point();
