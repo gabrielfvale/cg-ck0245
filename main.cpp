@@ -7,6 +7,7 @@
 #include "Plane.h"
 #include "Sphere.h"
 #include "Cylinder.h"
+#include "Cone.h"
 
 using namespace std;
 
@@ -21,14 +22,19 @@ int main()
   cout << "Dot product u . v: " << dot_product << endl;
   cout << "Cross product u x v: " << (u * v).to_string() << endl;
   cout << endl;
-
-  Ray r = Ray(Point(-2, 2, -1), u);
-  Plane p = Plane(Point(1, 0, 1), v);
-  Sphere s = Sphere(Point(2, 0, 0), Point(), 2);
-  Cylinder c = Cylinder(Point(2, 1, 0), Point(), Vector3(0, 1, 0), 2, 1);
-  Point* ray_plane = r.intersect(p);
-  std::vector<Point> ray_sphere = r.intersect(s);
-  std::vector<Point> ray_cylinder = r.intersect(c);
+  // Example ray (certainty of intersectin)
+  Ray ray = Ray(Point(-2, 2, -1), u);
+  // Ray that intersects with some base
+  Ray y_shifted = Ray(Point(0.5, 2, 0.5), Vector3(0, 3, 0));
+  Plane plane = Plane(Point(1, 0, 1), v);
+  Sphere sphere = Sphere(Point(2, 0, 0), Point(), 2);
+  Cylinder cylinder = Cylinder(Point(2, 1, 0), Point(), Vector3(0, 1, 0), 2, 1);
+  Cone cone = Cone(Point(1, 0, 0), Vector3(0, 1, 0), 3, 1);
+  // Intersections
+  Point* ray_plane = ray.intersect(plane);
+  std::vector<Point> ray_sphere = ray.intersect(sphere);
+  std::vector<Point> ray_cylinder = ray.intersect(cylinder);
+  std::vector<Point> ray_cone = ray.intersect(cone);
   if(ray_plane) {
     cout << "Ray-Plane intersection:" << endl;
     cout << ray_plane->to_string() << endl;
@@ -44,6 +50,12 @@ int main()
     cout << "Ray-Cylinder intersections:" << endl;
     cout << ray_cylinder[0].to_string() << endl;
     cout << ray_cylinder[1].to_string() << endl;
+    cout << endl;
+  }
+  if(ray_cone.size() > 0) {
+    cout << "Ray-Cone intersections:" << endl;
+    cout << ray_cone[0].to_string() << endl;
+    cout << ray_cone[1].to_string() << endl;
     cout << endl;
   }
   return 0;

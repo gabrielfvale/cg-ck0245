@@ -1,4 +1,5 @@
 #include <cmath>
+#include <iostream>
 #include <vector>
 #include "Ray.h"
 
@@ -93,7 +94,8 @@ std::vector<Point> Ray::intersect(Cylinder& cylinder)
     intersections.push_back(p2);
   // no intersections with cylinder surface
   // yet there may have intersections with the caps
-  if(intersections.size() == 0) {
+  if(intersections.size() == 0)
+  {
     float x, y, z;
     (*cylinder_axis).get_coordinates(&x, &y, &z);
     Point top_center = Point(x * (*cylinder_height), y * (*cylinder_height), z * (*cylinder_height));
@@ -113,6 +115,56 @@ std::vector<Point> Ray::intersect(Cylinder& cylinder)
     {
       float x, y, z;
       (*top_intersection).get_coordinates(&x, &y, &z);
+      intersections.push_back(Point(x, y, z));
+    }
+  }
+  return intersections;
+}
+std::vector<Point> Ray::intersect(Cone& cone)
+{
+  Point* cone_vertice = cone.get_vertice();
+  Vector3* axis = cone.get_axis();
+  float* cone_height = cone.get_height();
+  float* cone_radius = cone.get_radius();
+  // v = V - P0
+  Vector3 v = Vector3(&p0_, cone_vertice);
+  // cos_theta = adj / sqrt(gˆ2 + rˆ2)
+  // using cos_theta ^ 2
+  float cos_sqrd_theta = std::pow(*cone_height / std::sqrt(std::pow(*cone_height, 2) + std::pow(*cone_radius, 2)), 2);
+  float a = std::pow(d_.dot_product(axis), 2) - (d_.dot_product(&d_) * cos_sqrd_theta);
+  float b = (v.dot_product(&d_) * cos_sqrd_theta) - (v.dot_product(axis) * d_.dot_product(axis));
+  float c= std::pow(v.dot_product(axis), 2) - (v.dot_product(&v) * cos_sqrd_theta);
+  float delta = std::pow(b, 2) - a*c;
+  std::vector<Point> intersections;
+  if(delta < 0)
+    return intersections;
+  float t_int0 = (-1 * b + std::sqrt(delta)) / a;
+  float t_int1 = (-1 * b - std::sqrt(delta)) / a;
+  Point p1 = calc_point(t_int0);
+  Point p2 = calc_point(t_int1);
+  float p1_dotproduct = Vector3(&p1, cone_vertice).dot_product(axis);
+  float p2_dotproduct = Vector3(&p2, cone_vertice).dot_product(axis);
+  if(0 <= p1_dotproduct && p1_dotproduct <= *cone_height)
+    intersections.push_back(p1);
+  if(0 <= p2_dotproduct && p2_dotproduct <= *cone_height)
+    intersections.push_back(p2);
+  // one intersection with cone surface
+  // the other might happen with the base
+  if(delta > 0 && intersections.size() == 1)
+  {
+    float ox, oy, oz;
+    (*cone_vertice).get_coordinates(&ox, &oy, &oz);
+    ox -= *cone_height * (*axis).get_x();
+    oy -= *cone_height * (*axis).get_y();
+    oz -= *cone_height * (*axis).get_z();
+    Point base_center = Point(ox, oy, oz);
+    Plane base_plane = Plane(base_center, *axis);
+    Point* base_intersection = this->intersect(base_plane);
+    Vector3 cbase = Vector3(&base_center, base_intersection);
+    if(cbase.norm() < *cone_radius)
+    {
+      float x, y, z;
+      (*base_intersection).get_coordinates(&x, &y, &z);
       intersections.push_back(Point(x, y, z));
     }
   }
