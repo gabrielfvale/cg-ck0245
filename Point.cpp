@@ -1,4 +1,5 @@
 #include <cmath>
+#include <string>
 
 #include "Point.h"
 
@@ -28,4 +29,8 @@ float Point::distance_from(Point* p)
   sy = pow(y_ - y1, 2);
   sz = pow(z_ - z1, 2);
   return sqrt(sx + sy + sz);
+}
+std::string Point::to_string()
+{
+  return std::string() + "(" + std::to_string(x_) + ", " + std::to_string(y_) + ", " + std::to_string(z_) + ")";
 }
