@@ -1,9 +1,11 @@
 #ifndef RAY_H
 #define RAY_H
 
+#include <vector>
 #include "Point.h"
 #include "Vector3.h"
 #include "Plane.h"
+#include "Sphere.h"
 
 class Ray
 {
@@ -13,11 +15,12 @@ class Ray
   public:
     Ray();
     Ray(Point p0, Vector3 d);
-    Point* calc_point(float t);
+    Point calc_point(float t);
     Point get_p0();
     Vector3 get_d();
     void set_params(Point* p0, Vector3* d);
     Point* intersect(Plane& plane);
+    std::vector<Point> intersect(Sphere& sphere);
 };
 
 #endif
