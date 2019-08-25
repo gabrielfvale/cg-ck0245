@@ -19,9 +19,15 @@ class Vector3
     float get_z();
     void get_coordinates(float* x, float* y, float* z);
     void set_coordinates(float x,  float y, float z);
-    void add(Vector3* v);
-    void subtract(Vector3* v);
-    void multiply(float s);
+    Vector3 operator+(Vector3& v);
+    Vector3 operator-(Vector3& v);
+    Vector3 operator*(float value);
+    Vector3 operator*(Vector3& v);
+    Vector3 operator/(float value);
+    Vector3& operator+=(Vector3& v);
+    Vector3& operator-=(Vector3& v);
+    Vector3& operator*=(Vector3& v);
+    Vector3& operator/=(Vector3& v);
     float norm();
     void normalize();
     float dot_product(Vector3* v);

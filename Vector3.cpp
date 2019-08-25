@@ -51,6 +51,60 @@ void Vector3::normalize()
   y_ /= norm;
   z_ /= norm;
 }
+// Overloading operators
+Vector3 Vector3::operator+(Vector3& v)
+{ // Sum between vectors
+  float v1, v2, v3;
+  v.get_coordinates(&v1, &v2, &v3);
+  return Vector3(x_+v1, y_+v2, z_+v3);
+}
+Vector3 Vector3::operator-(Vector3& v)
+{ // Diff between vectors
+  float v1, v2, v3;
+  v.get_coordinates(&v1, &v2, &v3);
+  return Vector3(x_-v1, y_-v2, z_-v3);
+}
+Vector3 Vector3::operator*(float s)
+{ // Multiplication of a vector by a scalar
+  return Vector3(x_*s,y_*s,z_*s);
+}
+Vector3 Vector3::operator*(Vector3& v)
+{ // Alternative to cross product
+  return cross_product(&v);
+}
+Vector3 Vector3::operator/(float s)
+{ // Division of a vector by a scalar
+  return Vector3(x_/s,y_/s,z_/s);
+}
+// Overloading operators of self assignment
+Vector3 &Vector3::operator+=(Vector3& v)
+{
+  float v1, v2, v3;
+  v.get_coordinates(&v1, &v2, &v3);
+  x_+=v1; y_+=v2; z_+=v3;
+  return *this;
+}
+Vector3 &Vector3::operator-=(Vector3& v)
+{
+  float v1, v2, v3;
+  v.get_coordinates(&v1, &v2, &v3);
+  x_-=v1; y_-=v2; z_-=v3;
+  return *this;
+}
+Vector3 &Vector3::operator*=(Vector3& v)
+{
+  float v1, v2, v3;
+  v.get_coordinates(&v1, &v2, &v3);
+  x_*=v1; y_*=v2; z_*=v3;
+  return *this;
+}
+Vector3 &Vector3::operator/=(Vector3& v)
+{
+  float v1, v2, v3;
+  v.get_coordinates(&v1, &v2, &v3);
+  x_/=v1; y_/=v2; z_/=v3;
+  return *this;
+}
 
 float Vector3::dot_product(Vector3* v)
 {

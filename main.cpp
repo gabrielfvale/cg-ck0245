@@ -14,6 +14,6 @@ int main()
   float dot_product = u.dot_product(&v);
   Vector3 cross_product = u.cross_product(&v);
   cout << "Dot product u . v: " << dot_product << endl;
-  cout << "Cross product u x v: " << cross_product.to_string() << endl;
+  cout << "Cross product u x v: " << (u * v).to_string() << endl;
   return 0;
 }
