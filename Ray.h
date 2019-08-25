@@ -6,6 +6,7 @@
 #include "Vector3.h"
 #include "Plane.h"
 #include "Sphere.h"
+#include "Cylinder.h"
 
 class Ray
 {
@@ -21,6 +22,7 @@ class Ray
     void set_params(Point* p0, Vector3* d);
     Point* intersect(Plane& plane);
     std::vector<Point> intersect(Sphere& sphere);
+    std::vector<Point> intersect(Cylinder& Cylinder);
 };
 
 #endif

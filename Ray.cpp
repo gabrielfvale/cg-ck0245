@@ -59,3 +59,62 @@ std::vector<Point> Ray::intersect(Sphere& sphere)
   intersections.push_back(calc_point(t_int1));
   return intersections;
 }
+std::vector<Point> Ray::intersect(Cylinder& cylinder)
+{
+  // v = (P0 - B) - ((P0 - B).u)u
+  // w = d - (d . u)u
+  float* cylinder_radius = cylinder.get_radius();
+  float* cylinder_height = cylinder.get_height();
+  Point* cylinder_center = cylinder.get_center();
+  Vector3* cylinder_axis = cylinder.get_axis();
+  Vector3 bp0 = Vector3(cylinder_center, &p0_);
+
+  Vector3 section1 = (*cylinder_axis) * bp0.dot_product(cylinder_axis);
+  Vector3 v = bp0 - section1;
+  Vector3 section2 = (*cylinder_axis * d_.dot_product(cylinder_axis));
+  Vector3 w = d_ - section2;
+
+  float a = w.dot_product(&w);
+  float b = v.dot_product(&w);
+  float c = v.dot_product(&v) - std::pow(*cylinder_radius, 2);
+  float delta = std::pow(b, 2) - a*c;
+  std::vector<Point> intersections;
+  if(delta < 0)
+    return intersections;
+  float t_int0 = (-1 * b + std::sqrt(delta)) / a;
+  float t_int1 = (-1 * b - std::sqrt(delta)) / a;
+  Point p1 = calc_point(t_int0);
+  Point p2 = calc_point(t_int1);
+  float p1_dotproduct = Vector3(cylinder_center, &p1).dot_product(cylinder_axis);
+  float p2_dotproduct = Vector3(cylinder_center, &p2).dot_product(cylinder_axis);
+  if(0 <= p1_dotproduct && p1_dotproduct <= *cylinder_height)
+    intersections.push_back(p1);
+  if(0 <= p2_dotproduct && p2_dotproduct <= *cylinder_height)
+    intersections.push_back(p2);
+  // no intersections with cylinder surface
+  // yet there may have intersections with the caps
+  if(intersections.size() == 0) {
+    float x, y, z;
+    (*cylinder_axis).get_coordinates(&x, &y, &z);
+    Point top_center = Point(x * (*cylinder_height), y * (*cylinder_height), z * (*cylinder_height));
+    Plane base_plane = Plane(*cylinder_center, *cylinder_axis);
+    Plane top_plane = Plane(top_center, *cylinder_axis);
+    Point* base_intersection = this->intersect(base_plane);
+    Point* top_intersection = this->intersect(top_plane);
+    Vector3 cbase = Vector3(cylinder_center, base_intersection);
+    Vector3 ctop = Vector3(&top_center, top_intersection);
+    if(cbase.norm() < *cylinder_radius)
+    {
+      float x, y, z;
+      (*base_intersection).get_coordinates(&x, &y, &z);
+      intersections.push_back(Point(x, y, z));
+    }
+    if(ctop.norm() < *cylinder_radius)
+    {
+      float x, y, z;
+      (*top_intersection).get_coordinates(&x, &y, &z);
+      intersections.push_back(Point(x, y, z));
+    }
+  }
+  return intersections;
+}
