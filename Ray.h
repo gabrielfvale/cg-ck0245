@@ -8,6 +8,7 @@
 #include "Sphere.h"
 #include "Cylinder.h"
 #include "Cone.h"
+#include "Cube.h"
 
 class Ray
 {
@@ -25,6 +26,7 @@ class Ray
     std::vector<Point> intersect(Sphere& sphere);
     std::vector<Point> intersect(Cylinder& cylinder);
     std::vector<Point> intersect(Cone& cone);
+    std::vector<Point> intersect(Cube& cube);
 };
 
 #endif

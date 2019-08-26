@@ -8,6 +8,7 @@
 #include "Sphere.h"
 #include "Cylinder.h"
 #include "Cone.h"
+#include "Cube.h"
 
 using namespace std;
 
@@ -30,11 +31,13 @@ int main()
   Sphere sphere = Sphere(Point(2, 0, 0), Point(), 2);
   Cylinder cylinder = Cylinder(Point(2, 1, 0), Point(), Vector3(0, 1, 0), 2, 1);
   Cone cone = Cone(Point(1, 0, 0), Vector3(0, 1, 0), 3, 1);
+  Cube cube = Cube(Point(), Vector3(1, 0, 0), Vector3(0, 1, 0), 4);
   // Intersections
   Point* ray_plane = ray.intersect(plane);
   std::vector<Point> ray_sphere = ray.intersect(sphere);
   std::vector<Point> ray_cylinder = ray.intersect(cylinder);
   std::vector<Point> ray_cone = ray.intersect(cone);
+  std::vector<Point> ray_cube = ray.intersect(cube);
   if(ray_plane) {
     cout << "Ray-Plane intersection:" << endl;
     cout << ray_plane->to_string() << endl;
@@ -56,6 +59,12 @@ int main()
     cout << "Ray-Cone intersections:" << endl;
     cout << ray_cone[0].to_string() << endl;
     cout << ray_cone[1].to_string() << endl;
+    cout << endl;
+  }
+  if(ray_cube.size() > 0) {
+    cout << "Ray-Cube intersections:" << endl;
+    cout << ray_cube[0].to_string() << endl;
+    cout << ray_cube[1].to_string() << endl;
     cout << endl;
   }
   return 0;

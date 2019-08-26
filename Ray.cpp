@@ -170,3 +170,55 @@ std::vector<Point> Ray::intersect(Cone& cone)
   }
   return intersections;
 }
+std::vector<Point> Ray::intersect(Cube& cube)
+{
+  std::vector<Point> intersections;
+  float* cube_edge = cube.get_edge();
+  Point* cube_center = cube.get_center();
+  // checking if the ray is parallel to the planes
+  float px, py, pz;
+  d_.get_coordinates(&px, &py, &pz);
+  Vector3 u, v, w;
+  cube.get_axis(&u, &v, &w);
+  // vector that goes from some p0 to the center of the cube
+  Vector3 p0c = Vector3(&p0_, cube_center);
+  Vector3 axis[] = {u, v, w};
+  for(int i=0; i < 3; i++)
+  {
+    if(std::abs(d_.dot_product(&axis[i])) == 1)
+    { // ray parallel to plane i
+      float r = axis[i].dot_product(&p0c);
+      if(-1*r - (*cube_edge)/2 > 0 || -1*r + (*cube_edge)/2 > 0)
+      {
+        // there is no intersection
+        return intersections;
+      }
+    }
+    // continue checking intersections with planes
+    float r = axis[i].dot_product(&p0c);
+    float s = axis[i].dot_product(&d_);
+    float t_int0 = (r + *cube_edge) / s;
+    float t_int1 = (r - *cube_edge) / s;
+    Point p1 = calc_point(t_int0);
+    Point p2 = calc_point(t_int1);
+    // projecting vectors in axis
+    Vector3 cp1 = Vector3(cube_center, &p1);
+    Vector3 cp2 = Vector3(cube_center, &p2);
+    if(u.dot_product(&cp1) <= *cube_edge)
+      intersections.push_back(p1);
+    if(u.dot_product(&cp2) <= *cube_edge)
+      intersections.push_back(p2);
+  }
+  return intersections;
+  /*
+  bool parallel_u = (px/u.get_x() == py/u.get_y()) && py/u.get_y() == pz/u.get_z();
+  bool parallel_v = (px/v.get_x() == py/v.get_y()) && py/v.get_y() == pz/v.get_z();
+  bool parallel_z = (px/w.get_x() == py/w.get_y()) && py/w.get_y() == pz/w.get_z();
+  if(parallel_u)
+  {
+    float r = u.dot_product(&cp0);
+    if(r - *cube_edge > 0 || r + *cube_edge > 0 *)
+      return intersections;
+  }
+  */
+}
