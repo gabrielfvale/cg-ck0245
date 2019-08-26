@@ -20,14 +20,13 @@ int main()
   cout << "u: " + u.to_string() << endl;
   cout << "v: " + v.to_string() << endl;
   float dot_product = u.dot_product(&v);
-  Vector3 cross_product = u.cross_product(&v);
   cout << "Dot product u . v: " << dot_product << endl;
   cout << "Cross product u x v: " << (u * v).to_string() << endl;
   cout << endl;
   // Example ray (certainty of intersectin)
   Ray ray = Ray(Point(-2, 2, -1), u);
   // Ray that intersects with some base
-  Ray y_shifted = Ray(Point(0.5, 2, 0.5), Vector3(0, 3, 0));
+  // Ray y_shifted = Ray(Point(0.5, 2, 0.5), Vector3(0, 3, 0));
   // Easier ray for testing
   Ray inclined = Ray(Point(4, 0, 0), Vector3(-4, 5, 0));
 
