@@ -7,15 +7,15 @@
 class Cone
 {
   private:
-    Point p0_; // known point of the cylinder
+    Point c_; // kcylinder base center
     Point vertice_; // cone top vertice
     Vector3 n_; // cone axis (unit vector)
     float height_;
     float radius_;
   public:
     Cone();
-    Cone(Point p0, Vector3 n, float height, float radius);
-    Point* get_p0();
+    Cone(Point c, Vector3 n, float height, float radius);
+    Point* get_center();
     Point* get_vertice();
     Vector3* get_axis();
     float* get_height();

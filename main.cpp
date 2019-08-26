@@ -30,7 +30,7 @@ int main()
   Plane plane = Plane(Point(1, 0, 1), v);
   Sphere sphere = Sphere(Point(2, 0, 0), Point(), 2);
   Cylinder cylinder = Cylinder(Point(2, 1, 0), Point(), Vector3(0, 1, 0), 2, 1);
-  Cone cone = Cone(Point(1, 0, 0), Vector3(0, 1, 0), 3, 1);
+  Cone cone = Cone(Point(), Vector3(0, 1, 0), 3, 1);
   Cube cube = Cube(Point(), Vector3(1, 0, 0), Vector3(0, 1, 0), 4);
   // Intersections
   Point* ray_plane = ray.intersect(plane);
