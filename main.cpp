@@ -8,7 +8,8 @@
 #include "Sphere.h"
 #include "Cylinder.h"
 #include "Cone.h"
-#include "Cube.h"
+#include "AABB.h"
+#include "OBB.h"
 
 using namespace std;
 
@@ -27,17 +28,20 @@ int main()
   Ray ray = Ray(Point(-2, 2, -1), u);
   // Ray that intersects with some base
   Ray y_shifted = Ray(Point(0.5, 2, 0.5), Vector3(0, 3, 0));
+  // Easier ray for testing
+  Ray inclined = Ray(Point(4, 0, 0), Vector3(-4, 5, 0));
+
   Plane plane = Plane(Point(1, 0, 1), v);
   Sphere sphere = Sphere(Point(2, 0, 0), Point(), 2);
   Cylinder cylinder = Cylinder(Point(2, 1, 0), Point(), Vector3(0, 1, 0), 2, 1);
   Cone cone = Cone(Point(), Vector3(0, 1, 0), 3, 1);
-  Cube cube = Cube(Point(), Vector3(1, 0, 0), Vector3(0, 1, 0), 4);
+  AABB cube = AABB(Point(), Vector3(0, 0, 0), 4);
   // Intersections
   Point* ray_plane = ray.intersect(plane);
   std::vector<Point> ray_sphere = ray.intersect(sphere);
   std::vector<Point> ray_cylinder = ray.intersect(cylinder);
   std::vector<Point> ray_cone = ray.intersect(cone);
-  std::vector<Point> ray_cube = ray.intersect(cube);
+  std::vector<Point> ray_cube = inclined.intersect(cube);
   if(ray_plane) {
     cout << "Ray-Plane intersection:" << endl;
     cout << ray_plane->to_string() << endl;

@@ -1,7 +1,10 @@
 #include <cmath>
+#include <algorithm>
 #include <iostream>
 #include <vector>
 #include "Ray.h"
+
+using std::min; using std::max;
 
 Ray::Ray()
 {
@@ -168,6 +171,43 @@ std::vector<Point> Ray::intersect(Cone& cone)
       intersections.push_back(Point(x, y, z));
     }
   }
+  return intersections;
+}
+std::vector<Point> Ray::intersect(AABB& aabb)
+{
+  Point* cube_center = aabb.get_center();
+  float* cube_edge = aabb.get_edge();
+  float half_edge = (*cube_edge)/2;
+  float cx, cy, cz;
+  (*cube_center).get_coordinates(&cx, &cy, &cz);
+  Vector3 min_bound = Vector3(cx - half_edge, cy, cz - half_edge);
+  Vector3 max_bound = Vector3(cx + half_edge, cy + *cube_edge, cz + half_edge);
+  // possible points
+  float t0x, t0y, t0z;
+  float t1x, t1y, t1z;
+  /*
+  t0x = (max_bound.x - p0.x) / d.x
+  t1x = (min_bound.x - p0.x) / d.x
+  t0y = (max_bound.y - p0.y) / d.y
+  t1y = (min_bound.y - p0.y) / d.y
+  t0z = (max_bound.z - p0.z) / d.z
+  t1z = (min_bound.z - p0.z) / d.z
+   */
+  t0x = (max_bound.get_x() - p0_.get_x()) / d_.get_x();
+  t1x = (min_bound.get_x() - p0_.get_x()) / d_.get_x();
+  t0y = (max_bound.get_y() - p0_.get_y()) / d_.get_y();
+  t1y = (min_bound.get_y() - p0_.get_y()) / d_.get_y();
+  t0z = (max_bound.get_z() - p0_.get_z()) / d_.get_z();
+  t1z = (min_bound.get_z() - p0_.get_z()) / d_.get_z();
+  float tmin = max(max(min(t0x, t1x), min(t0y, t1y)), min(t0z, t1z));
+  float tmax = min(min(max(t0x, t1x), max(t0y, t1y)), max(t0z, t1z));
+  std::vector<Point> intersections;
+  if(tmin > tmax)
+    return intersections;
+  Point p1 = calc_point(tmin);
+  Point p2 = calc_point(tmax);
+  intersections.push_back(p1);
+  intersections.push_back(p2);
   return intersections;
 }
 std::vector<Point> Ray::intersect(Cube& cube)
