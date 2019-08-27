@@ -1,15 +1,15 @@
 #include <iostream>
 #include <vector>
 
-#include "Point.h"
-#include "Vector3.h"
-#include "Ray.h"
-#include "Plane.h"
-#include "Sphere.h"
-#include "Cylinder.h"
-#include "Cone.h"
-#include "AABB.h"
-#include "OBB.h"
+#include "src/Point.h"
+#include "src/Vector3.h"
+#include "src/Ray.h"
+#include "src/Plane.h"
+#include "src/Sphere.h"
+#include "src/Cylinder.h"
+#include "src/Cone.h"
+#include "src/AABB.h"
+#include "src/OBB.h"
 
 using namespace std;
 
