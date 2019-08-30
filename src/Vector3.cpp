@@ -1,4 +1,5 @@
 #include <cmath>
+#include <iostream>
 #include <string>
 
 #include "Vector3.h"
@@ -127,8 +128,8 @@ bool Vector3::is_orthogonal(Vector3* v)
 {
   return dot_product(v) == 0 ? true : false;
 }
-
-std::string Vector3::to_string()
+std::ostream& operator<<(std::ostream& stream, Vector3& vector)
 {
-  return std::string() + "(" + std::to_string(x_) + ", " + std::to_string(y_) + ", " + std::to_string(z_) + ")";
+  stream << "(" << vector.get_x() << ", " << vector.get_y() << ", " << vector.get_z() << ")";
+  return stream;
 }

@@ -1,4 +1,5 @@
 #include <cmath>
+#include <iostream>
 #include <string>
 
 #include "Point.h"
@@ -30,7 +31,8 @@ float Point::distance_from(Point* p)
   sz = pow(z_ - z1, 2);
   return sqrt(sx + sy + sz);
 }
-std::string Point::to_string()
+std::ostream& operator<<(std::ostream& stream, Point& point)
 {
-  return std::string() + "(" + std::to_string(x_) + ", " + std::to_string(y_) + ", " + std::to_string(z_) + ")";
+  stream << "(" << point.get_x() << ", " << point.get_y() << ", " << point.get_z() << ")";
+  return stream;
 }

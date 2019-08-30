@@ -33,7 +33,7 @@ class Vector3
     float dot_product(Vector3* v);
     Vector3 cross_product(Vector3* v);
     bool is_orthogonal(Vector3* v);
-    std::string to_string();
+    friend std::ostream& operator<<(std::ostream& stream, Vector3& vector);
 };
 
 #endif

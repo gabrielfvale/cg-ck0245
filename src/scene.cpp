@@ -125,27 +125,27 @@ int main()
       // interseções com o cilindro
       vector<Point> intersections =  temp.intersect(cylinder);
       if(intersections.size() > 0)
-        output << " - CILINDRO: " << intersections[0].to_string() << ", " << intersections[1].to_string() << endl;
+        output << " - CILINDRO: " << intersections[0] << ", " << intersections[1] << endl;
       
       // interseções com o cone
       intersections =  temp.intersect(cone);
       if(intersections.size() > 0)
-        output << " - CONE: " << intersections[0].to_string() << ", " << intersections[1].to_string() << endl;
+        output << " - CONE: " << intersections[0] << ", " << intersections[1] << endl;
       
       intersections =  temp.intersect(b_cube);
       // interseções com o cubo base
       if(intersections.size() > 0)
-        output << " - CUBO BASE: " << intersections[0].to_string() << ", " << intersections[1].to_string() << endl;
+        output << " - CUBO BASE: " << intersections[0] << ", " << intersections[1] << endl;
       
       // interseções com o cubo médio
       intersections =  temp.intersect(m_cube);
       if(intersections.size() > 0)
-        output << " - CUBO MEDIO: " << intersections[0].to_string() << ", " << intersections[1].to_string() << endl;
+        output << " - CUBO MEDIO: " << intersections[0] << ", " << intersections[1] << endl;
       
       // interseções com o cubo topo
       intersections =  temp.intersect(t_cube);
       if(intersections.size() > 0)
-        output << " - CUBO TOPO: " << intersections[0].to_string() << ", " << intersections[1].to_string() << endl;
+        output << " - CUBO TOPO: " << intersections[0] << ", " << intersections[1] << endl;
       
       output << endl;
     }
