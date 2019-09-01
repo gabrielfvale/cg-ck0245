@@ -120,33 +120,44 @@ int main()
     for (int j=0; j<panel_holes; j++)
     {
       output << "Raio (" << i << ", " << j << "):" << endl;
-      Ray temp = Ray(observer, hole_matrix[i][j]);
+      Ray ray = Ray(observer, hole_matrix[i][j]);
 
       // interseções com o cilindro
-      vector<Point> intersections =  temp.intersect(cylinder);
-      if(intersections.size() > 0)
-        output << " - CILINDRO: " << intersections[0] << ", " << intersections[1] << endl;
-      
+      float t_int;
+      if(ray.intersect(cylinder, t_int))
+      {
+        Point intersection = ray.calc_point(t_int);
+        output << " - CILINDRO: " << intersection << endl;
+      }
+
       // interseções com o cone
-      intersections =  temp.intersect(cone);
-      if(intersections.size() > 0)
-        output << " - CONE: " << intersections[0] << ", " << intersections[1] << endl;
-      
-      intersections =  temp.intersect(b_cube);
+      if(ray.intersect(cone, t_int))
+      {
+        Point intersection = ray.calc_point(t_int);
+        output << " - CONE: " << intersection << endl;
+      }
+
       // interseções com o cubo base
-      if(intersections.size() > 0)
-        output << " - CUBO BASE: " << intersections[0] << ", " << intersections[1] << endl;
-      
+      if(ray.intersect(b_cube, t_int))
+      {
+        Point intersection = ray.calc_point(t_int);
+        output << " - CUBO BASE: " << intersection << endl;
+      }
+
       // interseções com o cubo médio
-      intersections =  temp.intersect(m_cube);
-      if(intersections.size() > 0)
-        output << " - CUBO MEDIO: " << intersections[0] << ", " << intersections[1] << endl;
-      
+      if(ray.intersect(m_cube, t_int))
+      {
+        Point intersection = ray.calc_point(t_int);
+        output << " - CUBO MEDIO: " << intersection << endl;
+      }
+
       // interseções com o cubo topo
-      intersections =  temp.intersect(t_cube);
-      if(intersections.size() > 0)
-        output << " - CUBO TOPO: " << intersections[0] << ", " << intersections[1] << endl;
-      
+      if(ray.intersect(t_cube, t_int))
+      {
+        Point intersection = ray.calc_point(t_int);
+        output << " - CUBO TOPO: " << intersection << endl;
+      }
+
       output << endl;
     }
   }

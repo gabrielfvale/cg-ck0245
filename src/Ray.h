@@ -9,7 +9,6 @@
 #include "Cylinder.h"
 #include "Cone.h"
 #include "AABB.h"
-#include "OBB.h"
 
 class Ray
 {
@@ -23,12 +22,11 @@ class Ray
     Point get_p0();
     Vector3 get_d();
     void set_params(Point* p0, Vector3* d);
-    Point* intersect(Plane& plane);
-    std::vector<Point> intersect(Sphere& sphere);
-    std::vector<Point> intersect(Cylinder& cylinder);
-    std::vector<Point> intersect(Cone& cone);
-    std::vector<Point> intersect(AABB& aabb);
-    std::vector<Point> intersect(Cube& cube);
+    bool intersect(Plane& plane, float& t_int);
+    bool intersect(Sphere& sphere, float& t_min);
+    bool intersect(Cylinder& cylinder, float& t_min);
+    bool intersect(Cone& cone, float& t_min);
+    bool intersect(AABB& aabb, float& t_min);
 };
 
 #endif

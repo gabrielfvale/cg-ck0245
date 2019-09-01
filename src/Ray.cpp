@@ -35,18 +35,18 @@ void Ray::set_params(Point* p0, Vector3* d)
   d_ = *d;
 }
 
-Point* Ray::intersect(Plane& plane)
+bool Ray::intersect(Plane& plane, float& t_int)
 {
   Point plane_p0 = plane.get_p0();
   Vector3 plane_normal = plane.get_n();
   if(d_.dot_product(&plane_normal) == 0)
-    return NULL;
+    return false;
   Vector3 resultant = Vector3(&p0_, &plane_p0);
-  float t_int = resultant.dot_product(&plane_normal) / d_.dot_product(&plane_normal);
-  Point i = calc_point(t_int);
-  return new Point(i.get_x(), i.get_y(), i.get_z());
+  t_int = resultant.dot_product(&plane_normal) / d_.dot_product(&plane_normal);
+  return true;
 }
-std::vector<Point> Ray::intersect(Sphere& sphere)
+
+bool Ray::intersect(Sphere& sphere, float& t_min)
 {
   Point sphere_center = sphere.get_center();
   Vector3 cp0 = Vector3(&sphere_center, &p0_);
@@ -54,16 +54,15 @@ std::vector<Point> Ray::intersect(Sphere& sphere)
   float b = cp0.dot_product(&d_);
   float c = cp0.dot_product(&cp0) - std::pow(sphere.get_radius(), 2);
   float delta = std::pow(b, 2) - a*c;
-  std::vector<Point> intersections;
   if(delta < 0)
-    return intersections;
+    return false;
   float t_int0 = (-1 * b + std::sqrt(delta)) / a;
   float t_int1 = (-1 * b - std::sqrt(delta)) / a;
-  intersections.push_back(calc_point(t_int0));
-  intersections.push_back(calc_point(t_int1));
-  return intersections;
+  t_min = t_int0 < t_int1 ? t_int0 : t_int1;
+  return true;
 }
-std::vector<Point> Ray::intersect(Cylinder& cylinder)
+
+bool Ray::intersect(Cylinder& cylinder, float& t_min)
 {
   // v = (P0 - B) - ((P0 - B).u)u
   // w = d - (d . u)u
@@ -82,48 +81,64 @@ std::vector<Point> Ray::intersect(Cylinder& cylinder)
   float b = v.dot_product(&w);
   float c = v.dot_product(&v) - std::pow(*cylinder_radius, 2);
   float delta = std::pow(b, 2) - a*c;
-  std::vector<Point> intersections;
   if(delta < 0)
-    return intersections;
+    return false;
+
   float t_int0 = (-1 * b + std::sqrt(delta)) / a;
   float t_int1 = (-1 * b - std::sqrt(delta)) / a;
   Point p1 = calc_point(t_int0);
   Point p2 = calc_point(t_int1);
   float p1_dotproduct = Vector3(cylinder_center, &p1).dot_product(cylinder_axis);
   float p2_dotproduct = Vector3(cylinder_center, &p2).dot_product(cylinder_axis);
+
+  int total_intersections = 0;
   if(0 <= p1_dotproduct && p1_dotproduct <= *cylinder_height)
-    intersections.push_back(p1);
+  {
+    t_min = t_int0;
+    total_intersections++;
+  }
   if(0 <= p2_dotproduct && p2_dotproduct <= *cylinder_height)
-    intersections.push_back(p2);
-  // no intersections with cylinder surface
+  {
+    t_min = t_int1 < t_int0 ? t_int1 : t_int0;
+    total_intersections++;
+  }
+  // no/one intersections with cylinder surface
   // yet there may have intersections with the caps
-  if(intersections.size() == 0)
+  if(total_intersections < 2)
   {
     float x, y, z;
     (*cylinder_axis).get_coordinates(&x, &y, &z);
     Point top_center = Point(x * (*cylinder_height), y * (*cylinder_height), z * (*cylinder_height));
     Plane base_plane = Plane(*cylinder_center, *cylinder_axis);
     Plane top_plane = Plane(top_center, *cylinder_axis);
-    Point* base_intersection = this->intersect(base_plane);
-    Point* top_intersection = this->intersect(top_plane);
-    Vector3 cbase = Vector3(cylinder_center, base_intersection);
-    Vector3 ctop = Vector3(&top_center, top_intersection);
-    if(cbase.norm() < *cylinder_radius)
+    float t_base, t_top;
+    bool base_intersection = this->intersect(base_plane, t_base);
+    bool top_intersection = this->intersect(top_plane, t_top);
+    if(base_intersection)
     {
-      float x, y, z;
-      (*base_intersection).get_coordinates(&x, &y, &z);
-      intersections.push_back(Point(x, y, z));
+      Point p_base = calc_point(t_base);
+      Vector3 cbase = Vector3(cylinder_center, &p_base);
+      if(cbase.norm() < *cylinder_radius)
+      {
+        t_min = t_min < t_base ? t_min : t_base;
+        total_intersections++;
+      }
     }
-    if(ctop.norm() < *cylinder_radius)
+    if(top_intersection)
     {
-      float x, y, z;
-      (*top_intersection).get_coordinates(&x, &y, &z);
-      intersections.push_back(Point(x, y, z));
+      Point p_base = calc_point(t_top);
+      Vector3 ctop = Vector3(cylinder_center, &p_base);
+      if(ctop.norm() < *cylinder_radius)
+      {
+        t_min = t_min < t_top ? t_min : t_top;
+        total_intersections++;
+      }
     }
   }
-  return intersections;
+  return total_intersections >= 1;
 }
-std::vector<Point> Ray::intersect(Cone& cone)
+
+bool Ray::intersect(Cone& cone, float& t_min)
 {
   Point* cone_vertice = cone.get_vertice();
   Vector3* axis = cone.get_axis();
@@ -138,22 +153,29 @@ std::vector<Point> Ray::intersect(Cone& cone)
   float b = (v.dot_product(&d_) * cos_sqrd_theta) - (v.dot_product(axis) * d_.dot_product(axis));
   float c= std::pow(v.dot_product(axis), 2) - (v.dot_product(&v) * cos_sqrd_theta);
   float delta = std::pow(b, 2) - a*c;
-  std::vector<Point> intersections;
   if(delta < 0)
-    return intersections;
+    return false;
   float t_int0 = (-1 * b + std::sqrt(delta)) / a;
   float t_int1 = (-1 * b - std::sqrt(delta)) / a;
   Point p1 = calc_point(t_int0);
   Point p2 = calc_point(t_int1);
   float p1_dotproduct = Vector3(&p1, cone_vertice).dot_product(axis);
   float p2_dotproduct = Vector3(&p2, cone_vertice).dot_product(axis);
+
+  int total_intersections = 0;
   if(0 <= p1_dotproduct && p1_dotproduct <= *cone_height)
-    intersections.push_back(p1);
+  {
+    t_min = t_int0;
+    total_intersections++;
+  }
   if(0 <= p2_dotproduct && p2_dotproduct <= *cone_height)
-    intersections.push_back(p2);
+  {
+    t_min = t_int1 < t_int0 ? t_int1 : t_int0;
+    total_intersections++;
+  }
   // one intersection with cone surface
   // the other might happen with the base
-  if(delta > 0 && intersections.size() == 1)
+  if(delta > 0 && total_intersections == 1)
   {
     float ox, oy, oz;
     (*cone_vertice).get_coordinates(&ox, &oy, &oz);
@@ -162,18 +184,23 @@ std::vector<Point> Ray::intersect(Cone& cone)
     oz -= *cone_height * (*axis).get_z();
     Point base_center = Point(ox, oy, oz);
     Plane base_plane = Plane(base_center, *axis);
-    Point* base_intersection = this->intersect(base_plane);
-    Vector3 cbase = Vector3(&base_center, base_intersection);
-    if(cbase.norm() < *cone_radius)
+    float t_base;
+    bool base_intersection = this->intersect(base_plane, t_base);
+    if(base_intersection)
     {
-      float x, y, z;
-      (*base_intersection).get_coordinates(&x, &y, &z);
-      intersections.push_back(Point(x, y, z));
+      Point p_base = calc_point(t_base);
+      Vector3 cbase = Vector3(&base_center, &p_base);
+      if(cbase.norm() < *cone_radius)
+      {
+        t_min = t_min < t_base ? t_min : t_base;
+        total_intersections++;
+      }
     }
   }
-  return intersections;
+  return total_intersections >= 1;
 }
-std::vector<Point> Ray::intersect(AABB& aabb)
+
+bool Ray::intersect(AABB& aabb, float& t_min)
 {
   Point* cube_center = aabb.get_center();
   float* cube_edge = aabb.get_edge();
@@ -201,64 +228,8 @@ std::vector<Point> Ray::intersect(AABB& aabb)
   t1z = (min_bound.get_z() - p0_.get_z()) / d_.get_z();
   float tmin = max(max(min(t0x, t1x), min(t0y, t1y)), min(t0z, t1z));
   float tmax = min(min(max(t0x, t1x), max(t0y, t1y)), max(t0z, t1z));
-  std::vector<Point> intersections;
   if(tmin > tmax)
-    return intersections;
-  Point p1 = calc_point(tmin);
-  Point p2 = calc_point(tmax);
-  intersections.push_back(p1);
-  intersections.push_back(p2);
-  return intersections;
-}
-std::vector<Point> Ray::intersect(Cube& cube)
-{
-  std::vector<Point> intersections;
-  float* cube_edge = cube.get_edge();
-  Point* cube_center = cube.get_center();
-  // checking if the ray is parallel to the planes
-  float px, py, pz;
-  d_.get_coordinates(&px, &py, &pz);
-  Vector3 u, v, w;
-  cube.get_axis(&u, &v, &w);
-  // vector that goes from some p0 to the center of the cube
-  Vector3 p0c = Vector3(&p0_, cube_center);
-  Vector3 axis[] = {u, v, w};
-  for(int i=0; i < 3; i++)
-  {
-    if(std::abs(d_.dot_product(&axis[i])) == 1)
-    { // ray parallel to plane i
-      float r = axis[i].dot_product(&p0c);
-      if(-1*r - (*cube_edge)/2 > 0 || -1*r + (*cube_edge)/2 > 0)
-      {
-        // there is no intersection
-        return intersections;
-      }
-    }
-    // continue checking intersections with planes
-    float r = axis[i].dot_product(&p0c);
-    float s = axis[i].dot_product(&d_);
-    float t_int0 = (r + *cube_edge) / s;
-    float t_int1 = (r - *cube_edge) / s;
-    Point p1 = calc_point(t_int0);
-    Point p2 = calc_point(t_int1);
-    // projecting vectors in axis
-    Vector3 cp1 = Vector3(cube_center, &p1);
-    Vector3 cp2 = Vector3(cube_center, &p2);
-    if(u.dot_product(&cp1) <= *cube_edge)
-      intersections.push_back(p1);
-    if(u.dot_product(&cp2) <= *cube_edge)
-      intersections.push_back(p2);
-  }
-  return intersections;
-  /*
-  bool parallel_u = (px/u.get_x() == py/u.get_y()) && py/u.get_y() == pz/u.get_z();
-  bool parallel_v = (px/v.get_x() == py/v.get_y()) && py/v.get_y() == pz/v.get_z();
-  bool parallel_z = (px/w.get_x() == py/w.get_y()) && py/w.get_y() == pz/w.get_z();
-  if(parallel_u)
-  {
-    float r = u.dot_product(&cp0);
-    if(r - *cube_edge > 0 || r + *cube_edge > 0 *)
-      return intersections;
-  }
-  */
+    return false;
+  t_min = tmin;
+  return true;
 }
