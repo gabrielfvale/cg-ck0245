@@ -11,6 +11,8 @@
 #include "Cone.h"
 #include "AABB.h"
 
+#include "BMP.h"
+
 using namespace std;
 
 int main()
@@ -115,53 +117,97 @@ int main()
   // projeta cada um dos raios
   ofstream output;
   output.open("intersecoes.txt");
+  BMP preview = BMP(panel_holes, panel_holes);
   for(int i=0; i<panel_holes; i++)
   {
     for (int j=0; j<panel_holes; j++)
     {
       output << "Raio (" << i << ", " << j << "):" << endl;
       Ray ray = Ray(observer, hole_matrix[i][j]);
+      float t_cylinder, t_cone, t_bcube, t_mcube, t_tcube;
+      int object = 0;
+      float t_min = 0;
 
       // interseções com o cilindro
-      float t_int;
-      if(ray.intersect(cylinder, t_int))
+      if(ray.intersect(cylinder, t_cylinder))
       {
-        Point intersection = ray.calc_point(t_int);
+        Point intersection = ray.calc_point(t_cylinder);
         output << " - CILINDRO: " << intersection << endl;
+        t_min = abs(t_cylinder);
+        object = 1;
       }
 
       // interseções com o cone
-      if(ray.intersect(cone, t_int))
+      if(ray.intersect(cone, t_cone))
       {
-        Point intersection = ray.calc_point(t_int);
+        Point intersection = ray.calc_point(t_cone);
         output << " - CONE: " << intersection << endl;
+        if(object == 0 || (t_cone < t_min))
+        {
+          t_min = t_cone;
+          object = 2;
+        }
       }
 
       // interseções com o cubo base
-      if(ray.intersect(b_cube, t_int))
+      if(ray.intersect(b_cube, t_bcube))
       {
-        Point intersection = ray.calc_point(t_int);
+        Point intersection = ray.calc_point(t_bcube);
         output << " - CUBO BASE: " << intersection << endl;
+        if(object == 0 || (t_bcube < t_min))
+        {
+          t_min = t_bcube;
+          object = 3;
+        }
       }
 
       // interseções com o cubo médio
-      if(ray.intersect(m_cube, t_int))
+      if(ray.intersect(m_cube, t_mcube))
       {
-        Point intersection = ray.calc_point(t_int);
+        Point intersection = ray.calc_point(t_mcube);
         output << " - CUBO MEDIO: " << intersection << endl;
+        if(object == 0 || (t_mcube < t_min))
+        {
+          t_min = t_mcube;
+          object = 3;
+        }
       }
 
       // interseções com o cubo topo
-      if(ray.intersect(t_cube, t_int))
+      if(ray.intersect(t_cube, t_tcube))
       {
-        Point intersection = ray.calc_point(t_int);
+        Point intersection = ray.calc_point(t_tcube);
         output << " - CUBO TOPO: " << intersection << endl;
+        if(object == 0 || (t_tcube < t_min))
+        {
+          t_min = t_tcube;
+          object = 3;
+        }
       }
 
+      // colore o bitmap
+      switch(object)
+      {
+        case 1: // cilindro
+          preview.set_pixel(j, i, 95, 50, 10);
+          break;
+        case 2: // cone
+          preview.set_pixel(j, i, 166, 200, 64);
+          break;
+        case 3: // algum cubo
+          preview.set_pixel(j, i, 156, 64, 200);
+          break;
+        default: // sem intersecoes
+          preview.set_pixel(j, i, 87, 135, 208);
+          break;
+      }
       output << endl;
     }
   }
-  cout << "Resultados de interseções escritos em \"intersecoes.txt\"" << endl;
+
   output.close();
+  preview.write("preview.bmp");
+  cout << "Resultados de preview escrito em \"preview.bmp\"" << endl;
+  cout << "Resultados de interseções escritos em \"intersecoes.txt\"" << endl;
   return 0;
 }
