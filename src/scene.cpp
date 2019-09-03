@@ -189,16 +189,16 @@ int main()
       switch(object)
       {
         case 1: // cilindro
-          preview.set_pixel(j, i, 95, 50, 10);
+          preview.set_pixel(j, i, 69, 34, 0);
           break;
         case 2: // cone
-          preview.set_pixel(j, i, 166, 200, 64);
+          preview.set_pixel(j, i, 86, 125, 48);
           break;
         case 3: // algum cubo
-          preview.set_pixel(j, i, 156, 64, 200);
+          preview.set_pixel(j, i, 86, 48, 125);
           break;
         default: // sem intersecoes
-          preview.set_pixel(j, i, 87, 135, 208);
+          preview.set_pixel(j, i, 153, 204, 255);
           break;
       }
       output << endl;
