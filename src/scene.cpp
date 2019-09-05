@@ -11,6 +11,8 @@
 #include "Cone.h"
 #include "AABB.h"
 
+#include "Camera.h"
+
 #include "BMP.h"
 
 using namespace std;
@@ -27,33 +29,40 @@ int main()
   cout << "(serão gerados N*N pontos que serão distribuídos igualmente pela placa)" << endl;
   cin >> panel_holes;
 
-  cout << "Entre a distância da placa ao eixo y:" << endl;
+  cout << "Entre a distância da placa ao observador:" << endl;
   cin >> panel_d;
 
+  // gera o ponto do observador
   cout << "Entre as coordenadas x, y e z do observador, separadas por espaços:" << endl;
   cin >> obx >> oby >> obz;
-  // gera o ponto do observador
   Point observer = Point(obx, oby, obz);
+  // gera o ponto lookat
+  cout << "Entre as coordenadas x, y e z do lookat, separadas por espaços:" << endl;
+  cin >> obx >> oby >> obz;
+  Point lookat = Point(obx, oby, obz);
+  // gera o vetor viewup
+  cout << "Entre as coordenadas x, y e z do viewup, separadas por espaços:" << endl;
+  cin >> obx >> oby >> obz;
+  Vector3 viewup = Vector3(obx, oby, obz);
+
+  // gera a camera
+  Camera camera = Camera(observer, lookat, viewup);
 
   // calcula a largura dos furos
   float hole_width = panel_l/panel_holes;
   // matriz N*N
   Vector3 hole_matrix[panel_holes][panel_holes];
-  // O ponto inicial está no menor x e no maior y
-  float x_pos = -1*panel_l/2;
-  float y_pos = panel_l/2;
   for(int i=0; i<panel_holes; i++)
   {
     for (int j=0; j<panel_holes; j++)
     {
-      // sanity check: crio o ponto da matriz e só depois defino o vetor direção
-      Point hole_point = Point(x_pos + hole_width/2, y_pos - hole_width/2, panel_d);
+      // gera o ponto da matriz em coordenadas de camera
+      Point hole_point = Point(-panel_l/2 + hole_width/2 + j*hole_width, panel_l/2 - hole_width/2 - i*hole_width, -panel_d);
+      // converte o ponto para coordenadas de mundo
+      hole_point = camera.matrixTimesPoint(camera.camera_to_world(), hole_point);
       hole_matrix[i][j] = Vector3(&observer, &hole_point);
       // cout << "Buraco (" << i << ", " << j << "): " << hole_matrix[i][j].to_string() << endl;
-      x_pos += hole_width; // incrementa pos x
     }
-    x_pos = -1*panel_l/2; // reseta posição x
-    y_pos -= hole_width; // decrementa pos y
   }
 
   // gera o vetor normal a ser usado nos objetos
@@ -69,8 +78,9 @@ int main()
   float ojb_height, obj_radius;
   cout << "Entre a altura e o raio do cilindro, separados por espaços:" << endl;
   cin >> ojb_height >> obj_radius;
-  // gera o cilindro
+  // gera os cilindros
   Cylinder cylinder = Cylinder(Point(cylinder_center.get_x() - obj_radius, cylinder_center.get_y(), cylinder_center.get_z()), cylinder_center, g_axis, ojb_height, obj_radius);
+  Cylinder cylinder2 = Cylinder(Point(cylinder_center.get_x() + 3*obj_radius - obj_radius, cylinder_center.get_y(), cylinder_center.get_z()), cylinder_center, g_axis, ojb_height, obj_radius);
 
   cout << "Entre a altura e o raio do cone, separados por espaços:" << endl;
   cin >> ojb_height >> obj_radius;
@@ -82,8 +92,9 @@ int main()
   cox += (*cylinder_height) * g_axis.get_x();
   coy += (*cylinder_height) * g_axis.get_y();
   coz += (*cylinder_height) * g_axis.get_z();
-  // gera o cone
+  // gera os cones
   Cone cone = Cone(Point(cox, coy, coz), g_axis, ojb_height, obj_radius);
+  Cone cone2 = Cone(Point(cox + 3*(*cylinder.get_radius()), coy, coz), g_axis, ojb_height, obj_radius);
 
   cout << "Entre as coordenadas x, y e z do centro do primeiro cubo, separados por espaços:" << endl;
   cout << "(os demais cubos serão calculados exatamente acima do primeiro)" << endl;
@@ -124,63 +135,80 @@ int main()
     {
       output << "Raio (" << i << ", " << j << "):" << endl;
       Ray ray = Ray(observer, hole_matrix[i][j]);
-      float t_cylinder, t_cone, t_bcube, t_mcube, t_tcube;
+      float t_int;
       int object = 0;
       float t_min = 0;
 
-      // interseções com o cilindro
-      if(ray.intersect(cylinder, t_cylinder))
+      // interseções com os cilindros
+      if(ray.intersect(cylinder, t_int))
       {
-        Point intersection = ray.calc_point(t_cylinder);
+        Point intersection = ray.calc_point(t_int);
         output << " - CILINDRO: " << intersection << endl;
-        t_min = abs(t_cylinder);
+        t_min = abs(t_int);
+        object = 1;
+      }
+      if(ray.intersect(cylinder2, t_int))
+      {
+        Point intersection = ray.calc_point(t_int);
+        output << " - CILINDRO2: " << intersection << endl;
+        t_min = abs(t_int);
         object = 1;
       }
 
-      // interseções com o cone
-      if(ray.intersect(cone, t_cone))
+      // interseções com os cones
+      if(ray.intersect(cone, t_int))
       {
-        Point intersection = ray.calc_point(t_cone);
+        Point intersection = ray.calc_point(t_int);
         output << " - CONE: " << intersection << endl;
-        if(object == 0 || (t_cone < t_min))
+        if(object == 0 || (t_int < t_min))
         {
-          t_min = t_cone;
+          t_min = t_int;
+          object = 2;
+        }
+      }
+      if(ray.intersect(cone2, t_int))
+      {
+        Point intersection = ray.calc_point(t_int);
+        output << " - CONE2: " << intersection << endl;
+        if(object == 0 || (t_int < t_min))
+        {
+          t_min = t_int;
           object = 2;
         }
       }
 
       // interseções com o cubo base
-      if(ray.intersect(b_cube, t_bcube))
+      if(ray.intersect(b_cube, t_int))
       {
-        Point intersection = ray.calc_point(t_bcube);
+        Point intersection = ray.calc_point(t_int);
         output << " - CUBO BASE: " << intersection << endl;
-        if(object == 0 || (t_bcube < t_min))
+        if(object == 0 || (t_int < t_min))
         {
-          t_min = t_bcube;
+          t_min = t_int;
           object = 3;
         }
       }
 
       // interseções com o cubo médio
-      if(ray.intersect(m_cube, t_mcube))
+      if(ray.intersect(m_cube, t_int))
       {
-        Point intersection = ray.calc_point(t_mcube);
+        Point intersection = ray.calc_point(t_int);
         output << " - CUBO MEDIO: " << intersection << endl;
-        if(object == 0 || (t_mcube < t_min))
+        if(object == 0 || (t_int < t_min))
         {
-          t_min = t_mcube;
+          t_min = t_int;
           object = 3;
         }
       }
 
       // interseções com o cubo topo
-      if(ray.intersect(t_cube, t_tcube))
+      if(ray.intersect(t_cube, t_int))
       {
-        Point intersection = ray.calc_point(t_tcube);
+        Point intersection = ray.calc_point(t_int);
         output << " - CUBO TOPO: " << intersection << endl;
-        if(object == 0 || (t_tcube < t_min))
+        if(object == 0 || (t_int < t_min))
         {
-          t_min = t_tcube;
+          t_min = t_int;
           object = 3;
         }
       }
