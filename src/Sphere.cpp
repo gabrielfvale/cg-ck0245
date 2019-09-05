@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Sphere.h"
+#include "Sphere.hpp"
 
 Sphere::Sphere()
 {

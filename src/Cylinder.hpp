@@ -1,8 +1,8 @@
-#ifndef CYLINDER_H
-#define CYLINDER_H
+#ifndef CYLINDER_HPP
+#define CYLINDER_HPP
 
-#include "Point.h"
-#include "Vector3.h"
+#include "Point.hpp"
+#include "Vector3.hpp"
 
 class Cylinder
 {

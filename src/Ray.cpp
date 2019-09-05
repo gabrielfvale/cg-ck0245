@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <iostream>
 #include <vector>
-#include "Ray.h"
+#include "Ray.hpp"
 
 using std::min; using std::max;
 

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 
-#include "Point.h"
+#include "Point.hpp"
 
 using namespace std;
 

@@ -1,8 +1,8 @@
-#ifndef AABB_H
-#define AABB_H
+#ifndef AABB_HPP
+#define AABB_HPP
 
-#include "Point.h"
-#include "Vector3.h"
+#include "Point.hpp"
+#include "Vector3.hpp"
 
 class AABB
 {

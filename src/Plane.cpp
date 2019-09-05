@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Plane.h"
+#include "Plane.hpp"
 
 Plane::Plane()
 {

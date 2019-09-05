@@ -1,14 +1,14 @@
-#ifndef RAY_H
-#define RAY_H
+#ifndef RAY_HPP
+#define RAY_HPP
 
 #include <vector>
-#include "Point.h"
-#include "Vector3.h"
-#include "Plane.h"
-#include "Sphere.h"
-#include "Cylinder.h"
-#include "Cone.h"
-#include "AABB.h"
+#include "Point.hpp"
+#include "Vector3.hpp"
+#include "Plane.hpp"
+#include "Sphere.hpp"
+#include "Cylinder.hpp"
+#include "Cone.hpp"
+#include "AABB.hpp"
 
 class Ray
 {

@@ -1,4 +1,4 @@
-#include "BMP.h"
+#include "BMP.hpp"
 
 BMP::BMP(int32_t width, int32_t height) {
   info_header.width = width;

@@ -3,17 +3,17 @@
 #include <cmath>
 #include <vector>
 
-#include "Point.h"
-#include "Vector3.h"
-#include "Ray.h"
-#include "Plane.h"
-#include "Cylinder.h"
-#include "Cone.h"
-#include "AABB.h"
+#include "Point.hpp"
+#include "Vector3.hpp"
+#include "Ray.hpp"
+#include "Plane.hpp"
+#include "Cylinder.hpp"
+#include "Cone.hpp"
+#include "AABB.hpp"
 
-#include "Camera.h"
+#include "Camera.hpp"
 
-#include "BMP.h"
+#include "BMP.hpp"
 
 using namespace std;
 

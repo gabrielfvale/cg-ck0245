@@ -1,8 +1,8 @@
-#ifndef PLANE_H
-#define PLANE_H
+#ifndef PLANE_HPP
+#define PLANE_HPP
 
-#include "Point.h"
-#include "Vector3.h"
+#include "Point.hpp"
+#include "Vector3.hpp"
 
 class Plane
 {

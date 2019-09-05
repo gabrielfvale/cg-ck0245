@@ -1,8 +1,8 @@
-#ifndef CONE_H
-#define CONE_H
+#ifndef CONE_HPP
+#define CONE_HPP
 
-#include "Point.h"
-#include "Vector3.h"
+#include "Point.hpp"
+#include "Vector3.hpp"
 
 class Cone
 {

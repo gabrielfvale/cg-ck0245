@@ -2,8 +2,8 @@
 #include <iostream>
 #include <string>
 
-#include "Vector3.h"
-#include "Point.h"
+#include "Vector3.hpp"
+#include "Point.hpp"
 
 Vector3::Vector3(){ x_ = 0; y_ = 0; z_ = 0; }
 

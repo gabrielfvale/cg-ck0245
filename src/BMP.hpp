@@ -27,8 +27,8 @@ struct BMPInfoHeader {
 };
 #pragma pack(pop)
 
-#ifndef BMP_H
-#define BMP_H
+#ifndef BMP_HPP
+#define BMP_HPP
 
 class BMP {
   private:

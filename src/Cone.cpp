@@ -1,4 +1,4 @@
-#include "Cone.h"
+#include "Cone.hpp"
 
 Cone::Cone()
 {
