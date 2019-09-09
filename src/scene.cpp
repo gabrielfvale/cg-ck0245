@@ -48,23 +48,6 @@ int main()
   // gera a camera
   Camera camera = Camera(observer, lookat, viewup);
 
-  // calcula a largura dos furos
-  float hole_width = panel_l/panel_holes;
-  // matriz N*N
-  Vector3 hole_matrix[panel_holes][panel_holes];
-  for(int i=0; i<panel_holes; i++)
-  {
-    for (int j=0; j<panel_holes; j++)
-    {
-      // gera o ponto da matriz em coordenadas de camera
-      Point hole_point = Point(-panel_l/2 + hole_width/2 + j*hole_width, panel_l/2 - hole_width/2 - i*hole_width, -panel_d);
-      // converte o ponto para coordenadas de mundo
-      hole_point = camera.matrixTimesPoint(camera.camera_to_world(), hole_point);
-      hole_matrix[i][j] = Vector3(&observer, &hole_point);
-      // cout << "Buraco (" << i << ", " << j << "): " << hole_matrix[i][j].to_string() << endl;
-    }
-  }
-
   // gera o vetor normal a ser usado nos objetos
   Vector3 g_axis = Vector3(0, 1, 0);
 
@@ -138,12 +121,20 @@ int main()
   ofstream output;
   output.open("intersecoes.txt");
   BMP preview = BMP(panel_holes, panel_holes);
+  float hole_width = panel_l/panel_holes;
+
   for(int i=0; i<panel_holes; i++)
   {
     for (int j=0; j<panel_holes; j++)
     {
+      // gera o ponto da matriz em coordenadas de camera
+      Point hole_point = Point(-panel_l/2 + hole_width/2 + j*hole_width, panel_l/2 - hole_width/2 - i*hole_width, -panel_d);
+      // converte o ponto para coordenadas de mundo
+      hole_point = camera.matrixTimesPoint(camera.camera_to_world(), hole_point);
+      Vector3 ray_direction = Vector3(&observer, &hole_point);
+
       output << "Raio (" << i << ", " << j << "):" << endl;
-      Ray ray = Ray(observer, hole_matrix[i][j]);
+      Ray ray = Ray(observer, ray_direction);
       float t_int;
       int object = 0;
       float t_min = 0;
