@@ -5,7 +5,7 @@ Camera::Camera(Point eye, Point lookat, Vector3 up)
   eye_ = eye;
   lookat_ = lookat;
   up_ = up;
-  cz_ = Vector3(&lookat_, &eye);
+  cz_ = Vector3(&lookat_, &eye_);
 
   Point up_point = Point(up_.get_x(), up_.get_y(), up_.get_z());
   Vector3 v = Vector3(&eye_, &up_point);

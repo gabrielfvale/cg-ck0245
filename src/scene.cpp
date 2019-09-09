@@ -70,31 +70,40 @@ int main()
 
   cout << "Gerando placa com " << panel_holes*panel_holes << " buracos e largura " << panel_l << "." << endl;
   float cx, cy, cz;
+
   cout << "Entre as coordenadas x, y e z do centro do cilindro, separadas por espaços:" << endl;
   cin >> cx >> cy >> cz;
   // cria o ponto do centro do cilindro
   Point cylinder_center = Point(cx, cy, cz);
+  cout << "Entre as coordenadas x, y e z do centro do segundo cilindro, separadas por espaços:" << endl;
+  cin >> cx >> cy >> cz;
+  // cria o ponto do centro do cilindro
+  Point cylinder2_center = Point(cx, cy, cz);
 
   float ojb_height, obj_radius;
   cout << "Entre a altura e o raio do cilindro, separados por espaços:" << endl;
   cin >> ojb_height >> obj_radius;
   // gera os cilindros
   Cylinder cylinder = Cylinder(Point(cylinder_center.get_x() - obj_radius, cylinder_center.get_y(), cylinder_center.get_z()), cylinder_center, g_axis, ojb_height, obj_radius);
-  Cylinder cylinder2 = Cylinder(Point(cylinder_center.get_x() + 3*obj_radius - obj_radius, cylinder_center.get_y(), cylinder_center.get_z()), cylinder_center, g_axis, ojb_height, obj_radius);
+  Cylinder cylinder2 = Cylinder(Point(cylinder2_center.get_x() - obj_radius, cylinder2_center.get_y(), cylinder2_center.get_z()), cylinder2_center, g_axis, ojb_height, obj_radius);
 
   cout << "Entre a altura e o raio do cone, separados por espaços:" << endl;
   cin >> ojb_height >> obj_radius;
-  // copia as coordenadas para o ponto do centro
-  float cox, coy, coz;
-  cylinder_center.get_coordinates(&cox, &coy, &coz);
+
   float* cylinder_height = cylinder.get_height();
-  // calcula cada coordenada com base na fórmula Pi = h + Ci*Ai 
-  cox += (*cylinder_height) * g_axis.get_x();
-  coy += (*cylinder_height) * g_axis.get_y();
-  coz += (*cylinder_height) * g_axis.get_z();
   // gera os cones
-  Cone cone = Cone(Point(cox, coy, coz), g_axis, ojb_height, obj_radius);
-  Cone cone2 = Cone(Point(cox + 3*(*cylinder.get_radius()), coy, coz), g_axis, ojb_height, obj_radius);
+  Cone cone = Cone(
+    Point(
+      cylinder_center.get_x() + (*cylinder_height) * g_axis.get_x(),
+      cylinder_center.get_y() + (*cylinder_height) * g_axis.get_y(),
+      cylinder_center.get_z() + (*cylinder_height) * g_axis.get_z()
+    ), g_axis, ojb_height, obj_radius);
+  Cone cone2 = Cone(
+    Point(
+      cylinder2_center.get_x() + (*cylinder_height) * g_axis.get_x(),
+      cylinder2_center.get_y() + (*cylinder_height) * g_axis.get_y(),
+      cylinder2_center.get_z() + (*cylinder_height) * g_axis.get_z()
+    ), g_axis, ojb_height, obj_radius);
 
   cout << "Entre as coordenadas x, y e z do centro do primeiro cubo, separados por espaços:" << endl;
   cout << "(os demais cubos serão calculados exatamente acima do primeiro)" << endl;
@@ -144,14 +153,14 @@ int main()
       {
         Point intersection = ray.calc_point(t_int);
         output << " - CILINDRO: " << intersection << endl;
-        t_min = abs(t_int);
+        t_min = t_int;
         object = 1;
       }
       if(ray.intersect(cylinder2, t_int))
       {
         Point intersection = ray.calc_point(t_int);
         output << " - CILINDRO2: " << intersection << endl;
-        t_min = abs(t_int);
+        t_min = t_int;
         object = 1;
       }
 
