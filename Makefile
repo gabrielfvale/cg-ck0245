@@ -4,12 +4,18 @@ TARGET := program.out
 SRC_FILES := $(wildcard src/*.cpp)
 OBJ_FILES := $(patsubst src/%.cpp, obj/%.o, $(SRC_FILES))
 
-all: $(TARGET)
+all: checkdir $(TARGET)
 
-fresh: clean $(TARGET)
+fresh: clean checkdir $(TARGET)
+
+checkdir: obj/
 
 $(TARGET): $(OBJ_FILES)
 	$(CC) -o $@ $^
+
+obj/:
+	mkdir -p $@
+
 obj/%.o: src/%.cpp
 	$(CC) $(CFLAGS) -c -o $@ $<
 
