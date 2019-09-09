@@ -1,12 +1,8 @@
 #ifndef LIGHT_HPP
 #define LIGHT_HPP
 
-struct Intensity
-{
-  float r;
-  float g;
-  float b;
-};
+#include "Intensity.hpp"
+#include "Point.hpp"
 
 class Light
 {

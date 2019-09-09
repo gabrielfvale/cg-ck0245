@@ -30,7 +30,4 @@ void Light::set_intensity(float r, float b, float g)
   intensity_.b = b;
 }
 
-Intensity* Light::get_intensity()
-{
-  return &intensity_;
-}
+Intensity* Light::get_intensity() { return &intensity_; }
