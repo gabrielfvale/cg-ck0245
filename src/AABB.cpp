@@ -1,4 +1,5 @@
 #include "AABB.hpp"
+#include <cmath>
 
 AABB::AABB() : Object()
 {
@@ -43,9 +44,9 @@ Vector3 AABB::surface_normal(Point& p_int)
     (vmin.get_z() - vmax.get_z())/2
   );
   Vector3 normal = Vector3(
-    p.get_x()/abs(d.get_x()),
-    p.get_y()/abs(d.get_y()),
-    p.get_z()/abs(d.get_z())
+    p.get_x()/std::abs(d.get_x()),
+    p.get_y()/std::abs(d.get_y()),
+    p.get_z()/std::abs(d.get_z())
   );
   normal.normalize();
   return normal;

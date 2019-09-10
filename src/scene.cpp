@@ -1,5 +1,4 @@
 #include <iostream>
-#include <fstream>
 #include <cmath>
 #include <vector>
 
@@ -144,8 +143,6 @@ int main()
   PointLight point_light = PointLight(RGB(0.2, 0.2, 0.2), Point(20, 15, 9));
 
   // projeta cada um dos raios
-  ofstream output;
-  output.open("intersecoes.txt");
   BMP preview = BMP(panel_holes, panel_holes);
   float hole_width = panel_l/panel_holes;
 
@@ -158,8 +155,6 @@ int main()
       // converte o ponto para coordenadas de mundo
       hole_point = camera.matrixTimesPoint(camera.camera_to_world(), hole_point);
       Vector3 ray_direction = Vector3(&observer, &hole_point);
-
-      output << "Raio (" << i << ", " << j << "):" << endl;
       Ray ray = Ray(observer, ray_direction);
       float t_int;
       Object* object;
@@ -170,7 +165,6 @@ int main()
       if(ray.intersect(cylinder, t_int))
       {
         Point intersection = ray.calc_point(t_int);
-        output << " - CILINDRO: " << intersection << endl;
         RGB color = calculate_light(cylinder, ambient_light, point_light, hole_point, intersection);
         preview.set_pixel(j, i, floor(color.r * 255), floor(color.g * 255), floor(color.b * 255));
         t_min = t_int;
@@ -179,7 +173,6 @@ int main()
       if(ray.intersect(cylinder2, t_int))
       {
         Point intersection = ray.calc_point(t_int);
-        output << " - CILINDRO2: " << intersection << endl;
         RGB color = calculate_light(cylinder2, ambient_light, point_light, hole_point, intersection);
         preview.set_pixel(j, i, floor(color.r * 255), floor(color.g * 255), floor(color.b * 255));
         if(object == NULL || (t_int < t_min))
@@ -193,7 +186,6 @@ int main()
       if(ray.intersect(cone, t_int))
       {
         Point intersection = ray.calc_point(t_int);
-        output << " - CONE: " << intersection << endl;
         RGB color = calculate_light(cone, ambient_light, point_light, hole_point, intersection);
         preview.set_pixel(j, i, floor(color.r * 255), floor(color.g * 255), floor(color.b * 255));
         if(object == NULL || (t_int < t_min))
@@ -205,7 +197,6 @@ int main()
       if(ray.intersect(cone2, t_int))
       {
         Point intersection = ray.calc_point(t_int);
-        output << " - CONE2: " << intersection << endl;
         RGB color = calculate_light(cone2, ambient_light, point_light, hole_point, intersection);
         preview.set_pixel(j, i, floor(color.r * 255), floor(color.g * 255), floor(color.b * 255));
         if(object == NULL || (t_int < t_min))
@@ -219,7 +210,6 @@ int main()
       if(ray.intersect(b_cube, t_int))
       {
         Point intersection = ray.calc_point(t_int);
-        output << " - CUBO BASE: " << intersection << endl;
         RGB color = calculate_light(b_cube, ambient_light, point_light, hole_point, intersection);
         preview.set_pixel(j, i, floor(color.r * 255), floor(color.g * 255), floor(color.b * 255));
         if(object == NULL || (t_int < t_min))
@@ -233,7 +223,6 @@ int main()
       if(ray.intersect(m_cube, t_int))
       {
         Point intersection = ray.calc_point(t_int);
-        output << " - CUBO MEDIO: " << intersection << endl;
         RGB color = calculate_light(m_cube, ambient_light, point_light, hole_point, intersection);
         preview.set_pixel(j, i, floor(color.r * 255), floor(color.g * 255), floor(color.b * 255));
         if(object == NULL || (t_int < t_min))
@@ -247,7 +236,6 @@ int main()
       if(ray.intersect(t_cube, t_int))
       {
         Point intersection = ray.calc_point(t_int);
-        output << " - CUBO TOPO: " << intersection << endl;
         RGB color = calculate_light(t_cube, ambient_light, point_light, hole_point, intersection);
         preview.set_pixel(j, i, floor(color.r * 255), floor(color.g * 255), floor(color.b * 255));
         if(object == NULL || (t_int < t_min))
@@ -275,11 +263,8 @@ int main()
           break;
       }
       */
-      output << endl;
     }
   }
-
-  output.close();
   preview.write("preview.bmp");
   cout << "Resultados de preview escrito em \"preview.bmp\"" << endl;
   cout << "Resultados de interseções escritos em \"intersecoes.txt\"" << endl;
