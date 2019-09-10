@@ -66,9 +66,14 @@ int main()
   float ojb_height, obj_radius;
   cout << "Entre a altura e o raio do cilindro, separados por espaços:" << endl;
   cin >> ojb_height >> obj_radius;
+
+  Material dark_brown = Material(RGB(0.27, 0.13, 0), RGB(0, 0, 0), RGB(0, 0, 0));
+  Material tree_green = Material(RGB(0.33, 0.49, 0.18), RGB(0, 0, 0), RGB(0, 0, 0));
+  //Material purple = Material(RGB(0.33, 0.18, 0.49), RGB(0, 0, 0), RGB(0, 0, 0));
+
   // gera os cilindros
-  Cylinder cylinder = Cylinder(Point(cylinder_center.get_x() - obj_radius, cylinder_center.get_y(), cylinder_center.get_z()), cylinder_center, g_axis, ojb_height, obj_radius);
-  Cylinder cylinder2 = Cylinder(Point(cylinder2_center.get_x() - obj_radius, cylinder2_center.get_y(), cylinder2_center.get_z()), cylinder2_center, g_axis, ojb_height, obj_radius);
+  Cylinder cylinder = Cylinder(Point(cylinder_center.get_x() - obj_radius, cylinder_center.get_y(), cylinder_center.get_z()), cylinder_center, g_axis, ojb_height, obj_radius, &dark_brown);
+  Cylinder cylinder2 = Cylinder(Point(cylinder2_center.get_x() - obj_radius, cylinder2_center.get_y(), cylinder2_center.get_z()), cylinder2_center, g_axis, ojb_height, obj_radius, &dark_brown);
 
   cout << "Entre a altura e o raio do cone, separados por espaços:" << endl;
   cin >> ojb_height >> obj_radius;
@@ -80,13 +85,13 @@ int main()
       cylinder_center.get_x() + (*cylinder_height) * g_axis.get_x(),
       cylinder_center.get_y() + (*cylinder_height) * g_axis.get_y(),
       cylinder_center.get_z() + (*cylinder_height) * g_axis.get_z()
-    ), g_axis, ojb_height, obj_radius);
+    ), g_axis, ojb_height, obj_radius, &tree_green);
   Cone cone2 = Cone(
     Point(
       cylinder2_center.get_x() + (*cylinder_height) * g_axis.get_x(),
       cylinder2_center.get_y() + (*cylinder_height) * g_axis.get_y(),
       cylinder2_center.get_z() + (*cylinder_height) * g_axis.get_z()
-    ), g_axis, ojb_height, obj_radius);
+    ), g_axis, ojb_height, obj_radius, &tree_green);
 
   cout << "Entre as coordenadas x, y e z do centro do primeiro cubo, separados por espaços:" << endl;
   cout << "(os demais cubos serão calculados exatamente acima do primeiro)" << endl;

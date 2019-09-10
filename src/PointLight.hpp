@@ -10,7 +10,7 @@ class PointLight : public Light
     Point p0_;
   public:
     PointLight();
-    PointLight(Intensity intensity, Point p0);
+    PointLight(RGB intensity, Point p0);
     PointLight(float r, float g, float b, Point p0);
     void set_point(Point* p0);
     Point* get_point();

@@ -5,7 +5,7 @@
 #include "Vector3.hpp"
 #include "Point.hpp"
 
-Vector3::Vector3(){ x_ = 0; y_ = 0; z_ = 0; }
+Vector3::Vector3(){ x_ = 0; y_ = 1; z_ = 0; }
 
 Vector3::Vector3(float x, float y, float z)
 {

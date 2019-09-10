@@ -4,7 +4,7 @@ RemoteLight::RemoteLight() : Light()
 {
   direction_ = Vector3(0, -1, 0);
 }
-RemoteLight::RemoteLight(Intensity intensity, Vector3 direction) : Light(intensity)
+RemoteLight::RemoteLight(RGB intensity, Vector3 direction) : Light(intensity)
 {
   direction_ = direction;
 }

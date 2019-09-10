@@ -1,10 +1,11 @@
 #ifndef PLANE_HPP
 #define PLANE_HPP
 
+#include "Object.hpp"
 #include "Point.hpp"
 #include "Vector3.hpp"
 
-class Plane
+class Plane : public Object
 {
   private:
     Point p0_; // known point of the plane

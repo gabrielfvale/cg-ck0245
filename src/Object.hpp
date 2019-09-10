@@ -16,7 +16,7 @@ class Object
     void set_material(Material* material);
     bool get_visibility();
     Material* get_material();
-    Vector3 surface_normal(Point& p_int);
+    virtual Vector3 surface_normal(Point& p_int) { return Vector3(); }
 };
 
 #endif

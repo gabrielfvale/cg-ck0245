@@ -7,7 +7,7 @@ SpotLight::SpotLight() : Light()
   direction_ = Vector3(0, -1, 0);
   theta_ = 3.14/6;
 }
-SpotLight::SpotLight(Intensity intensity, Point p0, Vector3 direction, float theta) : Light(intensity)
+SpotLight::SpotLight(RGB intensity, Point p0, Vector3 direction, float theta) : Light(intensity)
 {
   p0_ = p0;
   direction_ = direction;

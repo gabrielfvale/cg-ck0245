@@ -4,7 +4,7 @@ PointLight::PointLight() : Light()
 {
   p0_ = Point(0, 0, 0);
 }
-PointLight::PointLight(Intensity intensity, Point p0) : Light(intensity)
+PointLight::PointLight(RGB intensity, Point p0) : Light(intensity)
 {
   p0_ = p0;
 }

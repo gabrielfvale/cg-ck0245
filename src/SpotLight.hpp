@@ -12,7 +12,7 @@ class SpotLight : public Light
     float theta_;
   public:
     SpotLight();
-    SpotLight(Intensity intensity, Point p0, Vector3 direction, float theta);
+    SpotLight(RGB intensity, Point p0, Vector3 direction, float theta);
     SpotLight(float r, float g, float b, Point p0, Vector3 direction, float theta);
     void set_point(Point* p0);
     void set_direction(Vector3* direction);
