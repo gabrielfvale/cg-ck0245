@@ -25,9 +25,10 @@ RGB calculate_light(Object& object, Light ambient_light, PointLight point_light,
   RGB mat_ambient = (*object.get_material()).ambient_;
   RGB mat_diffuse = (*object.get_material()).diffuse_;
 
-  Vector3 light_direction = Vector3(&hole_point, point_light.get_point());
+  Vector3 light_direction = Vector3(point_light.get_point(), &hole_point);
   Vector3 normal = object.surface_normal(intersection);
   float fd = normal.dot_product(&light_direction);
+  fd = fd < 0 ? 0 : fd;
 
   RGB Id = *(point_light.get_intensity()) * mat_diffuse * fd;
   RGB color = (*(ambient_light.get_intensity()) * mat_ambient) + Id;
@@ -139,8 +140,8 @@ int main()
   cout << endl;
   */
 
-  Light ambient_light = Light(0.3, 0.3, 0.3);
-  PointLight point_light = PointLight(RGB(0.5, 0.5, 0.5), Point(7, 6, 15));
+  Light ambient_light = Light(0.5, 0.5, 0.5);
+  PointLight point_light = PointLight(RGB(0.2, 0.2, 0.2), Point(20, 15, 9));
 
   // projeta cada um dos raios
   ofstream output;
