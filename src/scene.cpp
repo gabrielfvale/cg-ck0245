@@ -12,10 +12,27 @@
 #include "AABB.hpp"
 
 #include "Camera.hpp"
+#include "Light.hpp"
+#include "PointLight.hpp"
+#include "RemoteLight.hpp"
 
 #include "BMP.hpp"
 
 using namespace std;
+
+RGB calculate_light(Object& object, Light ambient_light, PointLight point_light, Point& hole_point, Point& intersection)
+{
+  RGB mat_ambient = (*object.get_material()).ambient_;
+  RGB mat_diffuse = (*object.get_material()).diffuse_;
+
+  Vector3 light_direction = Vector3(&hole_point, point_light.get_point());
+  Vector3 normal = object.surface_normal(intersection);
+  float fd = normal.dot_product(&light_direction);
+
+  RGB Id = *(point_light.get_intensity()) * mat_diffuse * fd;
+  RGB color = (*(ambient_light.get_intensity()) * mat_ambient) + Id;
+  return color;
+}
 
 int main()
 {
@@ -67,9 +84,9 @@ int main()
   cout << "Entre a altura e o raio do cilindro, separados por espaços:" << endl;
   cin >> ojb_height >> obj_radius;
 
-  Material dark_brown = Material(RGB(0.27, 0.13, 0), RGB(0, 0, 0), RGB(0, 0, 0));
-  Material tree_green = Material(RGB(0.33, 0.49, 0.18), RGB(0, 0, 0), RGB(0, 0, 0));
-  //Material purple = Material(RGB(0.33, 0.18, 0.49), RGB(0, 0, 0), RGB(0, 0, 0));
+  Material dark_brown = Material(RGB(0.27, 0.13, 0), RGB(0.27, 0.13, 0), RGB(0, 0, 0));
+  Material tree_green = Material(RGB(0.33, 0.49, 0.18), RGB(0.33, 0.49, 0.18), RGB(0, 0, 0));
+  Material purple = Material(RGB(0.33, 0.18, 0.49), RGB(0.33, 0.18, 0.49), RGB(0, 0, 0));
 
   // gera os cilindros
   Cylinder cylinder = Cylinder(Point(cylinder_center.get_x() - obj_radius, cylinder_center.get_y(), cylinder_center.get_z()), cylinder_center, g_axis, ojb_height, obj_radius, &dark_brown);
@@ -103,14 +120,14 @@ int main()
   cout << "Entre a largura da aresta do cubo:" << endl;
   cin >> cube_edge;
   // cria o cubo base
-  AABB b_cube = AABB(bcube_center, g_axis, cube_edge);
+  AABB b_cube = AABB(bcube_center, g_axis, cube_edge, &purple);
   float bcx, bcy, bcz;
   bcube_center.get_coordinates(&bcx, &bcy, &bcz);
   float dx, dy, dz;
   g_axis.get_coordinates(&dx, &dy, &dz);
   // cria os demais cubos calculando o centro a partir do cubo base
-  AABB m_cube = AABB(Point(bcx + (dx*cube_edge), bcy + (dy*cube_edge), bcz + (dz*cube_edge)), g_axis, cube_edge);
-  AABB t_cube = AABB(Point(bcx + (2*dx*cube_edge), bcy + (2*dy*cube_edge), bcz + (2*dz*cube_edge)), g_axis, cube_edge);
+  AABB m_cube = AABB(Point(bcx + (dx*cube_edge), bcy + (dy*cube_edge), bcz + (dz*cube_edge)), g_axis, cube_edge, &purple);
+  AABB t_cube = AABB(Point(bcx + (2*dx*cube_edge), bcy + (2*dy*cube_edge), bcz + (2*dz*cube_edge)), g_axis, cube_edge, &purple);
 
   /* debug
   cout << "CENTRO CILINDRO: " + (*(cylinder.get_center())).to_string() << endl;
@@ -121,6 +138,9 @@ int main()
   cout << "CENTRO TCUBE: " + (*(t_cube.get_center())).to_string() << endl;
   cout << endl;
   */
+
+  Light ambient_light = Light(0.3, 0.3, 0.3);
+  PointLight point_light = PointLight(RGB(0.5, 0.5, 0.5), Point(7, 6, 15));
 
   // projeta cada um dos raios
   ofstream output;
@@ -141,23 +161,31 @@ int main()
       output << "Raio (" << i << ", " << j << "):" << endl;
       Ray ray = Ray(observer, ray_direction);
       float t_int;
-      int object = 0;
+      Object* object;
       float t_min = 0;
+      preview.set_pixel(j, i, 153, 204, 255);
 
       // interseções com os cilindros
       if(ray.intersect(cylinder, t_int))
       {
         Point intersection = ray.calc_point(t_int);
         output << " - CILINDRO: " << intersection << endl;
+        RGB color = calculate_light(cylinder, ambient_light, point_light, hole_point, intersection);
+        preview.set_pixel(j, i, floor(color.r * 255), floor(color.g * 255), floor(color.b * 255));
         t_min = t_int;
-        object = 1;
+        object = &cylinder;
       }
       if(ray.intersect(cylinder2, t_int))
       {
         Point intersection = ray.calc_point(t_int);
         output << " - CILINDRO2: " << intersection << endl;
-        t_min = t_int;
-        object = 1;
+        RGB color = calculate_light(cylinder2, ambient_light, point_light, hole_point, intersection);
+        preview.set_pixel(j, i, floor(color.r * 255), floor(color.g * 255), floor(color.b * 255));
+        if(object == NULL || (t_int < t_min))
+        {
+          t_min = t_int;
+          object = &cylinder2;
+        }
       }
 
       // interseções com os cones
@@ -165,20 +193,24 @@ int main()
       {
         Point intersection = ray.calc_point(t_int);
         output << " - CONE: " << intersection << endl;
-        if(object == 0 || (t_int < t_min))
+        RGB color = calculate_light(cone, ambient_light, point_light, hole_point, intersection);
+        preview.set_pixel(j, i, floor(color.r * 255), floor(color.g * 255), floor(color.b * 255));
+        if(object == NULL || (t_int < t_min))
         {
           t_min = t_int;
-          object = 2;
+          object = &cone;
         }
       }
       if(ray.intersect(cone2, t_int))
       {
         Point intersection = ray.calc_point(t_int);
         output << " - CONE2: " << intersection << endl;
-        if(object == 0 || (t_int < t_min))
+        RGB color = calculate_light(cone2, ambient_light, point_light, hole_point, intersection);
+        preview.set_pixel(j, i, floor(color.r * 255), floor(color.g * 255), floor(color.b * 255));
+        if(object == NULL || (t_int < t_min))
         {
           t_min = t_int;
-          object = 2;
+          object = &cone2;
         }
       }
 
@@ -187,10 +219,12 @@ int main()
       {
         Point intersection = ray.calc_point(t_int);
         output << " - CUBO BASE: " << intersection << endl;
-        if(object == 0 || (t_int < t_min))
+        RGB color = calculate_light(b_cube, ambient_light, point_light, hole_point, intersection);
+        preview.set_pixel(j, i, floor(color.r * 255), floor(color.g * 255), floor(color.b * 255));
+        if(object == NULL || (t_int < t_min))
         {
           t_min = t_int;
-          object = 3;
+          object = &b_cube;
         }
       }
 
@@ -199,10 +233,12 @@ int main()
       {
         Point intersection = ray.calc_point(t_int);
         output << " - CUBO MEDIO: " << intersection << endl;
-        if(object == 0 || (t_int < t_min))
+        RGB color = calculate_light(m_cube, ambient_light, point_light, hole_point, intersection);
+        preview.set_pixel(j, i, floor(color.r * 255), floor(color.g * 255), floor(color.b * 255));
+        if(object == NULL || (t_int < t_min))
         {
           t_min = t_int;
-          object = 3;
+          object = &m_cube;
         }
       }
 
@@ -211,14 +247,17 @@ int main()
       {
         Point intersection = ray.calc_point(t_int);
         output << " - CUBO TOPO: " << intersection << endl;
-        if(object == 0 || (t_int < t_min))
+        RGB color = calculate_light(t_cube, ambient_light, point_light, hole_point, intersection);
+        preview.set_pixel(j, i, floor(color.r * 255), floor(color.g * 255), floor(color.b * 255));
+        if(object == NULL || (t_int < t_min))
         {
           t_min = t_int;
-          object = 3;
+          object = &t_cube;
         }
       }
 
       // colore o bitmap
+      /*
       switch(object)
       {
         case 1: // cilindro
@@ -234,6 +273,7 @@ int main()
           preview.set_pixel(j, i, 153, 204, 255);
           break;
       }
+      */
       output << endl;
     }
   }

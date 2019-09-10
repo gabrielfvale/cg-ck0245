@@ -5,11 +5,10 @@
 
 class Material
 {
-  private:
+  public:
     RGB ambient_;
     RGB diffuse_;
     RGB specular_;
-  public:
     Material();
     Material(RGB ambient, RGB diffuse, RGB specular);
     void set_ambient(float r, float g, float b);
