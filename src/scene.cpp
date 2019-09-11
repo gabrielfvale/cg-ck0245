@@ -20,21 +20,6 @@
 
 using namespace std;
 
-RGB calculate_light(Object& object, Light ambient_light, PointLight point_light, Point& intersection)
-{
-  RGB mat_ambient = (*object.get_material()).ambient_;
-  RGB mat_diffuse = (*object.get_material()).diffuse_;
-
-  Vector3 light_direction = Vector3(&intersection, point_light.get_point());
-  Vector3 normal = object.surface_normal(intersection);
-  float fd = normal.dot_product(&light_direction);
-  fd = fd < 0 ? 0 : fd;
-
-  RGB Id = *(point_light.get_intensity()) * mat_diffuse * fd;
-  RGB color = (*(ambient_light.get_intensity()) * mat_ambient) + Id;
-  return color;
-}
-
 int main()
 {
   // Definições observador e placa
@@ -85,9 +70,9 @@ int main()
   cout << "Entre a altura e o raio do cilindro, separados por espaços:" << endl;
   cin >> ojb_height >> obj_radius;
 
-  Material dark_brown = Material(RGB(0.27, 0.13, 0), RGB(0.27, 0.13, 0), RGB(0, 0, 0));
-  Material tree_green = Material(RGB(0.33, 0.49, 0.18), RGB(0.33, 0.49, 0.18), RGB(0, 0, 0));
-  Material purple = Material(RGB(0.33, 0.18, 0.49), RGB(0.33, 0.18, 0.49), RGB(0, 0, 0));
+  Material dark_brown = Material(RGB(0.27, 0.13, 0), RGB(0.27, 0.13, 0), RGB());
+  Material tree_green = Material(RGB(0.33, 0.49, 0.18), RGB(0.2, 0.2, 0.2), RGB());
+  Material purple = Material(RGB(0.33, 0.18, 0.49), RGB(0.33, 0.18, 0.49), RGB(0.1, 0.1, 0.1));
 
   // gera os cilindros
   Cylinder cylinder = Cylinder(Point(cylinder_center.get_x() - obj_radius, cylinder_center.get_y(), cylinder_center.get_z()), cylinder_center, g_axis, ojb_height, obj_radius, &dark_brown);
@@ -141,7 +126,8 @@ int main()
   */
 
   Light ambient_light = Light(0.5, 0.5, 0.5);
-  PointLight point_light = PointLight(RGB(0.2, 0.2, 0.2), Point(10, 15, 9));
+  vector<RemoteLight> rl = vector<RemoteLight>();
+  vector<PointLight> pl = {PointLight(RGB(0.2, 0.2, 0.2), Point(10, 15, 9))};
 
   // projeta cada um dos raios
   BMP preview = BMP(panel_holes, panel_holes);
@@ -187,7 +173,7 @@ int main()
       if(object_hit != NULL)
       {
         Point intersection = ray.calc_point(t_min);
-        RGB color = calculate_light(*object_hit, ambient_light, point_light, intersection);
+        RGB color = (*object_hit).calculate_color(hole_point, intersection, ambient_light, rl, pl);
         preview.set_pixel(j, i, floor(color.r * 255), floor(color.g * 255), floor(color.b * 255));
       } else
       {

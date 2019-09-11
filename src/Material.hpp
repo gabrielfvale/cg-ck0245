@@ -6,14 +6,16 @@
 class Material
 {
   public:
-    RGB ambient_;
-    RGB diffuse_;
-    RGB specular_;
+    RGB ambient;
+    RGB diffuse;
+    RGB specular;
+    float shine;
     Material();
     Material(RGB ambient, RGB diffuse, RGB specular);
     void set_ambient(float r, float g, float b);
     void set_diffuse(float r, float g, float b);
     void set_specular(float r, float g, float b);
+    void set_shine(float s);
 };
 
 #endif
