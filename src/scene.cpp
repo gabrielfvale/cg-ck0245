@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+#include <limits>
 
 #include "Point.hpp"
 #include "Vector3.hpp"
@@ -19,12 +20,12 @@
 
 using namespace std;
 
-RGB calculate_light(Object& object, Light ambient_light, PointLight point_light, Point& hole_point, Point& intersection)
+RGB calculate_light(Object& object, Light ambient_light, PointLight point_light, Point& intersection)
 {
   RGB mat_ambient = (*object.get_material()).ambient_;
   RGB mat_diffuse = (*object.get_material()).diffuse_;
 
-  Vector3 light_direction = Vector3(point_light.get_point(), &hole_point);
+  Vector3 light_direction = Vector3(&intersection, point_light.get_point());
   Vector3 normal = object.surface_normal(intersection);
   float fd = normal.dot_product(&light_direction);
   fd = fd < 0 ? 0 : fd;
@@ -140,7 +141,7 @@ int main()
   */
 
   Light ambient_light = Light(0.5, 0.5, 0.5);
-  PointLight point_light = PointLight(RGB(0.2, 0.2, 0.2), Point(20, 15, 9));
+  PointLight point_light = PointLight(RGB(0.2, 0.2, 0.2), Point(10, 15, 9));
 
   // projeta cada um dos raios
   BMP preview = BMP(panel_holes, panel_holes);
@@ -156,117 +157,46 @@ int main()
       hole_point = camera.matrixTimesPoint(camera.camera_to_world(), hole_point);
       Vector3 ray_direction = Vector3(&observer, &hole_point);
       Ray ray = Ray(observer, ray_direction);
+
       float t_int;
-      Object* object;
-      float t_min = 0;
-      preview.set_pixel(j, i, 153, 204, 255);
+      float t_min = numeric_limits<float>::infinity();
 
-      // interseções com os cilindros
-      if(ray.intersect(cylinder, t_int))
+      Object* object_hit = NULL;
+      Object* objects[7] = {
+        &cylinder,
+        &cylinder2,
+        &cone,
+        &cone2,
+        &t_cube,
+        &m_cube,
+        &b_cube
+      };
+
+      for(int i = 0; i < 7; i++)
       {
-        Point intersection = ray.calc_point(t_int);
-        RGB color = calculate_light(cylinder, ambient_light, point_light, hole_point, intersection);
-        preview.set_pixel(j, i, floor(color.r * 255), floor(color.g * 255), floor(color.b * 255));
-        t_min = t_int;
-        object = &cylinder;
-      }
-      if(ray.intersect(cylinder2, t_int))
-      {
-        Point intersection = ray.calc_point(t_int);
-        RGB color = calculate_light(cylinder2, ambient_light, point_light, hole_point, intersection);
-        preview.set_pixel(j, i, floor(color.r * 255), floor(color.g * 255), floor(color.b * 255));
-        if(object == NULL || (t_int < t_min))
+        if((*objects[i]).intersects(ray, t_int))
         {
-          t_min = t_int;
-          object = &cylinder2;
+          if(object_hit == NULL || (t_int < t_min))
+          {
+            t_min = t_int;
+            object_hit = objects[i];
+          }
         }
       }
 
-      // interseções com os cones
-      if(ray.intersect(cone, t_int))
+      if(object_hit != NULL)
       {
-        Point intersection = ray.calc_point(t_int);
-        RGB color = calculate_light(cone, ambient_light, point_light, hole_point, intersection);
+        Point intersection = ray.calc_point(t_min);
+        RGB color = calculate_light(*object_hit, ambient_light, point_light, intersection);
         preview.set_pixel(j, i, floor(color.r * 255), floor(color.g * 255), floor(color.b * 255));
-        if(object == NULL || (t_int < t_min))
-        {
-          t_min = t_int;
-          object = &cone;
-        }
-      }
-      if(ray.intersect(cone2, t_int))
+      } else
       {
-        Point intersection = ray.calc_point(t_int);
-        RGB color = calculate_light(cone2, ambient_light, point_light, hole_point, intersection);
-        preview.set_pixel(j, i, floor(color.r * 255), floor(color.g * 255), floor(color.b * 255));
-        if(object == NULL || (t_int < t_min))
-        {
-          t_min = t_int;
-          object = &cone2;
-        }
+        preview.set_pixel(j, i, 153, 204, 255);
       }
 
-      // interseções com o cubo base
-      if(ray.intersect(b_cube, t_int))
-      {
-        Point intersection = ray.calc_point(t_int);
-        RGB color = calculate_light(b_cube, ambient_light, point_light, hole_point, intersection);
-        preview.set_pixel(j, i, floor(color.r * 255), floor(color.g * 255), floor(color.b * 255));
-        if(object == NULL || (t_int < t_min))
-        {
-          t_min = t_int;
-          object = &b_cube;
-        }
-      }
-
-      // interseções com o cubo médio
-      if(ray.intersect(m_cube, t_int))
-      {
-        Point intersection = ray.calc_point(t_int);
-        RGB color = calculate_light(m_cube, ambient_light, point_light, hole_point, intersection);
-        preview.set_pixel(j, i, floor(color.r * 255), floor(color.g * 255), floor(color.b * 255));
-        if(object == NULL || (t_int < t_min))
-        {
-          t_min = t_int;
-          object = &m_cube;
-        }
-      }
-
-      // interseções com o cubo topo
-      if(ray.intersect(t_cube, t_int))
-      {
-        Point intersection = ray.calc_point(t_int);
-        RGB color = calculate_light(t_cube, ambient_light, point_light, hole_point, intersection);
-        preview.set_pixel(j, i, floor(color.r * 255), floor(color.g * 255), floor(color.b * 255));
-        if(object == NULL || (t_int < t_min))
-        {
-          t_min = t_int;
-          object = &t_cube;
-        }
-      }
-
-      // colore o bitmap
-      /*
-      switch(object)
-      {
-        case 1: // cilindro
-          preview.set_pixel(j, i, 69, 34, 0);
-          break;
-        case 2: // cone
-          preview.set_pixel(j, i, 86, 125, 48);
-          break;
-        case 3: // algum cubo
-          preview.set_pixel(j, i, 86, 48, 125);
-          break;
-        default: // sem intersecoes
-          preview.set_pixel(j, i, 153, 204, 255);
-          break;
-      }
-      */
     }
   }
   preview.write("preview.bmp");
   cout << "Resultados de preview escrito em \"preview.bmp\"" << endl;
-  cout << "Resultados de interseções escritos em \"intersecoes.txt\"" << endl;
   return 0;
 }

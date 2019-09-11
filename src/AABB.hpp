@@ -2,8 +2,6 @@
 #define AABB_HPP
 
 #include "Object.hpp"
-#include "Point.hpp"
-#include "Vector3.hpp"
 
 class AABB : public Object
 {
@@ -19,6 +17,7 @@ class AABB : public Object
     float* get_edge();
     void set_params(Point* center, Vector3* n, float* edge);
     Vector3 surface_normal(Point& p_int) override;
+    bool intersects(Ray& ray, float& t_int) override;
 };
 
 #endif

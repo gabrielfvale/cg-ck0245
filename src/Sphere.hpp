@@ -2,8 +2,6 @@
 #define SPHERE_HPP
 
 #include "Object.hpp"
-#include "Point.hpp"
-#include "Vector3.hpp"
 
 class Sphere : public Object
 {
@@ -19,6 +17,7 @@ class Sphere : public Object
     float get_radius();
     void set_params(Point* p0, Point* center, float* radius);
     Vector3 surface_normal(Point& p_int) override;
+    bool intersects(Ray& ray, float& t_int) override;
 };
 
 #endif

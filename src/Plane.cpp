@@ -21,3 +21,14 @@ void Plane::set_params(Point* p0, Vector3* n)
   p0_ = *p0;
   n_ = *n;
 }
+
+bool Plane::intersects(Ray& ray, float& t_int)
+{
+  Point ray_p0 = ray.get_p0();
+  Vector3 d = ray.get_d();
+  if(d.dot_product(&n_) == 0)
+    return false;
+  Vector3 resultant = Vector3(&ray_p0, &p0_);
+  t_int = resultant.dot_product(&n_) / d.dot_product(&n_);
+  return true;
+}

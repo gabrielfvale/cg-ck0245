@@ -2,7 +2,7 @@
 #define OBJECT_HPP
 
 #include "Material.hpp"
-#include "Vector3.hpp"
+#include "Ray.hpp"
 
 class Object
 {
@@ -17,6 +17,7 @@ class Object
     bool get_visibility();
     Material* get_material();
     virtual Vector3 surface_normal(Point& p_int) { return Vector3(); }
+    virtual bool intersects(Ray& ray, float& t_int) { return true; };
 };
 
 #endif

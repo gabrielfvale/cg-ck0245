@@ -2,8 +2,6 @@
 #define PLANE_HPP
 
 #include "Object.hpp"
-#include "Point.hpp"
-#include "Vector3.hpp"
 
 class Plane : public Object
 {
@@ -16,6 +14,7 @@ class Plane : public Object
     Point get_p0();
     Vector3 get_n();
     void set_params(Point* p0, Vector3* n);
+    bool intersects(Ray& ray, float& t_int) override;
 };
 
 #endif

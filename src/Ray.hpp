@@ -4,11 +4,6 @@
 #include <vector>
 #include "Point.hpp"
 #include "Vector3.hpp"
-#include "Plane.hpp"
-#include "Sphere.hpp"
-#include "Cylinder.hpp"
-#include "Cone.hpp"
-#include "AABB.hpp"
 
 class Ray
 {
@@ -22,11 +17,6 @@ class Ray
     Point get_p0();
     Vector3 get_d();
     void set_params(Point* p0, Vector3* d);
-    bool intersect(Plane& plane, float& t_int);
-    bool intersect(Sphere& sphere, float& t_min);
-    bool intersect(Cylinder& cylinder, float& t_min);
-    bool intersect(Cone& cone, float& t_min);
-    bool intersect(AABB& aabb, float& t_min);
 };
 
 #endif
