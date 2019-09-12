@@ -3,16 +3,16 @@
 
 Object::Object()
 {
-  visibility_ = true;
+  visible_ = true;
 }
 Object::Object(Material* material)
 {
-  visibility_ = true;
+  visible_ = true;
   material_ = material;
 }
-void Object::set_visibility(bool visibility) { visibility_ = visibility; }
+void Object::set_visible(bool visible) { visible_ = visible; }
 void Object::set_material(Material* material) {  }
-bool Object::get_visibility() { return visibility_; }
+bool Object::visible() { return visible_; }
 Material* Object::get_material() { return material_; }
 
 RGB Object::calculate_diffuse(RGB& light_intensity, Point& intersection, Vector3& light_direction)

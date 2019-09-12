@@ -11,16 +11,16 @@
 class Object
 {
   private:
-    bool visibility_;
+    bool visible_;
     Material* material_;
     RGB calculate_diffuse(RGB& light_intensity, Point& intersection, Vector3& light_direction);
     RGB calculate_specular(RGB& light_intensity, Point& observer, Point& intersection, Vector3& light_direction);
   public:
     Object();
     Object(Material* material);
-    void set_visibility(bool visibility);
+    void set_visible(bool visible);
     void set_material(Material* material);
-    bool get_visibility();
+    bool visible();
     Material* get_material();
     RGB calculate_color(Point& observer, Point& intersection, Light& ambient_light, std::vector<RemoteLight>& remote_lights, std::vector<PointLight>& point_lights);
     virtual Vector3 surface_normal(Point& p_int) { return Vector3(); }
