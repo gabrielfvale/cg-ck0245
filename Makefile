@@ -11,7 +11,7 @@ fresh: clean checkdir $(TARGET)
 checkdir: obj/
 
 $(TARGET): $(OBJ_FILES)
-	$(CC) -o $@ $^
+	$(CC) -o $@ $^ -lSDL2
 
 obj/:
 	mkdir -p $@
