@@ -26,8 +26,7 @@ RGB Object::calculate_specular(RGB& light_intensity, Point& observer, Point& int
 {
   Vector3 normal = surface_normal(intersection);
   Vector3 v = Vector3(&intersection, &observer);
-  Vector3 r = normal * (light_direction.dot_product(&normal)) * 2;
-  r.set_coordinates(r.get_x() - light_direction.get_x(), r.get_y() - light_direction.get_y(), r.get_z() - light_direction.get_z());
+  Vector3 r = normal * normal.dot_product(&light_direction) * 2 - light_direction;
   float fs = std::pow(v.dot_product(&r), (*material_).shine);
   RGB Is = light_intensity * (*material_).specular * fs;
   return Is;

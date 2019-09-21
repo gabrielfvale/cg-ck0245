@@ -30,17 +30,13 @@ void Cylinder::set_params(Point* p0, Point* b, Vector3* u, float* height, float*
 
 Vector3 Cylinder::surface_normal(Point& p_int)
 {
-  Vector3 center_p = Vector3(&b_, &p_int);
-  center_p = u_*(center_p.dot_product(&u_));
-  
-  float px, py, pz;
-  u_.get_coordinates(&px, &py, &pz);
-  px += center_p.get_x();
-  py += center_p.get_y();
-  pz += center_p.get_z();
-
-  Point pe = Point(px, py, pz);
-  Vector3 normal = Vector3(&pe, &p_int)/radius_;
+  float cx, cy, cz;
+  b_.get_coordinates(&cx, &cy, &cz);
+  cx += u_.get_x() * p_int.get_x();
+  cy += u_.get_x() * p_int.get_y();
+  cz += u_.get_x() * p_int.get_z();
+  Point center = Point(b_.get_x(), b_.get_y(), b_.get_z());
+  Vector3 normal = Vector3(&center, &p_int);
   normal.normalize();
   return normal;
 }

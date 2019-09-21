@@ -32,24 +32,18 @@ Vector3 AABB::surface_normal(Point& p_int)
 {
   float cx, cy, cz;
   center_.get_coordinates(&cx, &cy, &cz);
-  cx += n_.get_x()*edge_;
-  cy += n_.get_y()*edge_;
-  cy += n_.get_z()*edge_;
-  Point c = Point(cx, cy, cz);
-  Point vmin = Point(cx - edge_/2, cy - edge_/2, cz - edge_/2);
-  Point vmax = Point(cx + edge_/2, cy + edge_/2, cz + edge_/2);
+  Vector3 min_bound = Vector3(cx - edge_/2, cy, cz - edge_/2);
+  Vector3 max_bound = Vector3(cx + edge_/2, cy + edge_, cz + edge_/2);
 
-  Vector3 p = Vector3(&c, &p_int);
+  Vector3 c = (min_bound + max_bound) * 0.5;
+  Point center = Point(c.get_x(), c.get_y(), c.get_z());
 
-  Point d = Point(
-    (vmin.get_x() - vmax.get_x())/2,
-    (vmin.get_y() - vmax.get_y())/2,
-    (vmin.get_z() - vmax.get_z())/2
-  );
+  Vector3 center_p = Vector3(&center, &p_int);
+  Vector3 d = (min_bound - max_bound) * 0.5;
   Vector3 normal = Vector3(
-    p.get_x()/std::abs(d.get_x()),
-    p.get_y()/std::abs(d.get_y()),
-    p.get_z()/std::abs(d.get_z())
+    center_p.get_x() / abs(d.get_x()),
+    center_p.get_y() / abs(d.get_y()),
+    center_p.get_z() / abs(d.get_z())
   );
   normal.normalize();
   return normal;
