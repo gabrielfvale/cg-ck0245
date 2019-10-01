@@ -37,7 +37,7 @@ RGB Object::calculate_color(Point& observer, Point& intersection, Light& ambient
   RGB Id = RGB();
   RGB Is = RGB();
 
-  for(int i = 0; i < remote_lights.size(); i++)
+  for(uint32_t i = 0; i < remote_lights.size(); i++)
   {
     Vector3 light_direction = *(remote_lights[i].get_direction()) * -1;
     RGB light_intensity = *(remote_lights[i].get_intensity());
@@ -45,7 +45,7 @@ RGB Object::calculate_color(Point& observer, Point& intersection, Light& ambient
     Is = calculate_specular(light_intensity, observer, intersection, light_direction) + Is;
   }
 
-  for(int i = 0; i < point_lights.size(); i++)
+  for(uint32_t i = 0; i < point_lights.size(); i++)
   {
     Vector3 light_direction = Vector3(&intersection, point_lights[i].get_point());
     RGB light_intensity = *(point_lights[i].get_intensity());

@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 
   Material dark_brown = Material(RGB(0.27, 0.13, 0), RGB(0.27, 0.13, 0), RGB());
   Material tree_green = Material(RGB(0.33, 0.49, 0.18), RGB(0.2, 0.2, 0.2), RGB());
-  Material purple = Material(RGB(0.33, 0.18, 0.49), RGB(0.33, 0.18, 0.49), RGB(0.1, 0.1, 0.1));
+  Material purple = Material(RGB(0.33, 0.18, 0.49), RGB(0.33, 0.18, 0.49), RGB());
 
   Point observer = Point(10, 4.5, 20);
   Point lookat = Point(10, 4.5, 5);
@@ -146,8 +146,8 @@ int main(int argc, char *argv[])
 
   // cria as luzes
   Light ambient_light = Light(0.5, 0.5, 0.5);
-  vector<RemoteLight> rl = {RemoteLight(RGB(0.3, 0.3, 0.3), Vector3(1, -1, 0))};
-  vector<PointLight> pl = vector<PointLight>();
+  vector<RemoteLight> rl = vector<RemoteLight>();
+  vector<PointLight> pl = {PointLight(RGB(0.3, 0.3, 0.3), Point(15, 4.5, 15))};
 
   Object* objects[7] = {
     &cylinder,
