@@ -3,10 +3,11 @@
 #include <vector>
 #include <limits>
 
-#include <SDL2/SDL.h>
+#include <GL/freeglut.h>
 
 #include "Point.hpp"
 #include "Vector3.hpp"
+#include "Matrix4.hpp"
 #include "Ray.hpp"
 #include "Plane.hpp"
 #include "Cylinder.hpp"
@@ -22,78 +23,27 @@
 
 using namespace std;
 
-void trace_rays(Ray mouse_ray, SDL_Renderer* renderer, int panel_holes, float panel_l, float panel_d, Camera camera, Point observer, Object** objects, Light ambient_light, vector<RemoteLight> rl, vector<PointLight> pl)
+int panel_holes = 500;
+GLubyte* PixelBuffer = new GLubyte[panel_holes * panel_holes * 3];
+
+void render(void)
 {
+  glClear(GL_COLOR_BUFFER_BIT);
+  glDrawPixels(panel_holes, panel_holes, GL_RGB, GL_UNSIGNED_BYTE, PixelBuffer);
+  glutSwapBuffers(); 
+}
 
-  string object_ids[7] = {
-    "Cilindro 1",
-    "Cilindro 2",
-    "Cone 1",
-    "Cone 2",
-    "Cubo topo",
-    "Cubo médio",
-    "Cubo base"
-  };
-
-  float t_intm;
-  for(int i = 0; i < 7; i++)
-  {
-    if((*objects[i]).intersects(mouse_ray, t_intm))
-    {
-      (*objects[i]).set_visible(!(*objects[i]).visible());
-      cout << " - Objeto atingido: " << object_ids[i] << endl;
-    }
-  }
-
-  float hole_width = panel_l/panel_holes;
-  // projeta cada um dos raios
-  for(int i=0; i<panel_holes; i++)
-  {
-    for (int j=0; j<panel_holes; j++)
-    {
-      // gera o ponto da matriz em coordenadas de camera
-      Point hole_point = Point(-panel_l/2 + hole_width/2 + j*hole_width, panel_l/2 - hole_width/2 - i*hole_width, -panel_d);
-      // converte o ponto para coordenadas de mundo
-      hole_point = camera.matrixTimesPoint(camera.camera_to_world(), hole_point);
-      Vector3 ray_direction = Vector3(&observer, &hole_point);
-      Ray ray = Ray(observer, ray_direction);
-
-      float t_int;
-      float t_min = numeric_limits<float>::infinity();
-
-      Object* object_hit = NULL;
-
-      for(int i = 0; i < 7; i++)
-      {
-        if((*objects[i]).visible() && (*objects[i]).intersects(ray, t_int))
-        {
-          if(object_hit == NULL || (t_int < t_min))
-          {
-            t_min = t_int;
-            object_hit = objects[i];
-          }
-        }
-      }
-
-      if(object_hit != NULL && (*object_hit).visible())
-      {
-        Point intersection = ray.calc_point(t_min);
-        RGB color = (*object_hit).calculate_color(hole_point, intersection, ambient_light, rl, pl);
-        SDL_SetRenderDrawColor(renderer, floor(color.r * 255), floor(color.g * 255), floor(color.b * 255), 255);
-      } else
-      {
-        SDL_SetRenderDrawColor(renderer, 153, 204, 255, 255);
-      }
-      SDL_RenderDrawPoint(renderer, j, i);
-    }
-  }
-  SDL_RenderPresent(renderer);
+void set_pixel(int x, int y, int r, int g, int b, GLubyte* pixels, int width, int height)
+{
+  int position = (x + y * width) * 3;
+  pixels[position] = r;
+  pixels[position + 1] = g;
+  pixels[position + 2] = b;
 }
 
 int main(int argc, char *argv[])
 {
   // Definições observador e placa
-  int panel_holes = 600;
   float panel_l = 6;
   float panel_d = 3;
 
@@ -106,6 +56,7 @@ int main(int argc, char *argv[])
   Vector3 viewup = Vector3(10, 5.5, 20);
 
   Camera camera = Camera(observer, lookat, viewup);
+  Matrix4 cameraToWorld = camera.camera_to_world();
 
   // definições de objetos
   Vector3 g_axis = Vector3(0, 1, 0);
@@ -121,8 +72,8 @@ int main(int argc, char *argv[])
   float cube_edge = 3;
 
   // gera os objetos
-  Cylinder cylinder = Cylinder(Point(cylinder_center.get_x() - cylinder_radius, cylinder_center.get_y(), cylinder_center.get_z()), cylinder_center, g_axis, cylinder_height, cylinder_radius, &dark_brown);
-  Cylinder cylinder2 = Cylinder(Point(cylinder2_center.get_x() - cylinder_radius, cylinder2_center.get_y(), cylinder2_center.get_z()), cylinder2_center, g_axis, cylinder_height, cylinder_radius, &dark_brown);
+  Cylinder cylinder = Cylinder(cylinder_center, g_axis, cylinder_height, cylinder_radius, &dark_brown);
+  Cylinder cylinder2 = Cylinder(cylinder2_center, g_axis, cylinder_height, cylinder_radius, &dark_brown);
   Cone cone = Cone(
     Point(
       cylinder_center.get_x() + cylinder_height * g_axis.get_x(),
@@ -159,39 +110,54 @@ int main(int argc, char *argv[])
     &b_cube
   };
 
-  for(int i = 0; i < 7; i++)
-    (*objects[i]).set_visible(false);
+  // inicia GLUT
+  glutInit(&argc, argv);
+  glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+  glutInitWindowPosition(100, 100);
+  glutInitWindowSize(panel_holes, panel_holes);
+  glutCreateWindow("Trabalho CG");
 
-  // inicia SDL
-  SDL_Init(SDL_INIT_EVERYTHING);
-  SDL_Window* window;
-  SDL_Renderer* renderer;
-  SDL_Event event;
-  SDL_CreateWindowAndRenderer(panel_holes, panel_holes, 0, &window, &renderer);
-  SDL_RenderClear(renderer);
-
-  bool running = true;
-  while(running)
+  // projeta cada um dos raios
+  for(int i=0; i<panel_holes; i++)
   {
-    SDL_WaitEvent(&event);
-    switch(event.type)
+    for (int j=0; j<panel_holes; j++)
     {
-      case SDL_QUIT:
-        running = false;
-        break;
-      case SDL_MOUSEBUTTONDOWN:
-        int mouse_x = event.motion.x;
-        int mouse_y = event.motion.y;
-        cout << "Ponto (" << mouse_x << ", " << mouse_y << ")" << endl;
-        Point hole_point = Point(-panel_l/2 + hole_width/2 + mouse_x*hole_width, panel_l/2 - hole_width/2 - mouse_y*hole_width, -panel_d);
-        hole_point = camera.matrixTimesPoint(camera.camera_to_world(), hole_point);
-        Ray mouse_ray = Ray(observer, Vector3(&observer, &hole_point));
-        trace_rays(mouse_ray, renderer, panel_holes, panel_l, panel_d, camera, observer, objects, ambient_light, rl, pl);
-      break;
+      // gera o ponto da matriz em coordenadas de camera
+      Point hole_point = Point(-panel_l/2 + hole_width/2 + j*hole_width, panel_l/2 - hole_width/2 - i*hole_width, -panel_d);
+      // converte o ponto para coordenadas de mundo
+      hole_point = cameraToWorld * hole_point;
+      Vector3 ray_direction = Vector3(&observer, &hole_point);
+      Ray ray = Ray(observer, ray_direction);
+
+      float t_int;
+      float t_min = numeric_limits<float>::infinity();
+
+      Object* object_hit = NULL;
+
+      for(int i=0; i<7; i++)
+      {
+        if((*objects[i]).visible() && (*objects[i]).intersects(ray, t_int))
+        {
+          if(object_hit == NULL || (t_int < t_min))
+          {
+            t_min = t_int;
+            object_hit = objects[i];
+          }
+        }
+      }
+
+      if(object_hit != NULL && (*object_hit).visible())
+      {
+        Point intersection = ray.calc_point(t_min);
+        RGB color = (*object_hit).calculate_color(hole_point, intersection, ambient_light, rl, pl);
+        set_pixel(j, panel_holes-1-i, floor(color.r*255), floor(color.g*255), floor(color.b*255), PixelBuffer, panel_holes, panel_holes);
+      } else
+      {
+        set_pixel(j, panel_holes-1-i, 153, 204, 255, PixelBuffer, panel_holes, panel_holes);
+      }
     }
   }
-  SDL_DestroyRenderer(renderer);
-  SDL_DestroyWindow(window);
-  SDL_Quit();
-  return EXIT_SUCCESS;
+  glutDisplayFunc(render);
+  glutMainLoop();
+  return 0;
 }
