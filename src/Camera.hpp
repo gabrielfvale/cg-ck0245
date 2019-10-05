@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "Vector3.hpp"
+#include "Matrix4.hpp"
 
 class Camera
 {
@@ -13,10 +14,8 @@ class Camera
     Vector3 cx_, cy_, cz_;
   public:
     Camera(Point eye, Point lookat, Vector3 up);
-    std::vector<std::vector<float>> camera_to_world();
-    std::vector<std::vector<float>> world_to_camera();
-    Point matrixTimesPoint(std::vector<std::vector<float>> transformation_matrix, Point& origin);
-    Vector3 matrixTimesVector(std::vector<std::vector<float>> transformation_matrix, Vector3& origin);
+    Matrix4 camera_to_world();
+    Matrix4 world_to_camera();
     Vector3* x_axis();
     Vector3* y_axis();
     Vector3* z_axis();

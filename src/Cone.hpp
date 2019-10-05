@@ -7,7 +7,7 @@
 class Cone : public Object
 {
   private:
-    Point c_; // kcylinder base center
+    Point c_; // cone base center
     Point vertice_; // cone top vertice
     Vector3 n_; // cone axis (unit vector)
     float height_;
