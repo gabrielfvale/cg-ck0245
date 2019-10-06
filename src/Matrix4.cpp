@@ -53,3 +53,16 @@ Vector3 Matrix4::operator*(Vector3& v)
 
   return Vector3(newx, newy, newz);
 }
+
+Quaternion Matrix4::operator*(Quaternion& q)
+{
+  float ox, oy, oz;
+  float newx, newy, newz;
+  Vector3* vec = q.get_vec();
+  (*vec).get_coordinates(&ox, &oy, &oz);
+  newx = matrix_[0][0] * ox + matrix_[0][1] * oy + matrix_[0][2] * oz + matrix_[0][3] * q.get_scalar();
+  newy = matrix_[1][0] * ox + matrix_[1][1] * oy + matrix_[1][2] * oz + matrix_[1][3] * q.get_scalar();
+  newz = matrix_[2][0] * ox + matrix_[2][1] * oy + matrix_[2][2] * oz + matrix_[2][3] * q.get_scalar();
+
+  return Quaternion(Vector3(newx, newy, newz), q.get_scalar());
+}

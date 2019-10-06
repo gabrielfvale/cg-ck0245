@@ -3,6 +3,7 @@
 
 #include "Point.hpp"
 #include "Vector3.hpp"
+#include "Quaternion.hpp"
 
 class Matrix4
 {
@@ -14,8 +15,9 @@ class Matrix4
     float get(int i, int j);
     Matrix4 operator+(Matrix4& m);
     Matrix4 operator-(Matrix4& m);
-    Vector3 operator*(Vector3& v);
     Point operator*(Point& p);
+    Vector3 operator*(Vector3& v);
+    Quaternion operator*(Quaternion& q);
 };
 
 #endif

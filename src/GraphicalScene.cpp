@@ -7,7 +7,9 @@
 
 #include "Point.hpp"
 #include "Vector3.hpp"
+#include "Quaternion.hpp"
 #include "Matrix4.hpp"
+
 #include "Ray.hpp"
 #include "Plane.hpp"
 #include "Cylinder.hpp"
