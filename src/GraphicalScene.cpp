@@ -94,21 +94,19 @@ int main(int argc, char *argv[])
   float dx, dy, dz;
   g_axis.get_coordinates(&dx, &dy, &dz);
   // cria os demais cubos calculando o centro a partir do cubo base
-  AABB m_cube = AABB(Point(bcx + (dx*cube_edge), bcy + (dy*cube_edge), bcz + (dz*cube_edge)), g_axis, cube_edge, &purple);
-  AABB t_cube = AABB(Point(bcx + (2*dx*cube_edge), bcy + (2*dy*cube_edge), bcz + (2*dz*cube_edge)), g_axis, cube_edge, &purple);
+  //AABB m_cube = AABB(Point(bcx + (dx*cube_edge), bcy + (dy*cube_edge), bcz + (dz*cube_edge)), g_axis, cube_edge, &purple);
+  //AABB t_cube = AABB(Point(bcx + (2*dx*cube_edge), bcy + (2*dy*cube_edge), bcz + (2*dz*cube_edge)), g_axis, cube_edge, &purple);
 
   // cria as luzes
   Light ambient_light = Light(0.5, 0.5, 0.5);
   vector<RemoteLight> rl = vector<RemoteLight>();
   vector<PointLight> pl = {PointLight(RGB(0.3, 0.3, 0.3), Point(15, 4.5, 15))};
 
-  Object* objects[7] = {
+  vector<Object*> objects = {
     &cylinder,
     &cylinder2,
     &cone,
     &cone2,
-    &t_cube,
-    &m_cube,
     &b_cube
   };
 
@@ -136,7 +134,7 @@ int main(int argc, char *argv[])
 
       Object* object_hit = NULL;
 
-      for(int i=0; i<7; i++)
+      for(unsigned i=0; i<objects.size(); i++)
       {
         if((*objects[i]).visible() && (*objects[i]).intersects(ray, t_int))
         {

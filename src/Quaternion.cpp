@@ -39,25 +39,25 @@ Quaternion Quaternion::operator*(Quaternion& qr)
   float vlx, vly, vlz;
   v_.get_coordinates(&vlx, &vly, &vlz);
 
-  tr_matrix.set(0, 0, w_);
-  tr_matrix.set(0, 1, -vlz);
-  tr_matrix.set(0, 2, vly);
-  tr_matrix.set(0, 3, vlx);
+  tr_matrix(0, 0) = w_;
+  tr_matrix(0, 1) = -vlz;
+  tr_matrix(0, 2) = vly;
+  tr_matrix(0, 3) = vlx;
 
-  tr_matrix.set(1, 0, vlz);
-  tr_matrix.set(1, 1, w_);
-  tr_matrix.set(1, 2, -vlx);
-  tr_matrix.set(1, 3, vly);
+  tr_matrix(1, 0) = vlz;
+  tr_matrix(1, 1) = w_;
+  tr_matrix(1, 2) = -vlx;
+  tr_matrix(1, 3) = vly;
 
-  tr_matrix.set(2, 0, -vly);
-  tr_matrix.set(2, 1, vlx);
-  tr_matrix.set(2, 2, w_);
-  tr_matrix.set(2, 3, vlz);
+  tr_matrix(2, 0) = -vly;
+  tr_matrix(2, 1) = vlx;
+  tr_matrix(2, 2) = w_;
+  tr_matrix(2, 3) = vlz;
 
-  tr_matrix.set(3, 0, -vlx);
-  tr_matrix.set(3, 1, -vly);
-  tr_matrix.set(3, 2, -vlz);
-  tr_matrix.set(3, 3, w_);
+  tr_matrix(3, 0) = -vlx;
+  tr_matrix(3, 1) = -vly;
+  tr_matrix(3, 2) = -vlz;
+  tr_matrix(3, 3) = w_;
 
   return tr_matrix * qr;
 }

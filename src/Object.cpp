@@ -17,7 +17,9 @@ Material* Object::get_material() { return material_; }
 
 RGB Object::calculate_diffuse(RGB& light_intensity, Point& intersection, Vector3& light_direction)
 {
-  float fd = surface_normal(intersection).dot_product(&light_direction);
+  Vector3 normal = surface_normal(intersection);
+  normal.normalize();
+  float fd = normal.dot_product(&light_direction);
   fd = fd < 0 ? 0 : fd;
   RGB Id = light_intensity * (*material_).diffuse * fd;
   return Id;
@@ -27,6 +29,8 @@ RGB Object::calculate_specular(RGB& light_intensity, Point& observer, Point& int
   Vector3 normal = surface_normal(intersection);
   Vector3 v = Vector3(&intersection, &observer);
   Vector3 r = normal * normal.dot_product(&light_direction) * 2 - light_direction;
+  v.normalize();
+  r.normalize();
   float fs = std::pow(v.dot_product(&r), (*material_).shine);
   RGB Is = light_intensity * (*material_).specular * fs;
   return Is;

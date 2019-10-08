@@ -7,16 +7,13 @@ Matrix4::Matrix4()
       matrix_[i][j] = 0;
 }
 
-void Matrix4::set(int i, int j, float value) { matrix_[i][j] = value; }
-float Matrix4::get(int i, int j) { return matrix_[i][j]; }
-
 Matrix4 Matrix4::operator+(Matrix4& m)
 {
 	Matrix4 ret;
 	
   for(int i = 0; i < 4; i++)
     for(int j = 0; j < 4; j++)
-      ret.set(i, j, matrix_[i][j] + m.get(i, j));
+      ret(i, j) = matrix_[i][j] + m(i, j);
 	return ret;
 }
 
@@ -26,8 +23,13 @@ Matrix4 Matrix4::operator-(Matrix4& m)
 	
   for(int i = 0; i < 4; i++)
     for(int j = 0; j < 4; j++)
-      ret.set(i, j, matrix_[i][j] - m.get(i, j));
+      ret(i, j) = matrix_[i][j] - m(i, j);
 	return ret;
+}
+
+float& Matrix4::operator()(int i, int j)
+{
+  return matrix_[i][j];
 }
 
 Point Matrix4::operator*(Point& p)
