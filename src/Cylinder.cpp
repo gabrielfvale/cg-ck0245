@@ -30,11 +30,19 @@ Vector3 Cylinder::surface_normal(Point& p_int)
 {
   float cx, cy, cz;
   b_.get_coordinates(&cx, &cy, &cz);
-  cx += u_.get_x() * p_int.get_x();
-  cy += u_.get_x() * p_int.get_y();
-  cz += u_.get_x() * p_int.get_z();
-  Point center = Point(b_.get_x(), b_.get_y(), b_.get_z());
-  Vector3 normal = Vector3(&center, &p_int);
+
+  // point is in one of the caps
+  if(p_int.get_x() < cx + radius_ && p_int.get_x() > cx - radius_ && p_int.get_z() < cz + radius_ && p_int.get_z() > cz - radius_)
+  {
+    float epsilon = 1e-8;
+    if(p_int.get_y() < cy + height_+epsilon && p_int.get_y() > cy + height_-epsilon)
+      return Vector3(0, 1, 0);
+    if(p_int.get_y() < cy+epsilon && p_int.get_y() > cy-epsilon)
+      return Vector3(0, -1, 0);
+  }
+  // point is on the surface
+  Point c0 = Point(cx, p_int.get_y(), cz);
+  Vector3 normal = Vector3(&c0, &p_int);
   normal.normalize();
   return normal;
 }
