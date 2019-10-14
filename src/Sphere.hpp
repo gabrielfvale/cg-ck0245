@@ -3,7 +3,7 @@
 
 #include "Object.hpp"
 
-class Sphere : public Object
+class Sphere : public Solid
 {
   private:
     Point p0_; // known point of the sphere

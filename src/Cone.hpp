@@ -4,7 +4,7 @@
 #include "Plane.hpp"
 #include "Object.hpp"
 
-class Cone : public Object
+class Cone : public Solid
 {
   private:
     Point c_; // cone base center

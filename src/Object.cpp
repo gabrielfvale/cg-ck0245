@@ -1,62 +1,39 @@
 #include "Object.hpp"
-#include <cmath>
+#include <iostream>
 
-Object::Object()
+Object::Object(AABB bounding_box, std::vector<Solid*> mesh, bool visible)
 {
-  visible_ = true;
+  this->bounding_box_ = bounding_box;
+  this->mesh_ = mesh;
+  this->visible_ = visible;
 }
-Object::Object(Material* material)
-{
-  visible_ = true;
-  material_ = material;
-}
+
 void Object::set_visible(bool visible) { visible_ = visible; }
-void Object::set_material(Material* material) {  }
 bool Object::visible() { return visible_; }
-Material* Object::get_material() { return material_; }
 
-RGB Object::calculate_diffuse(RGB& light_intensity, Point& intersection, Vector3& light_direction)
+void Object::trace(Ray& ray, float& t_min, RGB& color, Point& hole_point, Light& ambient_light, std::vector<RemoteLight>& rl, std::vector<PointLight>& pl)
 {
-  Vector3 normal = surface_normal(intersection);
-  normal.normalize();
-  float fd = normal.dot_product(&light_direction);
-  fd = fd < 0 ? 0 : fd;
-  RGB Id = light_intensity * (*material_).diffuse * fd;
-  return Id;
-}
-RGB Object::calculate_specular(RGB& light_intensity, Point& observer, Point& intersection, Vector3& light_direction)
-{
-  Vector3 normal = surface_normal(intersection);
-  Vector3 v = Vector3(&intersection, &observer);
-  Vector3 r = normal * normal.dot_product(&light_direction) * 2 - light_direction;
-  v.normalize();
-  r.normalize();
-  float fs = std::pow(v.dot_product(&r), (*material_).shine);
-  RGB Is = light_intensity * (*material_).specular * fs;
-  return Is;
-}
+  float t_int;
+  Solid* solid_hit = NULL;
 
-RGB Object::calculate_color(Point& observer, Point& intersection, Light& ambient_light, std::vector<RemoteLight>& remote_lights, std::vector<PointLight>& point_lights)
-{
-  RGB Id = RGB();
-  RGB Is = RGB();
+  if(!visible_ || !bounding_box_.intersects(ray, t_int))
+    return;
 
-  for(uint32_t i = 0; i < remote_lights.size(); i++)
+  for(unsigned i = 0; i < mesh_.size(); i++)
   {
-    Vector3 light_direction = *(remote_lights[i].get_direction()) * -1;
-    RGB light_intensity = *(remote_lights[i].get_intensity());
-    Id = calculate_diffuse(light_intensity, intersection, light_direction) + Id;
-    Is = calculate_specular(light_intensity, observer, intersection, light_direction) + Is;
+    if((*mesh_[i]).intersects(ray, t_int))
+    {
+      if(solid_hit == NULL || (t_int < t_min))
+      {
+        t_min = t_int;
+        solid_hit = mesh_[i];
+      }
+    }
   }
 
-  for(uint32_t i = 0; i < point_lights.size(); i++)
+  if(solid_hit)
   {
-    Vector3 light_direction = Vector3(&intersection, point_lights[i].get_point());
-    RGB light_intensity = *(point_lights[i].get_intensity());
-    Id = calculate_diffuse(light_intensity, intersection, light_direction) + Id;
-    Is = calculate_specular(light_intensity, observer, intersection, light_direction) + Is;
+    Point intersection = ray.calc_point(t_min);
+    color = (*solid_hit).calculate_color(hole_point, intersection, ambient_light, rl, pl);
   }
-
-  RGB color = (*(ambient_light.get_intensity()) * (*material_).ambient) + Id + Is;
-  return color;
 }

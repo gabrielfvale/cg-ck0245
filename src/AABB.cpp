@@ -4,17 +4,38 @@
 
 using std::min; using std::max;
 
-AABB::AABB() : Object()
+AABB::AABB() : Solid()
 {
   center_ = Point();
   n_ = Vector3(0, 1, 0);
   edge_ = 1;
+  min_bound = Vector3(-edge_/2, 0, -edge_/2);
+  max_bound = Vector3(edge_/2, edge_, edge_/2);
 }
-AABB::AABB(Point center, Vector3 n, float edge, Material* material) : Object(material)
+AABB::AABB(Point center, Vector3 n, float edge, Material* material) : Solid(material)
 {
   center_ = center;
   n_ = n;
   edge_ = edge;
+
+  float cx, cy, cz;
+  center_.get_coordinates(&cx, &cy, &cz);
+  min_bound = Vector3(cx - edge_/2, cy, cz - edge_/2);
+  max_bound = Vector3(cx + edge_/2, cy + edge_, cz + edge_/2);
+
+  n_.normalize();
+}
+AABB::AABB(Point center, Vector3 n, float edge, Vector3 scale) : Solid()
+{
+  center_ = center;
+  n_ = n;
+  edge_ = edge;
+
+  float cx, cy, cz;
+  center_.get_coordinates(&cx, &cy, &cz);
+  min_bound = Vector3(cx - edge_/2, cy, cz - edge_/2);
+  max_bound = Vector3(cx + edge_/2, cy + edge_, cz + edge_/2) + scale;
+
   n_.normalize();
 }
 Point* AABB::get_center() { return &center_; }
@@ -30,11 +51,6 @@ void AABB::set_params(Point* center, Vector3* n, float* edge)
 
 Vector3 AABB::surface_normal(Point& p_int)
 {
-  float cx, cy, cz;
-  center_.get_coordinates(&cx, &cy, &cz);
-  Vector3 min_bound = Vector3(cx - edge_/2, cy, cz - edge_/2);
-  Vector3 max_bound = Vector3(cx + edge_/2, cy + edge_, cz + edge_/2);
-
   Vector3 c = (min_bound + max_bound) * 0.5;
   Point center = Point(c.get_x(), c.get_y(), c.get_z());
 
@@ -51,11 +67,6 @@ Vector3 AABB::surface_normal(Point& p_int)
 
 bool AABB::intersects(Ray& ray, float& t_min)
 {
-  float half_edge = edge_/2;
-  float cx, cy, cz;
-  center_.get_coordinates(&cx, &cy, &cz);
-  Vector3 min_bound = Vector3(cx - half_edge, cy, cz - half_edge);
-  Vector3 max_bound = Vector3(cx + half_edge, cy + edge_, cz + half_edge);
   // possible points
   float t0x, t0y, t0z;
   float t1x, t1y, t1z;

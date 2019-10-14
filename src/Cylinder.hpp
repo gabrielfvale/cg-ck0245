@@ -2,9 +2,9 @@
 #define CYLINDER_HPP
 
 #include "Plane.hpp"
-#include "Object.hpp"
+#include "Solid.hpp"
 
-class Cylinder : public Object
+class Cylinder : public Solid
 {
   private:
     Point b_; // center of cylinder's base

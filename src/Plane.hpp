@@ -3,7 +3,7 @@
 
 #include "Object.hpp"
 
-class Plane : public Object
+class Plane : public Solid
 {
   private:
     Point p0_; // known point of the plane

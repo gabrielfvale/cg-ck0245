@@ -88,27 +88,38 @@ int main(int argc, char *argv[])
       cylinder2_center.get_y() + cylinder_height * g_axis.get_y(),
       cylinder2_center.get_z() + cylinder_height * g_axis.get_z()
     ), g_axis, cone_height, cone_radius, &tree_green);
+
   AABB b_cube = AABB(bcube_center, g_axis, cube_edge, &purple);
   float bcx, bcy, bcz;
   bcube_center.get_coordinates(&bcx, &bcy, &bcz);
   float dx, dy, dz;
   g_axis.get_coordinates(&dx, &dy, &dz);
-  // cria os demais cubos calculando o centro a partir do cubo base
-  //AABB m_cube = AABB(Point(bcx + (dx*cube_edge), bcy + (dy*cube_edge), bcz + (dz*cube_edge)), g_axis, cube_edge, &purple);
-  //AABB t_cube = AABB(Point(bcx + (2*dx*cube_edge), bcy + (2*dy*cube_edge), bcz + (2*dz*cube_edge)), g_axis, cube_edge, &purple);
+  AABB m_cube = AABB(Point(bcx + (dx*cube_edge), bcy + (dy*cube_edge), bcz + (dz*cube_edge)), g_axis, cube_edge, &purple);
+  AABB t_cube = AABB(Point(bcx + (2*dx*cube_edge), bcy + (2*dy*cube_edge), bcz + (2*dz*cube_edge)), g_axis, cube_edge, &purple);
+
+  Object tree1 = Object(
+    AABB(cylinder_center, g_axis, cone_radius*2, Vector3(0, cylinder_height+cone_height-cone_radius*2, 0)),
+    vector<Solid*>{&cylinder, &cone}
+  );
+  Object tree2 = Object(
+    AABB(cylinder2_center, g_axis, cone_radius*2, Vector3(0, cylinder_height+cone_height-cone_radius*2, 0)),
+    vector<Solid*>{&cylinder2, &cone2}
+  );
+  Object building = Object(
+    AABB(bcube_center, g_axis, cube_edge, Vector3(0, 2*cube_edge, 0)),
+    vector<Solid*>{&t_cube, &m_cube, &b_cube}
+  );
+
+  vector<Object*> objects = {
+    &tree1,
+    &tree2,
+    &building,
+  };
 
   // cria as luzes
   Light ambient_light = Light(0.5, 0.5, 0.5);
   vector<RemoteLight> rl = vector<RemoteLight>();
   vector<PointLight> pl = {PointLight(RGB(0.3, 0.3, 0.3), Point(15, 4.5, 15))};
-
-  vector<Object*> objects = {
-    &cylinder,
-    &cylinder2,
-    &cone,
-    &cone2,
-    &b_cube
-  };
 
   // inicia GLUT
   glutInit(&argc, argv);
@@ -128,33 +139,22 @@ int main(int argc, char *argv[])
       hole_point = cameraToWorld * hole_point;
       Vector3 ray_direction = Vector3(&observer, &hole_point);
       Ray ray = Ray(observer, ray_direction);
-
-      float t_int;
+      
       float t_min = numeric_limits<float>::infinity();
-
-      Object* object_hit = NULL;
+      float obj_t_min = numeric_limits<float>::infinity();
+      RGB color = RGB();
+      RGB obj_color = RGB();
 
       for(unsigned i=0; i<objects.size(); i++)
       {
-        if((*objects[i]).visible() && (*objects[i]).intersects(ray, t_int))
+        (*objects[i]).trace(ray, obj_t_min, obj_color, hole_point, ambient_light, rl, pl);
+        if(obj_t_min < t_min)
         {
-          if(object_hit == NULL || (t_int < t_min))
-          {
-            t_min = t_int;
-            object_hit = objects[i];
-          }
+          t_min = obj_t_min;
+          color = obj_color;
         }
       }
-
-      if(object_hit != NULL && (*object_hit).visible())
-      {
-        Point intersection = ray.calc_point(t_min);
-        RGB color = (*object_hit).calculate_color(hole_point, intersection, ambient_light, rl, pl);
-        set_pixel(j, panel_holes-1-i, floor(color.r*255), floor(color.g*255), floor(color.b*255), PixelBuffer, panel_holes, panel_holes);
-      } else
-      {
-        set_pixel(j, panel_holes-1-i, 153, 204, 255, PixelBuffer, panel_holes, panel_holes);
-      }
+      set_pixel(j, panel_holes-1-i, floor(color.r*255), floor(color.g*255), floor(color.b*255), PixelBuffer, panel_holes, panel_holes);
     }
   }
   glutDisplayFunc(render);

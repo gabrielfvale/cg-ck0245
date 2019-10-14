@@ -1,7 +1,7 @@
 #include "Cone.hpp"
 #include <cmath>
 
-Cone::Cone() : Object()
+Cone::Cone() : Solid()
 {
   c_ = Point(0, 0, 0);
   vertice_ = Point(0, 1, 0);
@@ -10,7 +10,7 @@ Cone::Cone() : Object()
   radius_ = 1;
   n_.normalize();
 }
-Cone::Cone(Point c, Vector3 n, float height, float radius, Material* material) : Object(material)
+Cone::Cone(Point c, Vector3 n, float height, float radius, Material* material) : Solid(material)
 {
   c_ = c;
   n_ = n;

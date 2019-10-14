@@ -1,7 +1,7 @@
 #include "Cylinder.hpp"
 #include <cmath>
 
-Cylinder::Cylinder() : Object()
+Cylinder::Cylinder() : Solid()
 {
   b_ = Point();
   u_ = Vector3(0, 1, 0);
@@ -9,7 +9,7 @@ Cylinder::Cylinder() : Object()
   radius_ = 1;
   u_.normalize();
 }
-Cylinder::Cylinder(Point b, Vector3 u, float height, float radius, Material* material) : Object(material)
+Cylinder::Cylinder(Point b, Vector3 u, float height, float radius, Material* material) : Solid(material)
 {
   b_ = b; u_ = u; height_ =  height; radius_ = radius;
 }

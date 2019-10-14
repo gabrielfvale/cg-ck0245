@@ -2,9 +2,9 @@
 
 Material::Material()
 {
-  ambient = RGB(0, 0, 0);
-  diffuse = RGB(0, 0, 0);
-  specular = RGB(0, 0, 0);
+  ambient = RGB();
+  diffuse = RGB();
+  specular = RGB();
   shine = 0;
 }
 Material::Material(RGB ambient, RGB diffuse, RGB specular)
