@@ -17,6 +17,7 @@ class Matrix4
     Point operator*(Point& p);
     Vector3 operator*(Vector3& v);
     Quaternion operator*(Quaternion& q);
+    void identity();
 };
 
 #endif

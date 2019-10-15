@@ -9,8 +9,8 @@ class AABB : public Solid
     Point center_; // center of the cube
     Vector3 n_; // AABB axis (unit vector)
     float edge_; // edge length
-    Vector3 max_bound;
-    Vector3 min_bound;
+    Point max_bound;
+    Point min_bound;
   public:
     AABB();
     AABB(Point center, Vector3 n, float edge, Material* material);
@@ -21,6 +21,8 @@ class AABB : public Solid
     void set_params(Point* center, Vector3* n, float* edge);
     Vector3 surface_normal(Point& p_int) override;
     bool intersects(Ray& ray, float& t_int) override;
+    void transform(Matrix4 t_matrix) override;
+    virtual AABB* clone() const {return new AABB(*this);}
 };
 
 #endif

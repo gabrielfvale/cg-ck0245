@@ -22,6 +22,8 @@ class Solid
     RGB calculate_color(Point& observer, Point& intersection, Light& ambient_light, std::vector<RemoteLight>& remote_lights, std::vector<PointLight>& point_lights);
     virtual Vector3 surface_normal(Point& p_int) = 0;
     virtual bool intersects(Ray& ray, float& t_int) = 0;
+    virtual void transform(Matrix4 t_matrix) = 0;
+    virtual Solid* clone() const = 0;
 };
 
 #endif

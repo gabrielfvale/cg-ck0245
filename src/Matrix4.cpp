@@ -68,3 +68,9 @@ Quaternion Matrix4::operator*(Quaternion& q)
 
   return Quaternion(Vector3(newx, newy, newz), q.get_scalar());
 }
+
+void Matrix4::identity()
+{
+  for(int i=0; i<4; i++)
+    matrix_[i][i] = 1;
+}

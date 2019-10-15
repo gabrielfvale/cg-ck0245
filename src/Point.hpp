@@ -17,6 +17,9 @@ class Point
     void get_coordinates(float* x, float* y, float* z);
     void set_coordinates(float x, float y, float z);
     float distance_from(Point* p);
+    Point operator+(Point& p2);
+    Point operator-(Point& p2);
+    Point operator*(float value);
     friend std::ostream& operator<< (std::ostream& stream, Point& point);
 };
 

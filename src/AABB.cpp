@@ -9,8 +9,8 @@ AABB::AABB() : Solid()
   center_ = Point();
   n_ = Vector3(0, 1, 0);
   edge_ = 1;
-  min_bound = Vector3(-edge_/2, 0, -edge_/2);
-  max_bound = Vector3(edge_/2, edge_, edge_/2);
+  min_bound = Point(-edge_/2, 0, -edge_/2);
+  max_bound = Point(edge_/2, edge_, edge_/2);
 }
 AABB::AABB(Point center, Vector3 n, float edge, Material* material) : Solid(material)
 {
@@ -20,8 +20,8 @@ AABB::AABB(Point center, Vector3 n, float edge, Material* material) : Solid(mate
 
   float cx, cy, cz;
   center_.get_coordinates(&cx, &cy, &cz);
-  min_bound = Vector3(cx - edge_/2, cy, cz - edge_/2);
-  max_bound = Vector3(cx + edge_/2, cy + edge_, cz + edge_/2);
+  min_bound = Point(cx - edge_/2, cy, cz - edge_/2);
+  max_bound = Point(cx + edge_/2, cy + edge_, cz + edge_/2);
 
   n_.normalize();
 }
@@ -33,8 +33,8 @@ AABB::AABB(Point center, Vector3 n, float edge, Vector3 scale) : Solid()
 
   float cx, cy, cz;
   center_.get_coordinates(&cx, &cy, &cz);
-  min_bound = Vector3(cx - edge_/2, cy, cz - edge_/2);
-  max_bound = Vector3(cx + edge_/2, cy + edge_, cz + edge_/2) + scale;
+  min_bound = Point(cx - edge_/2, cy, cz - edge_/2);
+  max_bound = Point(cx + edge_/2 + scale.get_x(), cy + edge_ + scale.get_y(), cz + edge_/2 + scale.get_z());
 
   n_.normalize();
 }
@@ -51,11 +51,10 @@ void AABB::set_params(Point* center, Vector3* n, float* edge)
 
 Vector3 AABB::surface_normal(Point& p_int)
 {
-  Vector3 c = (min_bound + max_bound) * 0.5;
-  Point center = Point(c.get_x(), c.get_y(), c.get_z());
+  Point center = (min_bound + max_bound) * 0.5;
 
   Vector3 center_p = Vector3(&center, &p_int);
-  Vector3 d = (min_bound - max_bound) * 0.5;
+  Point d = (min_bound - max_bound) * 0.5;
   Vector3 normal = Vector3(
     center_p.get_x() / abs(d.get_x()),
     center_p.get_y() / abs(d.get_y()),
@@ -92,4 +91,11 @@ bool AABB::intersects(Ray& ray, float& t_min)
     return false;
   t_min = tmin;
   return true;
+}
+
+void AABB::transform(Matrix4 t_matrix)
+{
+  center_ = t_matrix * center_;
+  max_bound = t_matrix * max_bound;
+  min_bound = t_matrix * min_bound;
 }

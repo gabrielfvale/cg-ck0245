@@ -50,3 +50,9 @@ bool Sphere::intersects(Ray& ray, float& t_min)
   t_min = t_int0 < t_int1 ? t_int0 : t_int1;
   return true;
 }
+
+void Sphere::transform(Matrix4 t_matrix)
+{
+  p0_ = t_matrix * p0_;
+  center_ = t_matrix * center_;
+}

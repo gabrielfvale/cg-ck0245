@@ -63,7 +63,6 @@ int main(int argc, char *argv[])
   // definições de objetos
   Vector3 g_axis = Vector3(0, 1, 0);
   Point cylinder_center = Point(7, 0, 9);
-  Point cylinder2_center = Point(13, 0, 9);
   Point bcube_center = Point(10, 0, 5);
 
   float hole_width = panel_l/panel_holes;
@@ -75,18 +74,11 @@ int main(int argc, char *argv[])
 
   // gera os objetos
   Cylinder cylinder = Cylinder(cylinder_center, g_axis, cylinder_height, cylinder_radius, &dark_brown);
-  Cylinder cylinder2 = Cylinder(cylinder2_center, g_axis, cylinder_height, cylinder_radius, &dark_brown);
   Cone cone = Cone(
     Point(
       cylinder_center.get_x() + cylinder_height * g_axis.get_x(),
       cylinder_center.get_y() + cylinder_height * g_axis.get_y(),
       cylinder_center.get_z() + cylinder_height * g_axis.get_z()
-    ), g_axis, cone_height, cone_radius, &tree_green);
-  Cone cone2 = Cone(
-    Point(
-      cylinder2_center.get_x() + cylinder_height * g_axis.get_x(),
-      cylinder2_center.get_y() + cylinder_height * g_axis.get_y(),
-      cylinder2_center.get_z() + cylinder_height * g_axis.get_z()
     ), g_axis, cone_height, cone_radius, &tree_green);
 
   AABB b_cube = AABB(bcube_center, g_axis, cube_edge, &purple);
@@ -101,10 +93,10 @@ int main(int argc, char *argv[])
     AABB(cylinder_center, g_axis, cone_radius*2, Vector3(0, cylinder_height+cone_height-cone_radius*2, 0)),
     vector<Solid*>{&cylinder, &cone}
   );
-  Object tree2 = Object(
-    AABB(cylinder2_center, g_axis, cone_radius*2, Vector3(0, cylinder_height+cone_height-cone_radius*2, 0)),
-    vector<Solid*>{&cylinder2, &cone2}
-  );
+
+  Object tree2 = tree1.clone();
+  tree2.translate(Vector3(6, 0, 0));
+
   Object building = Object(
     AABB(bcube_center, g_axis, cube_edge, Vector3(0, 2*cube_edge, 0)),
     vector<Solid*>{&t_cube, &m_cube, &b_cube}

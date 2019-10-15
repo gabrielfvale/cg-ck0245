@@ -31,6 +31,22 @@ float Point::distance_from(Point* p)
   sz = pow(z_ - z1, 2);
   return sqrt(sx + sy + sz);
 }
+
+Point Point::operator+(Point& p2)
+{
+  return Point(x_ + p2.get_x(), y_ + p2.get_y(), z_ + p2.get_z());
+}
+
+Point Point::operator-(Point& p2)
+{
+  return Point(x_ - p2.get_x(), y_ - p2.get_y(), z_ - p2.get_z());
+}
+
+Point Point::operator*(float value)
+{ 
+  return Point(x_ * value, y_ * value, z_ * value);
+}
+
 std::ostream& operator<<(std::ostream& stream, Point& point)
 {
   stream << "(" << point.get_x() << ", " << point.get_y() << ", " << point.get_z() << ")";

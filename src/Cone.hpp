@@ -23,6 +23,8 @@ class Cone : public Solid
     void set_params(Point* p0, Point* v, Vector3* n, float* height, float* radius);
     Vector3 surface_normal(Point& p_int) override;
     bool intersects(Ray& ray, float& t_int) override;
+    void transform(Matrix4 t_matrix) override;
+    virtual Cone* clone() const {return new Cone(*this);}
 };
 
 #endif

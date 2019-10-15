@@ -16,6 +16,8 @@ class Plane : public Solid
     void set_params(Point* p0, Vector3* n);
     Vector3 surface_normal(Point& p_int) override {return n_;};
     bool intersects(Ray& ray, float& t_int) override;
+    void transform(Matrix4 t_matrix) override;
+    virtual Plane* clone() const {return new Plane(*this);}
 };
 
 #endif

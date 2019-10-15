@@ -32,3 +32,9 @@ bool Plane::intersects(Ray& ray, float& t_int)
   t_int = resultant.dot_product(&n_) / d.dot_product(&n_);
   return true;
 }
+
+void Plane::transform(Matrix4 t_matrix)
+{
+  p0_ = t_matrix * p0_;
+  n_ = t_matrix * n_;
+}
