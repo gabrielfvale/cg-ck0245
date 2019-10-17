@@ -31,27 +31,35 @@ RGB Solid::calculate_specular(RGB& light_intensity, Point& observer, Point& inte
   return Is;
 }
 
-RGB Solid::calculate_color(Point& observer, Point& intersection, Light& ambient_light, std::vector<RemoteLight>& remote_lights, std::vector<PointLight>& point_lights)
+RGB Solid::calculate_color(Point& observer, Point& intersection, std::vector<Light*> lights)
 {
   RGB Id = RGB();
   RGB Is = RGB();
 
-  for(uint32_t i = 0; i < remote_lights.size(); i++)
+  if(lights.size() == 0)
+    return RGB();
+
+  int ambient_i = 0;
+  for(unsigned i = 0; i < lights.size(); i++)
   {
-    Vector3 light_direction = *(remote_lights[i].get_direction()) * -1;
-    RGB light_intensity = *(remote_lights[i].get_intensity());
+    Vector3 light_direction = *(lights[i]->get_position());
+    Point light_point = Point(light_direction.get_x(), light_direction.get_y(), light_direction.get_z());
+
+    switch (lights[i]->type())
+    {
+    case AMBIENT:
+      ambient_i = i; continue; break;
+    case REMOTE:
+      light_direction = light_direction * -1; break;
+    default:
+      light_direction = Vector3(&intersection, &light_point); break;
+    }
+
+    RGB light_intensity = *(lights[i]->get_intensity());
     Id = calculate_diffuse(light_intensity, intersection, light_direction) + Id;
     Is = calculate_specular(light_intensity, observer, intersection, light_direction) + Is;
   }
 
-  for(uint32_t i = 0; i < point_lights.size(); i++)
-  {
-    Vector3 light_direction = Vector3(&intersection, point_lights[i].get_point());
-    RGB light_intensity = *(point_lights[i].get_intensity());
-    Id = calculate_diffuse(light_intensity, intersection, light_direction) + Id;
-    Is = calculate_specular(light_intensity, observer, intersection, light_direction) + Is;
-  }
-
-  RGB color = (*(ambient_light.get_intensity()) * (*material_).ambient) + Id + Is;
+  RGB color = *(lights[ambient_i]->get_intensity()) * (*material_).ambient + Id + Is;
   return color;
 }

@@ -17,7 +17,7 @@ Object Object::clone()
 void Object::set_visible(bool visible) { visible_ = visible; }
 bool Object::visible() { return visible_; }
 
-void Object::trace(Ray& ray, float& t_min, RGB& color, Point& hole_point, Light& ambient_light, std::vector<RemoteLight>& rl, std::vector<PointLight>& pl)
+void Object::trace(Ray& ray, float& t_min, RGB& color, Point& hole_point, std::vector<Light*> lights)
 {
   float t_int;
   Solid* solid_hit = NULL;
@@ -40,7 +40,7 @@ void Object::trace(Ray& ray, float& t_min, RGB& color, Point& hole_point, Light&
   if(solid_hit)
   {
     Point intersection = ray.calc_point(t_min);
-    color = (*solid_hit).calculate_color(hole_point, intersection, ambient_light, rl, pl);
+    color = (*solid_hit).calculate_color(hole_point, intersection, lights);
   }
 }
 

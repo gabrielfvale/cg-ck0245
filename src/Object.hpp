@@ -17,7 +17,7 @@ class Object
     Object clone();
     void set_visible(bool visible);
     bool visible();
-    void trace(Ray& ray, float& t_min, RGB& color, Point& hole_point, Light& ambient_light, std::vector<RemoteLight>& rl, std::vector<PointLight>& pl);
+    void trace(Ray& ray, float& t_min, RGB& color, Point& hole_point, std::vector<Light*> lights);
     void translate(Vector3 t_vec);
 };
 

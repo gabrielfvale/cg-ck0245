@@ -3,8 +3,6 @@
 
 #include "Material.hpp"
 #include "Light.hpp"
-#include "RemoteLight.hpp"
-#include "PointLight.hpp"
 #include "Matrix4.hpp"
 #include "Ray.hpp"
 
@@ -19,7 +17,7 @@ class Solid
     Solid();
     Solid(Material* material);
     Material* get_material();
-    RGB calculate_color(Point& observer, Point& intersection, Light& ambient_light, std::vector<RemoteLight>& remote_lights, std::vector<PointLight>& point_lights);
+    RGB calculate_color(Point& observer, Point& intersection, std::vector<Light*> lights);
     virtual Vector3 surface_normal(Point& p_int) = 0;
     virtual bool intersects(Ray& ray, float& t_int) = 0;
     virtual void transform(Matrix4 t_matrix) = 0;

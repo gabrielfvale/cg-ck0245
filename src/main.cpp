@@ -18,8 +18,6 @@
 
 #include "Camera.hpp"
 #include "Light.hpp"
-#include "PointLight.hpp"
-#include "RemoteLight.hpp"
 
 #include "BMP.hpp"
 
@@ -109,9 +107,12 @@ int main(int argc, char *argv[])
   };
 
   // cria as luzes
-  Light ambient_light = Light(0.5, 0.5, 0.5);
-  vector<RemoteLight> rl = vector<RemoteLight>();
-  vector<PointLight> pl = {PointLight(RGB(0.3, 0.3, 0.3), Point(15, 4.5, 15))};
+  Light ambient_light = Light(0.5, 0.5, 0.5, Vector3(), AMBIENT);
+  Light l1 = Light(0.3, 0.3, 0.3, Vector3(15, 4.5, 15));
+  vector<Light*> lights = {
+    &ambient_light,
+    &l1
+  };
 
   // inicia GLUT
   glutInit(&argc, argv);
@@ -139,7 +140,7 @@ int main(int argc, char *argv[])
 
       for(unsigned i=0; i<objects.size(); i++)
       {
-        (*objects[i]).trace(ray, obj_t_min, obj_color, hole_point, ambient_light, rl, pl);
+        (*objects[i]).trace(ray, obj_t_min, obj_color, hole_point, lights);
         if(obj_t_min < t_min)
         {
           t_min = obj_t_min;
