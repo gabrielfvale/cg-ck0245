@@ -17,7 +17,7 @@ class Light
     Light();
     Light(RGB intensity, Vector3 position, LightType light_type = POINT);
     Light(float r, float g, float b, Vector3 position, LightType light_type = POINT);
-    void set_intensity(RGB* new_intensity);
+    void set_intensity(RGB new_intensity);
     void set_intensity(float r, float g, float b);
     void set_position(Vector3 position);
     RGB* get_intensity();

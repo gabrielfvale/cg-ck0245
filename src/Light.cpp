@@ -25,9 +25,9 @@ Light::Light(float r, float g, float b, Vector3 position, LightType light_type)
   l_type = light_type;
 }
 
-void Light::set_intensity(RGB* intensity)
+void Light::set_intensity(RGB intensity)
 {
-  intensity_ = *intensity;
+  intensity_ = intensity;
 }
 void Light::set_intensity(float r, float b, float g)
 {

@@ -25,6 +25,12 @@
 using namespace std;
 
 int resolution = 500;
+bool lightOn = true;
+bool reRender = false;
+
+Scene* scene;
+Light* toggable_light;
+
 GLubyte* PixelBuffer = new GLubyte[resolution * resolution * 3];
 
 void render(void)
@@ -32,6 +38,38 @@ void render(void)
   glClear(GL_COLOR_BUFFER_BIT);
   glDrawPixels(resolution, resolution, GL_RGB, GL_UNSIGNED_BYTE, PixelBuffer);
   glutSwapBuffers(); 
+}
+
+void menuHandler(int item)
+{
+  switch (item)
+  {
+  case 0:
+    if(lightOn)
+      toggable_light->set_intensity(RGB());
+    else
+      toggable_light->set_intensity(0.3, 0.3, 0.3);
+    lightOn = !lightOn;
+    break;
+  default:
+    break;
+  }
+  scene->print(PixelBuffer);
+  glutPostRedisplay();
+}
+
+void createMenu(void)
+{
+  /*
+  int submenu_id = glutCreateMenu(menuHandler);
+  glutAddMenuEntry("Front", 1);
+  glutAddMenuEntry("Side", 2);
+  glutAddMenuEntry("Closeup", 3);
+  glutAddSubMenu("Toggle view", submenu_id);
+  */
+  glutCreateMenu(menuHandler);
+  glutAddMenuEntry("Toggle light", 0);
+  glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
 
 int main(int argc, char *argv[])
@@ -94,15 +132,17 @@ int main(int argc, char *argv[])
     &building,
   };
 
-  // cria as luzes
   Light ambient_light = Light(0.5, 0.5, 0.5, Vector3(), AMBIENT);
-  Light l1 = Light(0.3, 0.3, 0.3, Vector3(15, 4.5, 15));
+  toggable_light = new Light(0.3, 0.3, 0.3, Vector3(15, 4.5, 15));
   vector<Light*> lights = {
     &ambient_light,
-    &l1
+    toggable_light
   };
 
-  Scene scene = Scene(resolution, camera, objects, lights);
+  scene = new Scene(resolution, camera, objects, lights);
+
+  scene->print(PixelBuffer);
+
   // inicia GLUT
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
@@ -110,9 +150,8 @@ int main(int argc, char *argv[])
   glutInitWindowSize(resolution, resolution);
   glutCreateWindow("Trabalho CG");
 
-  scene.print(PixelBuffer);
-
   glutDisplayFunc(render);
+  createMenu();
   glutMainLoop();
   return 0;
 }

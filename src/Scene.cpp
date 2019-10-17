@@ -13,7 +13,6 @@ Scene::Scene(int resolution, Camera camera, vector<Object*> objects, vector<Ligh
 
 void Scene::castRay(int x, int y, Object** object_hit, RGB& color)
 {
-  //std::cout << "casting ray" << std::endl;
   // gera o ponto da matriz em coordenadas de camera
   float pixel_width = width/resolution;
   Point observer = *(camera.get_eye());
