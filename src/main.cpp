@@ -20,32 +20,22 @@
 #include "Light.hpp"
 
 #include "BMP.hpp"
+#include "Scene.hpp"
 
 using namespace std;
 
-int panel_holes = 500;
-GLubyte* PixelBuffer = new GLubyte[panel_holes * panel_holes * 3];
+int resolution = 500;
+GLubyte* PixelBuffer = new GLubyte[resolution * resolution * 3];
 
 void render(void)
 {
   glClear(GL_COLOR_BUFFER_BIT);
-  glDrawPixels(panel_holes, panel_holes, GL_RGB, GL_UNSIGNED_BYTE, PixelBuffer);
+  glDrawPixels(resolution, resolution, GL_RGB, GL_UNSIGNED_BYTE, PixelBuffer);
   glutSwapBuffers(); 
-}
-
-void set_pixel(int x, int y, int r, int g, int b, GLubyte* pixels, int width, int height)
-{
-  int position = (x + y * width) * 3;
-  pixels[position] = r;
-  pixels[position + 1] = g;
-  pixels[position + 2] = b;
 }
 
 int main(int argc, char *argv[])
 {
-  // Definições observador e placa
-  float panel_l = 6;
-  float panel_d = 3;
 
   Material dark_brown = Material(RGB(0.27, 0.13, 0), RGB(0.27, 0.13, 0), RGB());
   Material tree_green = Material(RGB(0.33, 0.49, 0.18), RGB(0.2, 0.2, 0.2), RGB());
@@ -56,14 +46,12 @@ int main(int argc, char *argv[])
   Vector3 viewup = Vector3(10, 5.5, 20);
 
   Camera camera = Camera(observer, lookat, viewup);
-  Matrix4 cameraToWorld = camera.camera_to_world();
 
   // definições de objetos
   Vector3 g_axis = Vector3(0, 1, 0);
   Point cylinder_center = Point(7, 0, 9);
   Point bcube_center = Point(10, 0, 5);
 
-  float hole_width = panel_l/panel_holes;
   float cylinder_radius = 0.5;
   float cylinder_height = 2;
   float cone_radius = 2;
@@ -114,42 +102,16 @@ int main(int argc, char *argv[])
     &l1
   };
 
+  Scene scene = Scene(resolution, camera, objects, lights);
   // inicia GLUT
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
   glutInitWindowPosition(100, 100);
-  glutInitWindowSize(panel_holes, panel_holes);
+  glutInitWindowSize(resolution, resolution);
   glutCreateWindow("Trabalho CG");
 
-  // projeta cada um dos raios
-  for(int i=0; i<panel_holes; i++)
-  {
-    for (int j=0; j<panel_holes; j++)
-    {
-      // gera o ponto da matriz em coordenadas de camera
-      Point hole_point = Point(-panel_l/2 + hole_width/2 + j*hole_width, panel_l/2 - hole_width/2 - i*hole_width, -panel_d);
-      // converte o ponto para coordenadas de mundo
-      hole_point = cameraToWorld * hole_point;
-      Vector3 ray_direction = Vector3(&observer, &hole_point);
-      Ray ray = Ray(observer, ray_direction);
-      
-      float t_min = numeric_limits<float>::infinity();
-      float obj_t_min = numeric_limits<float>::infinity();
-      RGB color = RGB();
-      RGB obj_color = RGB();
+  scene.print(PixelBuffer);
 
-      for(unsigned i=0; i<objects.size(); i++)
-      {
-        (*objects[i]).trace(ray, obj_t_min, obj_color, hole_point, lights);
-        if(obj_t_min < t_min)
-        {
-          t_min = obj_t_min;
-          color = obj_color;
-        }
-      }
-      set_pixel(j, panel_holes-1-i, floor(color.r*255), floor(color.g*255), floor(color.b*255), PixelBuffer, panel_holes, panel_holes);
-    }
-  }
   glutDisplayFunc(render);
   glutMainLoop();
   return 0;

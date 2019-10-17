@@ -1,5 +1,12 @@
 #include "Camera.hpp"
 
+Camera::Camera()
+{
+  eye_ = Point(0, 0, 0);
+  lookat_ = Point(0, 0, 1);
+  up_ = Vector3(0, 1, 0);
+}
+
 Camera::Camera(Point eye, Point lookat, Vector3 up)
 {
   eye_ = eye;
@@ -76,3 +83,4 @@ Matrix4 Camera::camera_to_world()
 Vector3* Camera::x_axis() { return &cx_; }
 Vector3* Camera::y_axis() { return &cy_; }
 Vector3* Camera::z_axis() { return &cz_; }
+Point* Camera::get_eye() { return &eye_; }

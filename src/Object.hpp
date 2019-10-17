@@ -17,7 +17,7 @@ class Object
     Object clone();
     void set_visible(bool visible);
     bool visible();
-    void trace(Ray& ray, float& t_min, RGB& color, Point& hole_point, std::vector<Light*> lights);
+    bool trace(Ray& ray, float& t_int, Solid** solid_hit);
     void translate(Vector3 t_vec);
 };
 

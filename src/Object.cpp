@@ -1,5 +1,6 @@
 #include "Object.hpp"
 #include <iostream>
+#include <limits>
 
 Object::Object(AABB bounding_box, std::vector<Solid*> mesh, bool visible)
 {
@@ -17,31 +18,34 @@ Object Object::clone()
 void Object::set_visible(bool visible) { visible_ = visible; }
 bool Object::visible() { return visible_; }
 
-void Object::trace(Ray& ray, float& t_min, RGB& color, Point& hole_point, std::vector<Light*> lights)
+bool Object::trace(Ray& ray, float& t_int, Solid** solid_hit)
 {
-  float t_int;
-  Solid* solid_hit = NULL;
+  float ray_tint;
+  float t_min = std::numeric_limits<float>::infinity();
+  Solid* curr_hit = NULL;
 
-  if(!visible_ || !bounding_box_.intersects(ray, t_int))
-    return;
+  if(!visible_ || !bounding_box_.intersects(ray, ray_tint))
+    return false;
 
   for(unsigned i = 0; i < mesh_.size(); i++)
   {
-    if((*mesh_[i]).intersects(ray, t_int))
+    if((*mesh_[i]).intersects(ray, ray_tint))
     {
-      if(solid_hit == NULL || (t_int < t_min))
+      if(curr_hit == NULL || (ray_tint < t_min))
       {
-        t_min = t_int;
-        solid_hit = mesh_[i];
+        t_min = ray_tint;
+        curr_hit = mesh_[i];
       }
     }
   }
 
-  if(solid_hit)
+  if(curr_hit)
   {
-    Point intersection = ray.calc_point(t_min);
-    color = (*solid_hit).calculate_color(hole_point, intersection, lights);
+    t_int = t_min;
+    *solid_hit = curr_hit;
+    return true;
   }
+  return false;
 }
 
 void Object::translate(Vector3 t_vec)
