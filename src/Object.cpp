@@ -10,6 +10,12 @@ Object::Object(AABB bounding_box, std::vector<Solid*> mesh, bool visible)
     mesh_.push_back(mesh[i]->clone());
 }
 
+void Object::get(AABB& bb, std::vector<Solid*>& mesh)
+{
+  bb = bounding_box_;
+  mesh = mesh_;
+}
+
 Object Object::clone()
 {
   return Object(bounding_box_, mesh_, visible_);

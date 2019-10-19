@@ -15,6 +15,7 @@ class Object
   public:
     Object(AABB bounding_box, std::vector<Solid*> mesh, bool visible = true);
     Object clone();
+    void get(AABB& bb, std::vector<Solid*>& mesh);
     void set_visible(bool visible);
     bool visible();
     bool trace(Ray& ray, float& t_int, Solid** solid_hit);
