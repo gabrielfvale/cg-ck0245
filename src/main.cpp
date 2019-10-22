@@ -11,6 +11,34 @@ int resolution = 500;
 GLubyte* PixelBuffer = new GLubyte[resolution * resolution * 3];
 double degree = -45.0f;
 
+enum projection_type {CABINET, CAVALIER};
+projection_type current_proj = CABINET;
+
+void menuHandler(int item)
+{
+  switch (item)
+  {
+  case 0:
+    /* CABINET */
+    current_proj = CABINET;
+    break;
+  case 1:
+    /* CAVALIER */
+    current_proj = CAVALIER;
+  default:
+    break;
+  }
+  glutPostRedisplay();
+}
+
+void createMenu(void)
+{
+  glutCreateMenu(menuHandler);
+  glutAddMenuEntry("Cabinet", 0);
+  glutAddMenuEntry("Cavalier", 1);
+  glutAttachMenu(GLUT_RIGHT_BUTTON);
+}
+
 void render(void)
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -29,9 +57,16 @@ void render(void)
   double angle = half_circle * degree;
 
   glGetDoublev(GL_MODELVIEW_MATRIX, projecMatrix);
-  projecMatrix[8]= -cos(angle)/2;
-  projecMatrix[9]= sin(angle)/2;
+  projecMatrix[8] = -cos(angle);
+  projecMatrix[9] = sin(angle);
+  if(current_proj == CABINET)
+  {
+    projecMatrix[8] /= 2;
+    projecMatrix[9] /= 2;
+  }
   glMultMatrixd(projecMatrix);
+
+  glTranslatef(-4.0, -8.0, 0.0);
 
   /* cube wireframes */
   glPushMatrix();
@@ -103,6 +138,7 @@ int main(int argc, char *argv[])
   glEnable(GL_DEPTH_TEST);
 
   glutDisplayFunc(render);
+  createMenu();
   glutMainLoop();
   return 0;
 }
