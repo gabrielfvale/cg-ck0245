@@ -4,6 +4,9 @@
 #include <limits>
 
 #include <GL/freeglut.h>
+#include "./imgui/imgui.h"
+#include "./imgui/imgui_impl_glut.h"
+#include "./imgui/imgui_impl_opengl2.h"
 
 #include "./geometry/Plane.hpp"
 #include "./geometry/Sphere.hpp"
@@ -24,54 +27,64 @@ bool reRender = false;
 Scene* scene;
 Light* toggable_light;
 
+Material* cone_color = new Material(RGB(0.33, 0.49, 0.18), RGB(0.2, 0.2, 0.2), RGB());
+Material* cylinder_color = new Material(RGB(), RGB(0.27, 0.13, 0), RGB());
+Material* cube_color = new Material(RGB(0.33, 0.18, 0.49), RGB(0.33, 0.18, 0.49), RGB());
+
 GLubyte* PixelBuffer = new GLubyte[resolution * resolution * 3];
 
-void render(void)
+// Our state
+static bool window_active = true;
+
+float mat1[4] = { 0.33f, 0.49f, 0.18f, 1.0f };
+float mat2[4] = { 0.27f, 0.13f, 0.0f, 1.0f };
+float mat3[4] = { 0.33f, 0.18f, 0.49f, 1.0f };
+
+void display_gui()
 {
+  ImGui::Begin("Materials", &window_active);
+
+  if(ImGui::ColorEdit4("Cone", mat1))
+  {
+    cone_color->set_ambient(mat1[0], mat1[1], mat1[2]);
+    scene->print(PixelBuffer);
+    glutPostRedisplay();
+  }
+  if(ImGui::ColorEdit4("Cylinder", mat2))
+  {
+    cylinder_color->set_ambient(mat2[0], mat2[1], mat2[2]);
+    scene->print(PixelBuffer);
+    glutPostRedisplay();
+  }
+  if(ImGui::ColorEdit4("Cube", mat3))
+  {
+    cube_color->set_ambient(mat3[0], mat3[1], mat3[2]);
+    scene->print(PixelBuffer);
+    glutPostRedisplay();
+  }
+
+  ImGui::End();
+}
+
+void render()
+{
+  ImGui_ImplOpenGL2_NewFrame();
+  ImGui_ImplGLUT_NewFrame();
+  display_gui();
+  ImGui::Render();
+  //ImGuiIO& io = ImGui::GetIO();
+
   glClear(GL_COLOR_BUFFER_BIT);
   glDrawPixels(resolution, resolution, GL_RGB, GL_UNSIGNED_BYTE, PixelBuffer);
-  glutSwapBuffers(); 
-}
 
-void menuHandler(int item)
-{
-  switch (item)
-  {
-  case 0:
-    if(lightOn)
-      toggable_light->set_intensity(RGB());
-    else
-      toggable_light->set_intensity(0.3, 0.3, 0.3);
-    lightOn = !lightOn;
-    break;
-  default:
-    break;
-  }
-  scene->print(PixelBuffer);
+  ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
+
+  glutSwapBuffers();
   glutPostRedisplay();
-}
-
-void createMenu(void)
-{
-  /*
-  int submenu_id = glutCreateMenu(menuHandler);
-  glutAddMenuEntry("Front", 1);
-  glutAddMenuEntry("Side", 2);
-  glutAddMenuEntry("Closeup", 3);
-  glutAddSubMenu("Toggle view", submenu_id);
-  */
-  glutCreateMenu(menuHandler);
-  glutAddMenuEntry("Toggle light", 0);
-  glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
 
 int main(int argc, char *argv[])
 {
-
-  Material dark_brown = Material(RGB(0.27, 0.13, 0), RGB(0.27, 0.13, 0), RGB());
-  Material tree_green = Material(RGB(0.33, 0.49, 0.18), RGB(0.2, 0.2, 0.2), RGB());
-  Material purple = Material(RGB(0.33, 0.18, 0.49), RGB(0.33, 0.18, 0.49), RGB());
-
   Point observer = Point(10, 4.5, 20);
   Point lookat = Point(10, 4.5, 5);
   Vector3 viewup = Vector3(10, 5.5, 20);
@@ -90,21 +103,15 @@ int main(int argc, char *argv[])
   float cube_edge = 3;
 
   // gera os objetos
-  Cylinder cylinder = Cylinder(cylinder_center, g_axis, cylinder_height, cylinder_radius, &dark_brown);
+  Cylinder cylinder = Cylinder(cylinder_center, g_axis, cylinder_height, cylinder_radius, cylinder_color);
   Cone cone = Cone(
     Point(
       cylinder_center.get_x() + cylinder_height * g_axis.get_x(),
       cylinder_center.get_y() + cylinder_height * g_axis.get_y(),
       cylinder_center.get_z() + cylinder_height * g_axis.get_z()
-    ), g_axis, cone_height, cone_radius, &tree_green);
+    ), g_axis, cone_height, cone_radius, cone_color);
 
-  AABB b_cube = AABB(bcube_center, g_axis, cube_edge, &purple);
-  float bcx, bcy, bcz;
-  bcube_center.get_coordinates(&bcx, &bcy, &bcz);
-  float dx, dy, dz;
-  g_axis.get_coordinates(&dx, &dy, &dz);
-  AABB m_cube = AABB(Point(bcx + (dx*cube_edge), bcy + (dy*cube_edge), bcz + (dz*cube_edge)), g_axis, cube_edge, &purple);
-  AABB t_cube = AABB(Point(bcx + (2*dx*cube_edge), bcy + (2*dy*cube_edge), bcz + (2*dz*cube_edge)), g_axis, cube_edge, &purple);
+  AABB b_cube = AABB(bcube_center, g_axis, cube_edge, cube_color);
 
   Object tree1 = Object(
     AABB(cylinder_center, g_axis, cone_radius*2, Vector3(0, cylinder_height+cone_height-cone_radius*2, 0)),
@@ -115,8 +122,8 @@ int main(int argc, char *argv[])
   tree2.translate(Vector3(6, 0, 0));
 
   Object building = Object(
-    AABB(bcube_center, g_axis, cube_edge, Vector3(0, 2*cube_edge, 0)),
-    vector<Solid*>{&t_cube, &m_cube, &b_cube}
+    AABB(bcube_center, g_axis, cube_edge, Vector3()),
+    vector<Solid*>{&b_cube}
   );
 
   vector<Object*> objects = {
@@ -144,7 +151,23 @@ int main(int argc, char *argv[])
   glutCreateWindow("Trabalho CG");
 
   glutDisplayFunc(render);
-  createMenu();
+
+  // Inicia contexto imgui
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext();
+  ImGuiIO& io = ImGui::GetIO(); (void)io;
+  ImGui::StyleColorsDark();
+
+  // Seta bindings com GLUT
+  ImGui_ImplGLUT_Init();
+  ImGui_ImplGLUT_InstallFuncs();
+  ImGui_ImplOpenGL2_Init();
+
   glutMainLoop();
+
+  ImGui_ImplOpenGL2_Shutdown();
+  ImGui_ImplGLUT_Shutdown();
+  ImGui::DestroyContext();
+
   return 0;
 }
