@@ -7,7 +7,7 @@
 
 #include "RGB.hpp"
 #include "Camera.hpp"
-#include "Object.hpp"
+#include "../geometry/Object.hpp"
 #include "Light.hpp"
 
 using std::vector;

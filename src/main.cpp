@@ -5,22 +5,15 @@
 
 #include <GL/freeglut.h>
 
-#include "Point.hpp"
-#include "Vector3.hpp"
-#include "Quaternion.hpp"
-#include "Matrix4.hpp"
+#include "./geometry/Plane.hpp"
+#include "./geometry/Sphere.hpp"
+#include "./geometry/AABB.hpp"
+#include "./geometry/Cone.hpp"
+#include "./geometry/Cylinder.hpp"
+#include "./geometry/Solid.hpp"
+#include "./geometry/Object.hpp"
 
-#include "Ray.hpp"
-#include "Plane.hpp"
-#include "Cylinder.hpp"
-#include "Cone.hpp"
-#include "AABB.hpp"
-
-#include "Camera.hpp"
-#include "Light.hpp"
-
-#include "BMP.hpp"
-#include "Scene.hpp"
+#include "./scene/Scene.hpp"
 
 using namespace std;
 

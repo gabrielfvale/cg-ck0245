@@ -1,11 +1,10 @@
 #ifndef SOLID_HPP
 #define SOLID_HPP
 
-#include "Material.hpp"
-#include "Light.hpp"
-#include "Matrix4.hpp"
-#include "Ray.hpp"
-
+#include "../scene/Material.hpp"
+#include "../scene/Light.hpp"
+#include "../math/Matrix4.hpp"
+#include "../math/Ray.hpp"
 
 class Solid
 {

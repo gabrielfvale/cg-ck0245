@@ -2,7 +2,6 @@
 #define QUATERNION_HPP
 
 #include "Vector3.hpp"
-#
 
 class Quaternion
 {

@@ -1,7 +1,7 @@
 #ifndef SPHERE_HPP
 #define SPHERE_HPP
 
-#include "Object.hpp"
+#include "Solid.hpp"
 
 class Sphere : public Solid
 {

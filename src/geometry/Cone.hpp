@@ -2,7 +2,7 @@
 #define CONE_HPP
 
 #include "Plane.hpp"
-#include "Object.hpp"
+#include "Solid.hpp"
 
 class Cone : public Solid
 {

@@ -1,8 +1,8 @@
 #ifndef VECTOR3_HPP
 #define VECTOR3_HPP
 
-#include "Point.hpp"
 #include <string>
+#include "Point.hpp"
 
 class Vector3
 {

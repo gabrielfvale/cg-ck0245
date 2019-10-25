@@ -2,8 +2,8 @@
 #define CAMERA_HPP
 
 #include <vector>
-#include "Vector3.hpp"
-#include "Matrix4.hpp"
+#include "../math/Vector3.hpp"
+#include "../math/Matrix4.hpp"
 
 class Camera
 {

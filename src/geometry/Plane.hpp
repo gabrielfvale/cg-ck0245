@@ -1,7 +1,7 @@
 #ifndef PLANE_HPP
 #define PLANE_HPP
 
-#include "Object.hpp"
+#include "Solid.hpp"
 
 class Plane : public Solid
 {

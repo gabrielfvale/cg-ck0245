@@ -13,4 +13,4 @@ Para limpar o binário e os OBJs gerados:
 ```console
 $ make clean
 ```
-O binário de saída será **program.out**.
+O binário de saída será **build/program.out**.

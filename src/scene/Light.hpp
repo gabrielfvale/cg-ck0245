@@ -2,8 +2,8 @@
 #define LIGHT_HPP
 
 #include "RGB.hpp"
-#include "Point.hpp"
-#include "Vector3.hpp"
+#include "../math/Point.hpp"
+#include "../math/Vector3.hpp"
 
 enum LightType { AMBIENT = 1, REMOTE = 2, POINT = 3 };
 
