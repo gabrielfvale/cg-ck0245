@@ -32,25 +32,32 @@ bool Scene::trace(Ray& ray, Intersection& intersection)
 
   if(object_index != -1)
   {
-    bool visible = true;
-
+    intersection.color = RGB();
     Point p_int = ray.calc_point(intersection.tint);
-    Vector3 light_dir = *(lights[1]->get_position());
-    light_dir = light_dir * -1;
 
-    Ray shadowray = Ray(p_int, light_dir);
-
-    for(unsigned i = 0; i < objects.size(); i++)
+    // cast shadow rays for each light
+    for(unsigned i = 0; i < lights.size(); i++)
     {
-      int skip_self = object_index == (int) i ? intersection.index : -1;
-      if(objects[i]->trace(shadowray, obj_intersect, skip_self) && obj_intersect.tint > 0)
+      if(lights[i]->type() == AMBIENT)
       {
-        visible = false;
-        break;
+        intersection.color += intersection.solid_hit->calculate_color(lights[i], observer, p_int);
+        continue;
       }
-    }
 
-    intersection.color = visible ? intersection.solid_hit->calculate_color(observer, p_int, lights) : RGB();
+      Vector3 light_dir = intersection.solid_hit->light_direction(lights[i], p_int);
+      Ray shadowray = Ray(p_int, light_dir);
+
+      int visible = 1;
+      unsigned k = 0;
+      while(visible && k < objects.size())
+      {
+        int skip_self = object_index == (int) k ? intersection.index : -1;
+        if(objects[k]->trace(shadowray, obj_intersect, skip_self) && obj_intersect.tint > 0)
+          visible = 0;
+        k++;
+      }
+      intersection.color += intersection.solid_hit->calculate_color(lights[i], observer, p_int) * visible;
+    }
     return true;
   }
   return false;

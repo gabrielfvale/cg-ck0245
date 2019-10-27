@@ -27,7 +27,7 @@ bool reRender = false;
 Scene* scene;
 Light* toggable_light;
 
-Material* cone_color = new Material(RGB(0.33, 0.49, 0.18), RGB(0.2, 0.2, 0.2), RGB());
+Material* cone_color = new Material(RGB(0.33, 0.49, 0.18), RGB(0.2, 0.2, 0.2), RGB(0.3, 0.3, 0.3));
 Material* cylinder_color = new Material(RGB(), RGB(0.27, 0.13, 0), RGB());
 Material* cube_color = new Material(RGB(0.33, 0.18, 0.49), RGB(0.33, 0.18, 0.49), RGB());
 
@@ -98,6 +98,7 @@ int main(int argc, char *argv[])
 
   AABB b_cube = AABB(Point(10, 0, 5), g_axis, cube_edge, cube_color);
   Sphere sp = Sphere(Point(), Point(10, 3.5, 5), sphere_radius, cone_color);
+  cone_color->set_shine(10.0f);
   Sphere sp2 = Sphere(Point(), Point(10, 1, 5), 1, cube_color);
 
   Object* cube = new Object(
@@ -118,11 +119,13 @@ int main(int argc, char *argv[])
     cube,
   };
 
-  Light ambient_light = Light(0.5, 0.5, 0.5, Vector3(), AMBIENT);
-  toggable_light = new Light(0.3, 0.3, 0.3, Vector3(-1, -1, -1), REMOTE);
+  Light* ambient_light = new Light(0.5, 0.5, 0.5, Vector3(), AMBIENT);
+  Light* point_light = new Light(0.05, 0.05, 0.05, Vector3(8, 20, 5));
+  toggable_light = new Light(0.3, 0.3, 0.3, Vector3(-1, -1, 0), REMOTE);
 
   vector<Light*> lights = {
-    &ambient_light,
+    ambient_light,
+    point_light,
     toggable_light
   };
 
