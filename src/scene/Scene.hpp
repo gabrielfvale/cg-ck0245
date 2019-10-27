@@ -26,6 +26,7 @@ class Scene
     void set_pixel(GLubyte* pixels, int x, int y, RGB rgb);
   public:
     Scene(int resolution, Camera camera, vector<Object*> objects, vector<Light*> lights, float w = 6, float d = 3);
+    bool trace(Ray& ray, Intersection& intersection);
     void castRay(int x, int y, RGB& color);
     void print(GLubyte* pixels);
 };

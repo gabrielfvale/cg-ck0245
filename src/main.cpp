@@ -85,55 +85,42 @@ void render()
 
 int main(int argc, char *argv[])
 {
-  Point observer = Point(10, 4.5, 20);
+  Point observer = Point(10, 4.5, 10);
   Point lookat = Point(10, 4.5, 5);
-  Vector3 viewup = Vector3(10, 5.5, 20);
+  Vector3 viewup = Vector3(10, 5.5, 10);
 
   Camera camera = Camera(observer, lookat, viewup);
 
   // definições de objetos
   Vector3 g_axis = Vector3(0, 1, 0);
-  Point cylinder_center = Point(7, 0, 9);
-  Point bcube_center = Point(10, 0, 5);
-
-  float cylinder_radius = 0.5;
-  float cylinder_height = 2;
-  float cone_radius = 2;
-  float cone_height = 8;
+  float sphere_radius = 0.5;
   float cube_edge = 3;
 
-  // gera os objetos
-  Cylinder cylinder = Cylinder(cylinder_center, g_axis, cylinder_height, cylinder_radius, cylinder_color);
-  Cone cone = Cone(
-    Point(
-      cylinder_center.get_x() + cylinder_height * g_axis.get_x(),
-      cylinder_center.get_y() + cylinder_height * g_axis.get_y(),
-      cylinder_center.get_z() + cylinder_height * g_axis.get_z()
-    ), g_axis, cone_height, cone_radius, cone_color);
+  AABB b_cube = AABB(Point(10, 0, 5), g_axis, cube_edge, cube_color);
+  Sphere sp = Sphere(Point(), Point(10, 3.5, 5), sphere_radius, cone_color);
+  Sphere sp2 = Sphere(Point(), Point(10, 1, 5), 1, cube_color);
 
-  AABB b_cube = AABB(bcube_center, g_axis, cube_edge, cube_color);
-
-  Object tree1 = Object(
-    AABB(cylinder_center, g_axis, cone_radius*2, Vector3(0, cylinder_height+cone_height-cone_radius*2, 0)),
-    vector<Solid*>{&cylinder, &cone}
-  );
-
-  Object tree2 = tree1.clone();
-  tree2.translate(Vector3(6, 0, 0));
-
-  Object building = Object(
-    AABB(bcube_center, g_axis, cube_edge, Vector3()),
+  Object* cube = new Object(
+    b_cube,
     vector<Solid*>{&b_cube}
+  );
+  Object* sphere = new Object(
+    AABB(Point(10, 3, 5), Vector3(0, 1, 0), sphere_radius*2, Vector3()),
+    vector<Solid*>{&sp}
+  );
+  Object* sphere2 = new Object(
+    AABB(Point(10, 0, 5), g_axis, 2, Vector3()),
+    vector<Solid*>{&sp2}
   );
 
   vector<Object*> objects = {
-    &tree1,
-    &tree2,
-    &building,
+    sphere,
+    cube,
   };
 
   Light ambient_light = Light(0.5, 0.5, 0.5, Vector3(), AMBIENT);
-  toggable_light = new Light(0.3, 0.3, 0.3, Vector3(15, 4.5, 15));
+  toggable_light = new Light(0.3, 0.3, 0.3, Vector3(-1, -1, -1), REMOTE);
+
   vector<Light*> lights = {
     &ambient_light,
     toggable_light

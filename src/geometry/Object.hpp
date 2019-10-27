@@ -8,8 +8,6 @@
 
 #include "../scene/Intersection.hpp"
 
-enum RayType { PRIMARY_RAY, SHADOW_RAY };
-
 class Object
 {
   private:
@@ -22,7 +20,7 @@ class Object
     void get(AABB& bb, std::vector<Solid*>& mesh);
     void set_visible(bool visible);
     bool visible();
-    bool trace(Ray& ray, Intersection& intersection, RayType ray_type = PRIMARY_RAY, int skip_index = -1);
+    bool trace(Ray& ray, Intersection& intersection, int skip_index = -1);
     void translate(Vector3 t_vec);
 };
 
