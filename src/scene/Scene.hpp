@@ -9,6 +9,7 @@
 #include "Camera.hpp"
 #include "../geometry/Object.hpp"
 #include "Light.hpp"
+#include "Intersection.hpp"
 
 using std::vector;
 using std::numeric_limits;
@@ -25,7 +26,7 @@ class Scene
     void set_pixel(GLubyte* pixels, int x, int y, RGB rgb);
   public:
     Scene(int resolution, Camera camera, vector<Object*> objects, vector<Light*> lights, float w = 6, float d = 3);
-    void castRay(int x, int y, Object** object_hit, RGB& color);
+    void castRay(int x, int y, RGB& color);
     void print(GLubyte* pixels);
 };
 

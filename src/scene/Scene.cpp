@@ -11,7 +11,7 @@ Scene::Scene(int resolution, Camera camera, vector<Object*> objects, vector<Ligh
   this->distance = d;
 }
 
-void Scene::castRay(int x, int y, Object** object_hit, RGB& color)
+void Scene::castRay(int x, int y, RGB& color)
 {
   // gera o ponto da matriz em coordenadas de camera
   float pixel_width = width/resolution;
@@ -24,24 +24,16 @@ void Scene::castRay(int x, int y, Object** object_hit, RGB& color)
   Ray ray = Ray(observer, ray_direction);
   
   float t_min = numeric_limits<float>::infinity();
-  float t_int;
 
-  Solid* close_obj = NULL;
-  Solid* solid_hit = NULL;
+  Intersection intersection;
 
   for(unsigned i=0; i<objects.size(); i++)
   {
-    if((*objects[i]).trace(ray, t_int, &solid_hit))
+    if(objects[i]->trace(ray, intersection) && intersection.tint < t_min)
     {
-      if(close_obj == NULL || t_int < t_min)
-      {
-        t_min = t_int;
-        close_obj = solid_hit;
-        Point intersection = ray.calc_point(t_int);
-
-        *object_hit = objects[i];
-        color = solid_hit->calculate_color(observer, intersection, lights);
-      }
+      t_min = intersection.tint;
+      Point p_int = ray.calc_point(intersection.tint);
+      color = intersection.solid_hit->calculate_color(observer, p_int, lights);
     }
   }
 }
@@ -62,8 +54,7 @@ void Scene::print(GLubyte* pixels)
     for (int x = 0; x < resolution; x++)
     {
       RGB color = RGB();
-      Object* object_hit = NULL;
-      castRay(x, y, &object_hit, color);
+      castRay(x, y, color);
       set_pixel(pixels, x, y, color);
     }
   }

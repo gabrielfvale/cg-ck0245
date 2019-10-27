@@ -24,34 +24,27 @@ Object Object::clone()
 void Object::set_visible(bool visible) { visible_ = visible; }
 bool Object::visible() { return visible_; }
 
-bool Object::trace(Ray& ray, float& t_int, Solid** solid_hit)
+bool Object::trace(Ray& ray, Intersection& intersection, RayType ray_type, int skip_index)
 {
-  float ray_tint;
   float t_min = std::numeric_limits<float>::infinity();
-  Solid* curr_hit = NULL;
+  float t_int;
 
-  if(!visible_ || !bounding_box_.intersects(ray, ray_tint))
+  if(!visible_ || !bounding_box_.intersects(ray, t_int))
     return false;
 
   for(unsigned i = 0; i < mesh_.size(); i++)
   {
-    if((*mesh_[i]).intersects(ray, ray_tint))
+    if(mesh_[i]->intersects(ray, t_int) && t_int < t_min)
     {
-      if(curr_hit == NULL || (ray_tint < t_min))
-      {
-        t_min = ray_tint;
-        curr_hit = mesh_[i];
-      }
+      if(ray_type == SHADOW_RAY && skip_index == (int)i) continue;
+      t_min = t_int;
+      intersection.solid_hit = mesh_[i];
+      intersection.index = i;
+      intersection.tint = t_int;
     }
   }
 
-  if(curr_hit)
-  {
-    t_int = t_min;
-    *solid_hit = curr_hit;
-    return true;
-  }
-  return false;
+  return intersection.solid_hit != NULL;
 }
 
 void Object::translate(Vector3 t_vec)
