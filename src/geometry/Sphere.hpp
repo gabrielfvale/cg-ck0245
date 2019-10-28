@@ -11,11 +11,10 @@ class Sphere : public Solid
     float radius_;
   public:
     Sphere();
-    Sphere(Point p0, Point center, float radius, Material* material);
-    Point get_p0();
+    Sphere(Point center, float radius, Material* material);
     Point get_center();
     float get_radius();
-    void set_params(Point* p0, Point* center, float* radius);
+    void set_params(Point* center, float* radius);
     Vector3 surface_normal(Point& p_int) override;
     bool intersects(Ray& ray, float& t_int) override;
     void transform(Matrix4 t_matrix) override;

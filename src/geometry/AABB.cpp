@@ -4,7 +4,7 @@
 
 using std::min; using std::max;
 
-AABB::AABB() : Solid()
+AABB::AABB() : Solid("Cube")
 {
   center_ = Point();
   n_ = Vector3(0, 1, 0);
@@ -12,7 +12,7 @@ AABB::AABB() : Solid()
   min_bound = Point(-edge_/2, 0, -edge_/2);
   max_bound = Point(edge_/2, edge_, edge_/2);
 }
-AABB::AABB(Point center, Vector3 n, float edge, Material* material) : Solid(material)
+AABB::AABB(Point center, Vector3 n, float edge, Material* material) : Solid("Cube", material)
 {
   center_ = center;
   n_ = n;
@@ -25,7 +25,7 @@ AABB::AABB(Point center, Vector3 n, float edge, Material* material) : Solid(mate
 
   n_.normalize();
 }
-AABB::AABB(Point center, Vector3 n, float edge, Vector3 scale) : Solid()
+AABB::AABB(Point center, Vector3 n, float edge, Vector3 scale) : Solid("Bounding box")
 {
   center_ = center;
   n_ = n;

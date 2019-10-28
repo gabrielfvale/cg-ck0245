@@ -15,22 +15,22 @@ Material::Material(RGB ambient, RGB diffuse, RGB specular)
   this->shine = 1;
 }
 
-void Material::set_ambient(float r, float g, float b)
+void Material::set_ambient(float* rgb)
 {
-  this->ambient.r = r;
-  this->ambient.g = g;
-  this->ambient.b = b;
+  this->ambient.r = rgb[0];
+  this->ambient.g = rgb[1];
+  this->ambient.b = rgb[2];
 }
-void Material::set_diffuse(float r, float g, float b)
+void Material::set_diffuse(float* rgb)
 {
-  this->diffuse.r = r;
-  this->diffuse.g = g;
-  this->diffuse.b = b;
+  this->diffuse.r = rgb[0];
+  this->diffuse.g = rgb[1];
+  this->diffuse.b = rgb[2];
 }
-void Material::set_specular(float r, float g, float b)
+void Material::set_specular(float* rgb)
 {
-  this->specular.r = r;
-  this->specular.g = g;
-  this->specular.b = b;
+  this->specular.r = rgb[0];
+  this->specular.g = rgb[1];
+  this->specular.b = rgb[0];
 }
 void Material::set_shine(float s) { shine = s; }

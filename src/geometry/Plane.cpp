@@ -1,12 +1,12 @@
 #include <iostream>
 #include "Plane.hpp"
 
-Plane::Plane()
+Plane::Plane() : Solid("Plane")
 {
   p0_ = Point(); // known point of the plane
   n_ = Vector3(); // unit vector perpendicular to the plane
 }
-Plane::Plane(Point p0, Vector3 n)
+Plane::Plane(Point p0, Vector3 n) : Solid("Plane")
 {
   p0_ = p0;
   n_ = n;

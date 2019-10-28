@@ -16,9 +16,9 @@ void Object::get(AABB& bb, std::vector<Solid*>& mesh)
   mesh = mesh_;
 }
 
-Object Object::clone()
+Object* Object::clone()
 {
-  return Object(bounding_box_, mesh_, visible_);
+  return new Object(bounding_box_, mesh_, visible_);
 }
 
 void Object::set_visible(bool visible) { visible_ = visible; }

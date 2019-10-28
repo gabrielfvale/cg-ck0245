@@ -3,9 +3,19 @@
 
 Solid::Solid()
 {
-  material_ = new Material();
+  this->material_ = new Material();
+  this->name = "Unamed Solid";
 }
-Solid::Solid(Material* material) : material_(material){};
+Solid::Solid(const char* name)
+{
+  this->name = name;
+  this->material_ = new Material();
+}
+Solid::Solid(const char* name, Material* material)
+{
+  this->name = name;
+  this->material_ = material;
+};
 
 Material* Solid::get_material() { return material_; }
 
@@ -64,4 +74,9 @@ RGB Solid::calculate_color(Light* light, Point& observer, Point& intersection)
   RGB Id = calculate_diffuse(light, intersection);
   RGB Is = calculate_specular(light, observer, intersection);
   return Id + Is;
+}
+std::ostream& operator<<(std::ostream& stream, Solid& solid)
+{
+  stream << solid.name;
+  return stream;
 }

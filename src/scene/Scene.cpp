@@ -2,7 +2,7 @@
 #include <cmath>
 #include <iostream>
 
-Scene::Scene(int resolution, Camera camera, vector<Object*> objects, vector<Light*> lights, float w, float d)
+Scene::Scene(int resolution, Camera* camera, vector<Object*> objects, vector<Light*> lights, float w, float d)
 {
   this->resolution = resolution;
   this->camera = camera;
@@ -14,7 +14,7 @@ Scene::Scene(int resolution, Camera camera, vector<Object*> objects, vector<Ligh
 
 bool Scene::trace(Ray& ray, Intersection& intersection)
 {
-  Point observer = *(camera.get_eye());
+  Point observer = *(camera->get_eye());
   float t_min = numeric_limits<float>::infinity();
 
   Intersection obj_intersect;
@@ -22,6 +22,7 @@ bool Scene::trace(Ray& ray, Intersection& intersection)
 
   for(unsigned i = 0; i < objects.size(); i++)
   {
+    //objects[i]->transform(camera.world_to_camera());
     if(objects[i]->trace(ray, obj_intersect) && obj_intersect.tint < t_min)
     {
       t_min = obj_intersect.tint;
@@ -63,21 +64,19 @@ bool Scene::trace(Ray& ray, Intersection& intersection)
   return false;
 }
 
-void Scene::castRay(int x, int y, RGB& color)
+void Scene::castRay(int x, int y, Intersection& intersection)
 {
   // gera o ponto da matriz em coordenadas de camera
   float pixel_width = width/resolution;
-  Point observer = *(camera.get_eye());
+  Point observer = *(camera->get_eye());
 
   Point hole_point = Point(-width/2 + pixel_width/2 + x*pixel_width, width/2 - pixel_width/2 - y*pixel_width, -distance);
   // converte o ponto para coordenadas de mundo
-  hole_point = camera.camera_to_world() * hole_point;
+  hole_point = camera->camera_to_world() * hole_point;
   Vector3 ray_direction = Vector3(&observer, &hole_point);
   Ray ray = Ray(observer, ray_direction);
 
-  Intersection intersection;
-  if(trace(ray, intersection))
-    color = intersection.color;
+  trace(ray, intersection);
 }
 
 void Scene::set_pixel(GLubyte* pixels, int x, int y, RGB rgb)
@@ -95,9 +94,9 @@ void Scene::print(GLubyte* pixels)
   {
     for (int x = 0; x < resolution; x++)
     {
-      RGB color = RGB();
-      castRay(x, y, color);
-      set_pixel(pixels, x, y, color);
+      Intersection intersection;
+      castRay(x, y, intersection);
+      set_pixel(pixels, x, y, intersection.color);
     }
   }
 }

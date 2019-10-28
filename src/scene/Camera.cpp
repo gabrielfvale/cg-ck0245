@@ -12,12 +12,27 @@ Camera::Camera(Point eye, Point lookat, Vector3 up)
   eye_ = eye;
   lookat_ = lookat;
   up_ = up;
-  cz_ = Vector3(&lookat_, &eye_);
 
   Point up_point = Point(up_.get_x(), up_.get_y(), up_.get_z());
   Vector3 v = Vector3(&eye_, &up_point);
-  cx_ = v.cross_product(&cz_);
 
+  cz_ = Vector3(&lookat_, &eye_);
+  cx_ = v.cross_product(&cz_);
+  cx_.normalize();
+  cz_.normalize();
+  cy_ = cz_.cross_product(&cx_);
+}
+Camera::Camera(float* eye, float* lookat, float* up)
+{
+  eye_ = Point(eye[0], eye[1], eye[2]);
+  lookat_ = Point(lookat[0], lookat[1], lookat[2]);;
+  up_ = Vector3(up[0], up[1], up[2]);
+
+  Point up_point = Point(up_.get_x(), up_.get_y(), up_.get_z());
+  Vector3 v = Vector3(&eye_, &up_point);
+
+  cz_ = Vector3(&lookat_, &eye_);
+  cx_ = v.cross_product(&cz_);
   cx_.normalize();
   cz_.normalize();
   cy_ = cz_.cross_product(&cx_);
@@ -84,3 +99,29 @@ Vector3* Camera::x_axis() { return &cx_; }
 Vector3* Camera::y_axis() { return &cy_; }
 Vector3* Camera::z_axis() { return &cz_; }
 Point* Camera::get_eye() { return &eye_; }
+void Camera::set_eye(float* coords)
+{
+  eye_.set_coordinates(coords[0], coords[1], coords[2]);
+}
+void Camera::set_lookat(float* coords)
+{
+  lookat_.set_coordinates(coords[0], coords[1], coords[2]);
+  Point up_point = Point(up_.get_x(), up_.get_y(), up_.get_z());
+  Vector3 v = Vector3(&eye_, &up_point);
+  cz_ = Vector3(&lookat_, &eye_);
+  cx_ = v.cross_product(&cz_);
+  cx_.normalize();
+  cz_.normalize();
+  cy_ = cz_.cross_product(&cx_);
+}
+void Camera::set_viewup(float* coords)
+{
+  up_.set_coordinates(coords[0], coords[1], coords[2]);
+  Point up_point = Point(coords[0], coords[1], coords[2]);
+  Vector3 v = Vector3(&eye_, &up_point);
+  cz_ = Vector3(&lookat_, &eye_);
+  cx_ = v.cross_product(&cz_);
+  cx_.normalize();
+  cz_.normalize();
+  cy_ = cz_.cross_product(&cx_);
+}

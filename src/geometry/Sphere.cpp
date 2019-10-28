@@ -2,26 +2,22 @@
 #include <cmath>
 #include "Sphere.hpp"
 
-Sphere::Sphere() : Solid()
+Sphere::Sphere() : Solid("Sphere")
 {
-  p0_ = Point(0, 1, 0); // known point of the plane
   center_ = Point(); // unit vector perpendicular to the plane
   radius_ = 1;
 }
-Sphere::Sphere(Point p0, Point center, float radius, Material* material) : Solid(material)
+Sphere::Sphere(Point center, float radius, Material* material) : Solid("Sphere", material)
 {
-  p0_ = p0;
   center_ = center;
   radius_ = radius;
 }
 
-Point Sphere::get_p0() { return p0_; }
 Point Sphere::get_center() { return center_; }
 float Sphere::get_radius() { return radius_; }
 
-void Sphere::set_params(Point* p0, Point* center, float* radius)
+void Sphere::set_params(Point* center, float* radius)
 {
-  p0_ = *p0;
   center_ = *center;
   radius_ = *radius;
 }
@@ -53,6 +49,5 @@ bool Sphere::intersects(Ray& ray, float& t_min)
 
 void Sphere::transform(Matrix4 t_matrix)
 {
-  p0_ = t_matrix * p0_;
   center_ = t_matrix * center_;
 }
