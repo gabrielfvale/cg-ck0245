@@ -53,7 +53,7 @@ bool Scene::trace(Ray& ray, Intersection& intersection)
       while(visible && k < objects.size())
       {
         int skip_self = object_index == (int) k ? intersection.index : -1;
-        if(objects[k]->trace(shadowray, obj_intersect, skip_self) && obj_intersect.tint > 0)
+        if(objects[k]->trace(shadowray, obj_intersect, skip_self))
           visible = 0;
         k++;
       }
