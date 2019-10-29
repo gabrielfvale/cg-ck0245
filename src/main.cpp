@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdlib.h>
 #include <cmath>
 #include <vector>
 #include <limits>
@@ -21,7 +22,8 @@
 using namespace std;
 
 int resolution = 500;
-GLubyte* PixelBuffer = new GLubyte[resolution * resolution * 3];
+float upscaling = 1.0f;
+GLubyte* PixelBuffer;
 
 static float observerf3[3] = { 10.0f, 4.5f, 10.0f };
 static float lookatf3[3] = { 10.0f, 4.5f, 5.0f };
@@ -129,11 +131,11 @@ void display_gui()
   ImGui::End();
   // Object picking
   ImGuiIO& io = ImGui::GetIO();
-  if(ImGui::IsMouseClicked(0))
+  if(ImGui::IsMouseClicked(0) && !ImGui::IsMouseDragging())
   {
     // Manda um raio em MousePos.x, MousePos.y
     Intersection intersection;
-    scene->castRay(io.MousePos.x, io.MousePos.y, intersection);
+    scene->castRay(io.MousePos.x/upscaling, io.MousePos.y/upscaling, intersection);
     if(intersection.index != -1)
     {
       cout << "Solid hit: " << *(intersection.solid_hit) << endl;
@@ -167,6 +169,7 @@ void render()
 
   glClear(GL_COLOR_BUFFER_BIT);
   glDrawPixels(resolution, resolution, GL_RGB, GL_UNSIGNED_BYTE, PixelBuffer);
+  glPixelZoom(upscaling, upscaling);
 
   ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
 
@@ -176,6 +179,11 @@ void render()
 
 int main(int argc, char *argv[])
 {
+  if(argc >= 2)
+    resolution = atoi(argv[1]);
+  if(argc == 3)
+    upscaling = atof(argv[2]);
+  PixelBuffer = new GLubyte[resolution * resolution * 3];
   // definições de objetos
   Vector3 g_axis = Vector3(0, 1, 0);
   float sphere_radius = 0.5;
@@ -243,8 +251,8 @@ int main(int argc, char *argv[])
   // inicia GLUT
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-  glutInitWindowPosition(100, 100);
-  glutInitWindowSize(resolution, resolution);
+  glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH)-resolution*upscaling)/2, (glutGet(GLUT_SCREEN_HEIGHT)-resolution*upscaling)/2);
+  glutInitWindowSize(resolution*upscaling, resolution*upscaling);
   glutCreateWindow("Trabalho CG");
 
   glutDisplayFunc(render);
