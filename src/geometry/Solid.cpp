@@ -26,7 +26,7 @@ Vector3 Solid::light_direction(Light* light, Point& intersection)
   switch (light->type())
   {
   case AMBIENT:
-    return Vector3();
+    return Vector3(); break;
   case REMOTE:
     ld = ld * -1; break;
   default:
