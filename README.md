@@ -20,6 +20,7 @@ O binário de saída será **build/program.out**.
 * Mínimo 15 objetos distintos (0%)
 * Um material diferente para cada objeto (0%)
 * Mínimo 1 luz pontual, 1 spotlight, 1 direcional (66%)
+* Transformações - escala, rotação, translação e cisalhamento (0%)
 
 ### Interatividade
 * Modificação dos parâmetros da câmera (100%) ✓
