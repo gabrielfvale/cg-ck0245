@@ -25,7 +25,7 @@ O binário de saída será **build/program.out**.
 ### Interatividade
 * Modificação dos parâmetros da câmera (100%) ✓
 * Modificação de propriedades de material (100%) ✓
-* Modificação de propriedades das fontes luminosas (0%)
+* Modificação de propriedades das fontes luminosas (100%)
 * Uso de Picking (100%) ✓
 * Acender e apagar fonte luminosa (100%) ✓
 

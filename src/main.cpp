@@ -29,10 +29,13 @@ static float observerf3[3] = { 10.0f, 4.5f, 10.0f };
 static float lookatf3[3] = { 10.0f, 4.5f, 5.0f };
 static float viewupf3[3] = { 10.0f, 5.5f, 10.0f };
 Camera* camera = new Camera(observerf3, lookatf3, viewupf3);
+
+float pl_intensity[3] = {0.05f, 0.05f, 0.05f};
+float rl_intensity[3] = {0.3f, 0.3f, 0.3f};
+Light* point_light = new Light(pl_intensity, Vector3(10, 20, 5));
+Light* remote_light = new Light(rl_intensity, Vector3(-1, -1, 0), REMOTE);
+
 Scene* scene;
-Light* point_light = new Light(0.05, 0.05, 0.05, Vector3(10, 20, 5));
-Light* remote_light = new Light(0.3, 0.3, 0.3, Vector3(-1, -1, 0), REMOTE);
-bool pl_on = true; bool rl_on = true;
 
 Material* cone_color = new Material(RGB(0.33, 0.49, 0.18), RGB(0.2, 0.2, 0.2), RGB(0.3, 0.3, 0.3));
 Material* cylinder_color = new Material(RGB(0.27, 0.13, 0), RGB(0.27, 0.13, 0), RGB());
@@ -67,7 +70,8 @@ void display_gui()
   ImGui::SetNextWindowSize(ImVec2(250, 300), ImGuiCond_Once);
   // Janela de propriedades do cenario
   ImGui::Begin("Scene", NULL, window_flags);
-  // Propriedades de camera
+
+  /* Propriedades de camera */
   ImGui::Text("Camera");
   ImGui::InputFloat3("observer", observerf3);
   if(ImGui::IsItemDeactivatedAfterEdit())
@@ -87,19 +91,27 @@ void display_gui()
     camera->set_viewup(viewupf3);
     redraw();
   }
-  // Interruptores de luzes
+
+  /* Configuração de luzes */
   ImGui::Text("Lights");
-  if(ImGui::Checkbox("Remote light", &rl_on))
+  if(ImGui::Checkbox("Remote light", remote_light->active()))
+    redraw();
+  ImGui::ColorEdit3("rl_rgb", rl_intensity);
+  if(ImGui::IsItemDeactivatedAfterEdit())
   {
-    rl_on ? remote_light->set_intensity(0.3, 0.3, 0.3) : remote_light->set_intensity(0, 0, 0);
+    remote_light->set_intensity(rl_intensity);
     redraw();
   }
-  if(ImGui::Checkbox("Point light", &pl_on))
+  if(ImGui::Checkbox("Point light", point_light->active()))
+    redraw();
+  ImGui::ColorEdit3("pl_rgb", pl_intensity);
+  if(ImGui::IsItemDeactivatedAfterEdit())
   {
-    pl_on ? point_light->set_intensity(0.05, 0.05, 0.05) : point_light->set_intensity(0, 0, 0);
+    point_light->set_intensity(pl_intensity);
     redraw();
   }
-  // Propriedades de materiais
+
+  /* Propriedades de materiais */
   ImGui::BeginChild("Material");
   ImGui::Text("Materials");
   ImGui::Text(object_selected);
@@ -129,9 +141,10 @@ void display_gui()
   }
   ImGui::EndChild();
   ImGui::End();
-  // Object picking
+
+  /* Object picking */
   ImGuiIO& io = ImGui::GetIO();
-  if(ImGui::IsMouseClicked(0) && !ImGui::IsMouseDragging())
+  if(ImGui::IsMouseClicked(0))
   {
     // Manda um raio em MousePos.x, MousePos.y
     Intersection intersection;
@@ -236,7 +249,7 @@ int main(int argc, char *argv[])
     sphere
   };
 
-  Light* ambient_light = new Light(0.5, 0.5, 0.5, Vector3(), AMBIENT);
+  Light* ambient_light = new Light(RGB(0.5, 0.5, 0.5), Vector3(), AMBIENT);
 
   vector<Light*> lights = {
     ambient_light,
