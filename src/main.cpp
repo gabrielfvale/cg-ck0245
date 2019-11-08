@@ -26,9 +26,9 @@ int resolution = 500;
 float upscaling = 1.0f;
 GLubyte* PixelBuffer;
 
-static float observerf3[3] = { 10.0f, 4.5f, 10.0f };
-static float lookatf3[3] = { 10.0f, 4.5f, 5.0f };
-static float viewupf3[3] = { 10.0f, 5.5f, 10.0f };
+static float observerf3[3] = { 0.0f, 0.0f, 6.0f };
+static float lookatf3[3] = { 0.0f, 0.0f, 0.0f };
+static float viewupf3[3] = { 0.0f, 1.0f, 6.0f };
 Camera* camera = new Camera(observerf3, lookatf3, viewupf3);
 
 float pl_intensity[3] = {0.05f, 0.05f, 0.05f};
@@ -240,19 +240,10 @@ int main(int argc, char *argv[])
     AABB(Point(10, 3, 5), Vector3(0, 1, 0), 1, Vector3()),
     vector<Solid*>{&sp}
   );
-  /*
-  Sphere sp2 = Sphere(Point(10, 1, 5), 1, cube_color);
-  Object* sphere2 = new Object(
-    AABB(Point(10, 2, 5), g_axis, 6, Vector3()),
-    vector<Solid*>{&sp2}
-  );
-  */
 
+  Object* imported_obj = new Object("./obj/MACACO.obj", gold);
   vector<Object*> objects = {
-    tree1,
-    tree2,
-    cube,
-    sphere
+    imported_obj
   };
 
   Light* ambient_light = new Light(RGB(0.5, 0.5, 0.5), Vector3(), AMBIENT);

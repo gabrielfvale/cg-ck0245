@@ -1,6 +1,11 @@
 #include "Object.hpp"
+#include "Triangle.hpp"
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <limits>
+
+using namespace std;
 
 Object::Object(AABB bounding_box, std::vector<Solid*> mesh, bool visible)
 {
@@ -8,6 +13,37 @@ Object::Object(AABB bounding_box, std::vector<Solid*> mesh, bool visible)
   this->visible_ = visible;
   for(unsigned i=0; i<mesh.size(); i++)
     mesh_.push_back(mesh[i]->clone());
+}
+
+Object::Object(char* obj_path, Material* material, bool visible)
+{
+  vector<Point> vertices;
+  ifstream in(obj_path, ios::in);
+  if(!in)
+  {
+    cerr << "Cannot open " << obj_path << endl;
+    exit(1);
+  }
+  string line;
+  while(getline(in, line))
+  {
+    if(line.substr(0, 2) == "v ")
+    {
+      istringstream s(line.substr(2));
+      float px, py, pz;
+      s >> px; s >> py; s >> pz;
+      vertices.push_back(Point(px, py, pz));
+    }
+    else if(line.substr(0, 2) == "f ")
+    {
+      istringstream s(line.substr(2));
+      float iv0, iv1, iv2;
+      s >> iv0; s >> iv1; s >> iv2;
+      iv0--; iv1--; iv2--;
+      mesh_.push_back(new Triangle(vertices[iv0], vertices[iv1], vertices[iv2], material));
+    }
+  }
+  this->visible_ = visible;
 }
 
 void Object::get(AABB& bb, std::vector<Solid*>& mesh)

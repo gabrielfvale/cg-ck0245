@@ -50,6 +50,7 @@ Vector3 Triangle::surface_normal(Point& p_int)
 }
 bool Triangle::intersects(Ray& ray, float& t_int)
 {
+  float episilon = 0.0001;
   // Möller–Trumbore intersection
   Point ray_p0 = ray.get_p0();
   Vector3 ray_d = ray.get_d();
@@ -60,7 +61,7 @@ bool Triangle::intersects(Ray& ray, float& t_int)
   edge2 = Vector3(&vertex0, &vertex2);
   h = ray_d.cross_product(&edge2);
   a = edge1.dot_product(&h);
-  if((int)a == 0)
+  if(a < episilon or std::abs(a) < episilon)
     return false;
 
   f = 1.0f/a;

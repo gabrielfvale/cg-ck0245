@@ -16,6 +16,7 @@ class Object
     bool visible_;
   public:
     Object(AABB bounding_box, std::vector<Solid*> mesh, bool visible = true);
+    Object(char* obj_path, Material* material, bool visible = true);
     Object* clone();
     void get(AABB& bb, std::vector<Solid*>& mesh);
     void set_visible(bool visible);
