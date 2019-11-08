@@ -15,7 +15,7 @@ Object::Object(AABB bounding_box, std::vector<Solid*> mesh, bool visible)
     mesh_.push_back(mesh[i]->clone());
 }
 
-Object::Object(char* obj_path, Material* material, bool visible)
+Object::Object(const char* obj_path, Material* material, bool visible)
 {
   vector<Point> vertices;
 

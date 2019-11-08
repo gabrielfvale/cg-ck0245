@@ -26,9 +26,9 @@ int resolution = 500;
 float upscaling = 1.0f;
 GLubyte* PixelBuffer;
 
-static float observerf3[3] = { 0.0f, 0.0f, 6.0f };
-static float lookatf3[3] = { 0.0f, 0.0f, 0.0f };
-static float viewupf3[3] = { 0.0f, 1.0f, 6.0f };
+static float observerf3[3] = { 10.0f, 4.5f, 10.0f };
+static float lookatf3[3] = { 10.0f, 4.5f, 5.0f };
+static float viewupf3[3] = { 10.0f, 6.0f, 10.0f };
 Camera* camera = new Camera(observerf3, lookatf3, viewupf3);
 
 float pl_intensity[3] = {0.05f, 0.05f, 0.05f};
@@ -38,14 +38,26 @@ Light* remote_light = new Light(rl_intensity, Vector3(-1, -1, 0), REMOTE);
 
 Scene* scene;
 
-Material* cone_color = new Material(RGB(0.33, 0.49, 0.18), RGB(0.2, 0.2, 0.2), RGB(0.3, 0.3, 0.3), 10.0f);
-Material* cylinder_color = new Material(RGB(0.27, 0.13, 0), RGB(0.27, 0.13, 0), RGB());
-Material* cube_color = new Material(RGB(0.33, 0.18, 0.49), RGB(0.33, 0.18, 0.49), RGB());
-Material* gold = new Material(
+Material* mat_green = new Material(RGB(0.33, 0.49, 0.18), RGB(0.2, 0.2, 0.2), RGB(0.3, 0.3, 0.3), 10.0f);
+Material* mat_brown = new Material(RGB(0.27, 0.13, 0), RGB(0.27, 0.13, 0), RGB());
+Material* mat_purple = new Material(RGB(0.33, 0.18, 0.49), RGB(0.33, 0.18, 0.49), RGB());
+Material* mat_gold = new Material(
   RGB(0.24725, 0.1995, 0.0745),
   RGB(0.75164, 0.60648, 0.22648),
   RGB(0.628281, 0.555802, 0.366065),
   128*0.4
+);
+Material* mat_jade = new Material(
+  RGB(0.135, 0.2225, 0.1575),
+  RGB(0.54, 0.89, 0.63),
+  RGB(0.316228, 0.316228, 0.316228),
+  12.8
+);
+Material* mat_ruby = new Material(
+  RGB(0.1745, 0.01175, 0.01175),
+  RGB(0.61424, 0.04136, 0.04136),
+  RGB(0.727811, 0.626959, 0.626959),
+  76.8
 );
 
 float mat_ambient[3] = {0.0f, 0.0f, 0.0f};
@@ -204,27 +216,26 @@ int main(int argc, char *argv[])
   if(argc == 3)
     upscaling = atof(argv[2]);
   PixelBuffer = new GLubyte[resolution * resolution * 3];
+
   // definições de objetos
+  Point origin;
   Vector3 g_axis = Vector3(0, 1, 0);
-  float sphere_radius = 0.5;
+  //float sphere_radius = 0.5;
   float cylinder_radius = 0.5;
   float cylinder_height = 2;
   float cone_radius = 2;
   float cone_height = 8;
   float cube_edge = 3;
 
-  // gera os objetos
-  Cylinder cylinder = Cylinder(Point(7, 0, 9), g_axis, cylinder_height, cylinder_radius, cylinder_color);
+  // Trees
+  Cylinder cylinder = Cylinder(Point(7, 0, 9), g_axis, cylinder_height, cylinder_radius, mat_brown);
   Cone cone = Cone(
     Point(
       7 + cylinder_height * g_axis.get_x(),
       cylinder_height * g_axis.get_y(),
       9 + cylinder_height * g_axis.get_z()
-    ), g_axis, cone_height, cone_radius, cone_color);
-
-  AABB b_cube = AABB(Point(10, 0, 5), g_axis, cube_edge, gold);
-  Sphere sp = Sphere(Point(10, 3.5, 5), sphere_radius, cone_color);
-
+    ), g_axis, cone_height, cone_radius, mat_green);
+  
   Object* tree1 = new Object(
     AABB(Point(7, 0, 9), g_axis, cone_radius*2, Vector3(0, cylinder_height+cone_height-cone_radius*2, 0)),
     vector<Solid*>{&cylinder, &cone}
@@ -232,18 +243,31 @@ int main(int argc, char *argv[])
   Object* tree2 = tree1->clone();
   tree2->translate(Vector3(6, 0, 0));
 
+  // Cube
+  AABB b_cube = AABB(Point(10, 0, 5), g_axis, cube_edge, mat_purple);
   Object* cube = new Object(
     b_cube,
     vector<Solid*>{&b_cube}
   );
+
+  /* Sphere
+  Sphere sp = Sphere(Point(10, 3.5, 5), sphere_radius, mat_green);
   Object* sphere = new Object(
     AABB(Point(10, 3, 5), Vector3(0, 1, 0), 1, Vector3()),
     vector<Solid*>{&sp}
   );
+  */
 
-  Object* imported_obj = new Object("./obj/MACACO.obj", gold);
+  // Ruby (imported OBJ)
+  Object* ruby = new Object("./obj/sidegem.obj", mat_ruby);
+  Point destination = Point(10, 3, 5);
+  ruby->translate(Vector3(&origin, &destination));
+
   vector<Object*> objects = {
-    imported_obj
+    tree1,
+    tree2,
+    cube,
+    ruby
   };
 
   Light* ambient_light = new Light(RGB(0.5, 0.5, 0.5), Vector3(), AMBIENT);
