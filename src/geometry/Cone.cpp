@@ -76,42 +76,36 @@ bool Cone::intersects(Ray& ray, float& t_min)
   float p1_dotproduct = Vector3(&p1, &vertice_).dot_product(&n_);
   float p2_dotproduct = Vector3(&p2, &vertice_).dot_product(&n_);
 
-  int total_intersections = 0;
-  if(0 <= p1_dotproduct && p1_dotproduct <= height_)
-  {
-    t_min = t_int0;
-    total_intersections++;
-  }
-  if(0 <= p2_dotproduct && p2_dotproduct <= height_)
-  {
-    t_min = t_int1 < t_int0 ? t_int1 : t_int0;
-    total_intersections++;
-  }
+  std::vector<float> intersections;
+
+  if(t_int0 >= 0 && (0 <= p1_dotproduct && p1_dotproduct <= height_))
+    intersections.push_back(t_int0);
+  if(t_int1 >= 0 && (0 <= p2_dotproduct && p2_dotproduct <= height_))
+    intersections.push_back(t_int1);
+
   // one intersection with cone surface
   // the other might happen with the base
-  if(delta > 0 && total_intersections == 1)
+  if((int)intersections.size() == 1)
   {
-    float ox, oy, oz;
-    vertice_.get_coordinates(&ox, &oy, &oz);
-    ox -= height_ * n_.get_x();
-    oy -= height_ * n_.get_y();
-    oz -= height_ * n_.get_z();
-    Point base_center = Point(ox, oy, oz);
-    Plane base_plane = Plane(base_center, n_);
+    Plane base_plane = Plane(c_, n_);
     float t_base;
     bool base_intersection = base_plane.intersects(ray, t_base);
     if(base_intersection)
     {
       Point p_base = ray.calc_point(t_base);
-      Vector3 cbase = Vector3(&base_center, &p_base);
-      if(cbase.norm() < radius_)
-      {
-        t_min = t_min < t_base ? t_min : t_base;
-        total_intersections++;
-      }
+      Vector3 cbase = Vector3(&c_, &p_base);
+      if(t_base >= 0 && cbase.norm() < radius_)
+        intersections.push_back(t_base);
     }
   }
-  return total_intersections >= 1;
+  int int_candidates = (int) intersections.size();
+
+  t_min = int_candidates != 0 ? intersections[0] : t_min;
+  for(int i = 1; i < int_candidates; i++)
+    if(intersections[i] < t_min)
+      t_min = intersections[i];
+
+  return int_candidates >= 1;
 }
 
 void Cone::transform(Matrix4 t_matrix, TransformType t_type)

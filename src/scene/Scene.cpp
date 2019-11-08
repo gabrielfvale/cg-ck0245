@@ -33,8 +33,18 @@ bool Scene::trace(Ray& ray, Intersection& intersection)
 
   if(object_index != -1)
   {
+    float episilon = 0.001;
     intersection.color = RGB();
     Point p_int = ray.calc_point(intersection.tint);
+    Vector3 surfc_normal = intersection.solid_hit->surface_normal(p_int);
+    surfc_normal = surfc_normal * episilon;
+
+    // shifts intersection so there is no shadow acne
+    p_int.set_coordinates(
+      p_int.get_x() + surfc_normal.get_x(),
+      p_int.get_y() + surfc_normal.get_y(),
+      p_int.get_z() + surfc_normal.get_z()
+    );
 
     // cast shadow rays for each light
     for(unsigned i = 0; i < lights.size(); i++)
@@ -52,8 +62,7 @@ bool Scene::trace(Ray& ray, Intersection& intersection)
       unsigned k = 0;
       while(visible && k < objects.size())
       {
-        int skip_self = object_index == (int) k ? intersection.index : -1;
-        if(objects[k]->trace(shadowray, obj_intersect, skip_self))
+        if(objects[k]->trace(shadowray, obj_intersect))
           visible = 0;
         k++;
       }

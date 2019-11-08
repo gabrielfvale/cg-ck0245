@@ -70,25 +70,22 @@ bool Cylinder::intersects(Ray& ray, float& t_min)
 
   float t_int0 = (-1 * b + std::sqrt(delta)) / a;
   float t_int1 = (-1 * b - std::sqrt(delta)) / a;
+
   Point p1 = ray.calc_point(t_int0);
   Point p2 = ray.calc_point(t_int1);
   float p1_dotproduct = Vector3(&b_, &p1).dot_product(&u_);
   float p2_dotproduct = Vector3(&b_, &p2).dot_product(&u_);
 
-  int total_intersections = 0;
-  if(0 <= p1_dotproduct && p1_dotproduct <= height_)
-  {
-    t_min = t_int0;
-    total_intersections++;
-  }
-  if(0 <= p2_dotproduct && p2_dotproduct <= height_)
-  {
-    t_min = t_int1 < t_int0 ? t_int1 : t_int0;
-    total_intersections++;
-  }
+  std::vector<float> intersections;
+
+  if(t_int0 >= 0 && (0 <= p1_dotproduct && p1_dotproduct <= height_))
+    intersections.push_back(t_int0);
+  if(t_int1 >= 0 && (0 <= p2_dotproduct && p2_dotproduct <= height_))
+    intersections.push_back(t_int1);
+
   // no/one intersections with cylinder surface
   // yet there may have intersections with the caps
-  if(total_intersections < 2)
+  if((int)intersections.size() < 2)
   {
     float x, y, z;
     u_.get_coordinates(&x, &y, &z);
@@ -102,24 +99,25 @@ bool Cylinder::intersects(Ray& ray, float& t_min)
     {
       Point p_base = ray.calc_point(t_base);
       Vector3 cbase = Vector3(&b_, &p_base);
-      if(cbase.norm() < radius_)
-      {
-        t_min = t_min < t_base ? t_min : t_base;
-        total_intersections++;
-      }
+      if(t_base >= 0 && cbase.norm() < radius_)
+        intersections.push_back(t_base);
     }
     if(top_intersection)
     {
       Point p_base = ray.calc_point(t_top);
       Vector3 ctop = Vector3(&b_, &p_base);
-      if(ctop.norm() < radius_)
-      {
-        t_min = t_min < t_top ? t_min : t_top;
-        total_intersections++;
-      }
+      if(t_top >= 0 && ctop.norm() < radius_)
+        intersections.push_back(t_top);
     }
   }
-  return total_intersections >= 1;
+  int int_candidates = (int) intersections.size();
+
+  t_min = int_candidates != 0 ? intersections[0] : t_min;
+  for(int i = 1; i < int_candidates; i++)
+    if(intersections[i] < t_min)
+      t_min = intersections[i];
+
+  return int_candidates >= 1;
 }
 
 void Cylinder::transform(Matrix4 t_matrix, TransformType t_type)

@@ -1,5 +1,6 @@
 # config files
 *.ini
+.vscode
 
 # Prerequisites
 *.d

@@ -24,7 +24,7 @@ Object* Object::clone()
 void Object::set_visible(bool visible) { visible_ = visible; }
 bool Object::visible() { return visible_; }
 
-bool Object::trace(Ray& ray, Intersection& intersection, int skip_index)
+bool Object::trace(Ray& ray, Intersection& intersection)
 {
   float t_min = std::numeric_limits<float>::infinity();
   float t_int;
@@ -35,7 +35,6 @@ bool Object::trace(Ray& ray, Intersection& intersection, int skip_index)
 
   for(unsigned i = 0; i < mesh_.size(); i++)
   {
-    if(skip_index == (int)i) continue;
     if(mesh_[i]->intersects(ray, t_int) && t_int >= 0 && t_int < t_min)
     {
       t_min = t_int;
@@ -72,5 +71,4 @@ void Object::scale(float sx, float sy, float sz)
   scale_m(1, 1) = sy;
   scale_m(2, 2) = sz;
   scale_m(3, 3) = 1;
-
 }

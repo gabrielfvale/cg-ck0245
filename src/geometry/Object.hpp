@@ -20,7 +20,7 @@ class Object
     void get(AABB& bb, std::vector<Solid*>& mesh);
     void set_visible(bool visible);
     bool visible();
-    bool trace(Ray& ray, Intersection& intersection, int skip_index = -1);
+    bool trace(Ray& ray, Intersection& intersection);
     void transform(Matrix4 t_matrix, TransformType t_type = TRANSLATE);
     void translate(Vector3 t_vec);
     void scale(float sx, float sy, float sz);
