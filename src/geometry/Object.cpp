@@ -18,6 +18,11 @@ Object::Object(AABB bounding_box, std::vector<Solid*> mesh, bool visible)
 Object::Object(char* obj_path, Material* material, bool visible)
 {
   vector<Point> vertices;
+
+  float infinity = std::numeric_limits<float>::infinity();
+  float min_point[3] = {infinity, infinity, infinity};
+  float max_point[3] = {-infinity, -infinity, -infinity};
+
   ifstream in(obj_path, ios::in);
   if(!in)
   {
@@ -32,6 +37,13 @@ Object::Object(char* obj_path, Material* material, bool visible)
       istringstream s(line.substr(2));
       float px, py, pz;
       s >> px; s >> py; s >> pz;
+      min_point[0] = std::min(min_point[0], px);
+      min_point[1] = std::min(min_point[1], py);
+      min_point[2] = std::min(min_point[2], pz);
+
+      max_point[0] = std::max(max_point[0], px);
+      max_point[1] = std::max(max_point[1], py);
+      max_point[2] = std::max(max_point[2], pz);
       vertices.push_back(Point(px, py, pz));
     }
     else if(line.substr(0, 2) == "f ")
@@ -44,6 +56,7 @@ Object::Object(char* obj_path, Material* material, bool visible)
     }
   }
   this->visible_ = visible;
+  bounding_box_ = AABB(Vector3(0, 1, 0), Point(min_point), Point(max_point));
 }
 
 void Object::get(AABB& bb, std::vector<Solid*>& mesh)
@@ -65,10 +78,9 @@ bool Object::trace(Ray& ray, Intersection& intersection)
   float t_min = std::numeric_limits<float>::infinity();
   float t_int;
   bool hit = false;
-/*
+
   if(!visible_ || !bounding_box_.intersects(ray, t_int))
     return hit;
-*/
 
   for(unsigned i = 0; i < mesh_.size(); i++)
   {

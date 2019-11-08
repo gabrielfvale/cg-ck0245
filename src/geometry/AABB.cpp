@@ -38,6 +38,19 @@ AABB::AABB(Point center, Vector3 n, float edge, Vector3 scale) : Solid("Bounding
 
   n_.normalize();
 }
+AABB::AABB(Vector3 n, Point min_point, Point max_point) : Solid("Bounding box")
+{
+  n_ = n;
+  edge_ = 1;
+  min_bound = min_point;
+  max_bound = max_point;
+  center_ = Point(
+    (max_point.get_x() - min_point.get_x())/2,
+    min_point.get_y(),
+    (max_point.get_z() - min_point.get_z())/2
+  );
+  n_.normalize();
+}
 Point* AABB::get_center() { return &center_; }
 Vector3* AABB::get_axis() { return &n_; }
 float* AABB::get_edge() { return &edge_; }
