@@ -33,7 +33,7 @@ bool Plane::intersects(Ray& ray, float& t_int)
   return true;
 }
 
-void Plane::transform(Matrix4 t_matrix)
+void Plane::transform(Matrix4 t_matrix, TransformType t_type)
 {
   p0_ = t_matrix * p0_;
   n_ = t_matrix * n_;

@@ -93,7 +93,7 @@ bool AABB::intersects(Ray& ray, float& t_min)
   return true;
 }
 
-void AABB::transform(Matrix4 t_matrix)
+void AABB::transform(Matrix4 t_matrix, TransformType t_type)
 {
   center_ = t_matrix * center_;
   max_bound = t_matrix * max_bound;

@@ -77,7 +77,8 @@ bool Triangle::intersects(Ray& ray, float& t_int)
   t_int = f * edge2.dot_product(&q);
   return true;
 }
-void Triangle::transform(Matrix4 t_matrix)
+
+void Triangle::transform(Matrix4 t_matrix, TransformType t_type)
 {
   vertex0 = t_matrix * vertex0;
   vertex1 = t_matrix * vertex1;

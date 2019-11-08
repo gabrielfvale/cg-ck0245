@@ -47,7 +47,7 @@ bool Sphere::intersects(Ray& ray, float& t_min)
   return true;
 }
 
-void Sphere::transform(Matrix4 t_matrix)
+void Sphere::transform(Matrix4 t_matrix, TransformType t_type)
 {
   center_ = t_matrix * center_;
 }

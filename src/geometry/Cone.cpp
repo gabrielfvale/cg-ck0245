@@ -114,7 +114,7 @@ bool Cone::intersects(Ray& ray, float& t_min)
   return total_intersections >= 1;
 }
 
-void Cone::transform(Matrix4 t_matrix)
+void Cone::transform(Matrix4 t_matrix, TransformType t_type)
 {
   c_ = t_matrix * c_;
   vertice_ = t_matrix * vertice_;

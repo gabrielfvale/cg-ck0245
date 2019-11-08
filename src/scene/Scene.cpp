@@ -22,7 +22,7 @@ bool Scene::trace(Ray& ray, Intersection& intersection)
 
   for(unsigned i = 0; i < objects.size(); i++)
   {
-    //objects[i]->transform(camera.world_to_camera());
+    //objects[i]->transform(camera->world_to_camera());
     if(objects[i]->trace(ray, obj_intersect) && obj_intersect.tint < t_min)
     {
       t_min = obj_intersect.tint;

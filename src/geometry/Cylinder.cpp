@@ -122,7 +122,7 @@ bool Cylinder::intersects(Ray& ray, float& t_min)
   return total_intersections >= 1;
 }
 
-void Cylinder::transform(Matrix4 t_matrix)
+void Cylinder::transform(Matrix4 t_matrix, TransformType t_type)
 {
   b_ = t_matrix * b_;
 }

@@ -8,6 +8,8 @@
 #include "../math/Matrix4.hpp"
 #include "../math/Ray.hpp"
 
+enum TransformType { TRANSLATE, SCALE, ROTATE };
+
 class Solid
 {
   private:
@@ -24,7 +26,7 @@ class Solid
     RGB calculate_color(Light* light, Point& observer, Point& intersection);
     virtual Vector3 surface_normal(Point& p_int) = 0;
     virtual bool intersects(Ray& ray, float& t_int) = 0;
-    virtual void transform(Matrix4 t_matrix) = 0;
+    virtual void transform(Matrix4 t_matrix, TransformType t_type = TRANSLATE) = 0;
     virtual Solid* clone() const = 0;
     friend std::ostream& operator<<(std::ostream& stream, Solid& solid);
 };

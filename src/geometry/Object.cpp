@@ -48,14 +48,29 @@ bool Object::trace(Ray& ray, Intersection& intersection, int skip_index)
   return hit;
 }
 
+void Object::transform(Matrix4 t_matrix, TransformType t_type)
+{
+  bounding_box_.transform(t_matrix, t_type);
+  for(unsigned i=0; i<mesh_.size(); i++)
+    mesh_[i]->transform(t_matrix, t_type);
+}
+
 void Object::translate(Vector3 t_vec)
 {
-  Matrix4 t_matrix = Matrix4();
-  t_matrix.identity();
-  t_matrix(0, 3) = t_vec.get_x();
-  t_matrix(1, 3) = t_vec.get_y();
-  t_matrix(2, 3) = t_vec.get_z();
-  bounding_box_.transform(t_matrix);
-  for(unsigned i=0; i<mesh_.size(); i++)
-    mesh_[i]->transform(t_matrix);
+  Matrix4 translation_m = Matrix4();
+  translation_m.identity();
+  translation_m(0, 3) = t_vec.get_x();
+  translation_m(1, 3) = t_vec.get_y();
+  translation_m(2, 3) = t_vec.get_z();
+  transform(translation_m);
+}
+
+void Object::scale(float sx, float sy, float sz)
+{
+  Matrix4 scale_m = Matrix4();
+  scale_m(0, 0) = sx;
+  scale_m(1, 1) = sy;
+  scale_m(2, 2) = sz;
+  scale_m(3, 3) = 1;
+
 }

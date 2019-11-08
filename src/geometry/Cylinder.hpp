@@ -21,7 +21,7 @@ class Cylinder : public Solid
     void set_params(Point* b, Vector3* u, float* height, float* radius);
     Vector3 surface_normal(Point& p_int) override;
     bool intersects(Ray& ray, float& t_int) override;
-    void transform(Matrix4 t_matrix) override;
+    void transform(Matrix4 t_matrix, TransformType t_type = TRANSLATE) override;
     virtual Cylinder* clone() const {return new Cylinder(*this);}
 };
 
