@@ -7,12 +7,12 @@ Material::Material()
   specular = RGB();
   shine = 0;
 }
-Material::Material(RGB ambient, RGB diffuse, RGB specular)
+Material::Material(RGB ambient, RGB diffuse, RGB specular, float shine)
 {
   this->ambient = ambient;
   this->diffuse = diffuse;
   this->specular = specular;
-  this->shine = 1;
+  this->shine = shine;
 }
 
 void Material::set_ambient(float* rgb)

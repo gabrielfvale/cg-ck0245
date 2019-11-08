@@ -29,9 +29,10 @@ bool Object::trace(Ray& ray, Intersection& intersection)
   float t_min = std::numeric_limits<float>::infinity();
   float t_int;
   bool hit = false;
-
+/*
   if(!visible_ || !bounding_box_.intersects(ray, t_int))
     return hit;
+*/
 
   for(unsigned i = 0; i < mesh_.size(); i++)
   {

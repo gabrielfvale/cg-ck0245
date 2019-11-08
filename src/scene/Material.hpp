@@ -11,7 +11,7 @@ class Material
     RGB specular;
     float shine;
     Material();
-    Material(RGB ambient, RGB diffuse, RGB specular);
+    Material(RGB ambient, RGB diffuse, RGB specular, float shine = 1);
     void set_ambient(float* rgb);
     void set_diffuse(float* rgb);
     void set_specular(float* rgb);

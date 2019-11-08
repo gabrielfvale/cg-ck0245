@@ -10,6 +10,7 @@
 #include "./imgui/imgui_impl_opengl2.h"
 
 #include "./geometry/Plane.hpp"
+#include "./geometry/Triangle.hpp"
 #include "./geometry/Sphere.hpp"
 #include "./geometry/AABB.hpp"
 #include "./geometry/Cone.hpp"
@@ -37,9 +38,15 @@ Light* remote_light = new Light(rl_intensity, Vector3(-1, -1, 0), REMOTE);
 
 Scene* scene;
 
-Material* cone_color = new Material(RGB(0.33, 0.49, 0.18), RGB(0.2, 0.2, 0.2), RGB(0.3, 0.3, 0.3));
+Material* cone_color = new Material(RGB(0.33, 0.49, 0.18), RGB(0.2, 0.2, 0.2), RGB(0.3, 0.3, 0.3), 10.0f);
 Material* cylinder_color = new Material(RGB(0.27, 0.13, 0), RGB(0.27, 0.13, 0), RGB());
 Material* cube_color = new Material(RGB(0.33, 0.18, 0.49), RGB(0.33, 0.18, 0.49), RGB());
+Material* gold = new Material(
+  RGB(0.24725, 0.1995, 0.0745),
+  RGB(0.75164, 0.60648, 0.22648),
+  RGB(0.628281, 0.555802, 0.366065),
+  128*0.4
+);
 
 float mat_ambient[3] = {0.0f, 0.0f, 0.0f};
 float mat_diffuse[3] = {0.0f, 0.0f, 0.0f};
@@ -215,9 +222,8 @@ int main(int argc, char *argv[])
       9 + cylinder_height * g_axis.get_z()
     ), g_axis, cone_height, cone_radius, cone_color);
 
-  AABB b_cube = AABB(Point(10, 0, 5), g_axis, cube_edge, cube_color);
+  AABB b_cube = AABB(Point(10, 0, 5), g_axis, cube_edge, gold);
   Sphere sp = Sphere(Point(10, 3.5, 5), sphere_radius, cone_color);
-  cone_color->set_shine(10.0f);
 
   Object* tree1 = new Object(
     AABB(Point(7, 0, 9), g_axis, cone_radius*2, Vector3(0, cylinder_height+cone_height-cone_radius*2, 0)),

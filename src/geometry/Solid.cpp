@@ -47,7 +47,7 @@ RGB Solid::calculate_diffuse(Light* light, Point& intersection)
   float fd = normal.dot_product(&ld);
   fd = fd < 0 ? 0 : fd;
 
-  RGB Id = intensity * (*material_).diffuse * fd;
+  RGB Id = intensity * material_->diffuse * fd;
   return Id;
 }
 
@@ -63,14 +63,17 @@ RGB Solid::calculate_specular(Light* light, Point& observer, Point& intersection
   v.normalize();
   r.normalize();
 
-  float fs = std::pow(v.dot_product(&r), (*material_).shine);
-  RGB Is = intensity * (*material_).specular * fs;
+  float vr_product = v.dot_product(&r);
+  vr_product = vr_product <= 0 ? 0.0f : vr_product;
+  float fs = std::pow(vr_product, material_->shine);
+
+  RGB Is = intensity * material_->specular * fs;
   return Is;
 }
 
 RGB Solid::calculate_color(Light* light, Point& observer, Point& intersection)
 {
-  if(light->type() == AMBIENT) return *(light->get_intensity()) * (*material_).ambient;
+  if(light->type() == AMBIENT) return *(light->get_intensity()) * material_->ambient;
   RGB Id = calculate_diffuse(light, intersection);
   RGB Is = calculate_specular(light, observer, intersection);
   return Id + Is;
