@@ -27,6 +27,7 @@ bool Scene::trace(Ray& ray, Intersection& intersection)
     {
       t_min = obj_intersect.tint;
       intersection = obj_intersect;
+      intersection.object_hit = objects[i];
       object_index = i;
     }
   }

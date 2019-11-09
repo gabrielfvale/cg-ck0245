@@ -1,18 +1,18 @@
 #include "Triangle.hpp"
 
-Triangle::Triangle() : Solid("Triangle")
+Triangle::Triangle() : Solid()
 {
   vertex0 = Point(1, 0, 0);
   vertex1 = Point(-1, 0, 0);
   vertex2 = Point(0, 1, 0);
 }
-Triangle::Triangle(Point vertex0, Point vertex1, Point vertex2, Material* material) : Solid("Triangle", material)
+Triangle::Triangle(Point vertex0, Point vertex1, Point vertex2, Material* material) : Solid(material)
 {
   this->vertex0 = vertex0;
   this->vertex1 = vertex1;
   this->vertex2 = vertex2;
 }
-Triangle::Triangle(float* vertex0, float* vertex1, float* vertex2, Material* material) : Solid("Triangle", material)
+Triangle::Triangle(float* vertex0, float* vertex1, float* vertex2, Material* material) : Solid(material)
 {
   this->vertex0 = Point(vertex0);
   this->vertex1 = Point(vertex1);

@@ -14,8 +14,8 @@ class AABB : public Solid
   public:
     AABB();
     AABB(Point center, Vector3 n, float edge, Material* material);
-    AABB(Point center, Vector3 n, float edge, Vector3 scale);
-    AABB(Vector3 n, Point min_point, Point max_point);
+    AABB(Point center, Vector3 n, float edge, Vector3 scale); // Bounding box 1
+    AABB(Vector3 n, Point min_point, Point max_point); // Bounding box 2
     Point* get_center();
     Vector3* get_axis();
     float* get_edge();

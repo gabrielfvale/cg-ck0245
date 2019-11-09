@@ -7,15 +7,16 @@
 
 using namespace std;
 
-Object::Object(AABB bounding_box, std::vector<Solid*> mesh, bool visible)
+Object::Object(const char* name, AABB bounding_box, std::vector<Solid*> mesh, bool visible)
 {
   this->bounding_box_ = bounding_box;
+  this->name = name;
   this->visible_ = visible;
   for(unsigned i=0; i<mesh.size(); i++)
     mesh_.push_back(mesh[i]->clone());
 }
 
-Object::Object(const char* obj_path, Material* material, bool visible)
+Object::Object(const char* name, const char* obj_path, Material* material, bool visible)
 {
   vector<Point> vertices;
 
@@ -55,6 +56,7 @@ Object::Object(const char* obj_path, Material* material, bool visible)
       mesh_.push_back(new Triangle(vertices[iv0], vertices[iv1], vertices[iv2], material));
     }
   }
+  this->name = name;
   this->visible_ = visible;
   bounding_box_ = AABB(Vector3(0, 1, 0), Point(min_point), Point(max_point));
 }
@@ -67,7 +69,7 @@ void Object::get(AABB& bb, std::vector<Solid*>& mesh)
 
 Object* Object::clone()
 {
-  return new Object(bounding_box_, mesh_, visible_);
+  return new Object(name, bounding_box_, mesh_, visible_);
 }
 
 void Object::set_visible(bool visible) { visible_ = visible; }
@@ -120,4 +122,11 @@ void Object::scale(float sx, float sy, float sz)
   scale_m(1, 1) = sy;
   scale_m(2, 2) = sz;
   scale_m(3, 3) = 1;
+}
+
+std::ostream& operator<<(std::ostream& stream, Object& object)
+{
+  stream << "Object " << object.name << endl;
+  stream << " - Shapes: " << object.mesh_.size();
+  return stream;
 }

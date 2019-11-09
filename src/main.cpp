@@ -1,8 +1,8 @@
 #include <iostream>
-#include <stdlib.h>
+#include <cstdio>
 #include <cmath>
+#include <ctime>
 #include <vector>
-#include <limits>
 
 #include <GL/freeglut.h>
 #include "./imgui/imgui.h"
@@ -25,6 +25,7 @@ using namespace std;
 int resolution = 500;
 float upscaling = 1.0f;
 GLubyte* PixelBuffer;
+float frametime = 0.0f;
 
 static float observerf3[3] = { 10.0f, 4.5f, 10.0f };
 static float lookatf3[3] = { 10.0f, 4.5f, 5.0f };
@@ -59,6 +60,12 @@ Material* mat_ruby = new Material(
   RGB(0.727811, 0.626959, 0.626959),
   76.8
 );
+Material* mat_bronze = new Material(
+  RGB(0.2125, 0.1275, 0.054),
+  RGB(0.714, 0.4284, 0.18144),
+  RGB(0.393548, 0.271906, 0.166721),
+  25.6
+);
 
 float mat_ambient[3] = {0.0f, 0.0f, 0.0f};
 float mat_diffuse[3] = {0.0f, 0.0f, 0.0f};
@@ -69,12 +76,18 @@ const char* object_selected = "No object selected";
 
 void redraw()
 {
+  clock_t t = clock();
   scene->print(PixelBuffer);
+  t = clock() - t;
+  frametime = ((float)t)/CLOCKS_PER_SEC;
   glutPostRedisplay();
 }
 
 void display_gui()
 {
+  char ft_buffer[128];
+  snprintf(ft_buffer, sizeof ft_buffer, "%.2f", frametime);
+
   ImGuiColorEditFlags picker_flags = ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_Float;
   ImGuiWindowFlags window_flags = 0;
   //window_flags |= ImGuiWindowFlags_NoTitleBar;
@@ -86,10 +99,12 @@ void display_gui()
   //window_flags |= ImGuiWindowFlags_NoDecoration;
 
   ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Once);
-  ImGui::SetNextWindowSize(ImVec2(250, 300), ImGuiCond_Once);
+  ImGui::SetNextWindowSize(ImVec2(250, 350), ImGuiCond_Once);
   // Janela de propriedades do cenario
   ImGui::Begin("Scene", NULL, window_flags);
-
+  ImGui::Text("Frametime: ");
+  ImGui::SameLine(); ImGui::Text(ft_buffer);
+  ImGui::SameLine(); ImGui::Text("s");
   /* Propriedades de camera */
   ImGui::Text("Camera");
   ImGui::InputFloat3("observer", observerf3);
@@ -170,7 +185,7 @@ void display_gui()
     scene->castRay(io.MousePos.x/upscaling, io.MousePos.y/upscaling, intersection);
     if(intersection.index != -1)
     {
-      cout << "Solid hit: " << *(intersection.solid_hit) << endl;
+      cout <<  *(intersection.object_hit) << endl;
       Material* int_material = intersection.solid_hit->get_material();
 
       mat_ambient[0] = int_material->ambient.r;
@@ -185,7 +200,7 @@ void display_gui()
       mat_specular[1] = int_material->specular.g;
       mat_specular[2] = int_material->specular.b;
 
-      object_selected = intersection.solid_hit->name;
+      object_selected = intersection.object_hit->name;
       picked_solid = intersection.solid_hit;
     }
   }
@@ -237,6 +252,7 @@ int main(int argc, char *argv[])
     ), g_axis, cone_height, cone_radius, mat_green);
   
   Object* tree1 = new Object(
+    "Tree",
     AABB(Point(7, 0, 9), g_axis, cone_radius*2, Vector3(0, cylinder_height+cone_height-cone_radius*2, 0)),
     vector<Solid*>{&cylinder, &cone}
   );
@@ -246,6 +262,7 @@ int main(int argc, char *argv[])
   // Cube
   AABB b_cube = AABB(Point(10, 0, 5), g_axis, cube_edge, mat_purple);
   Object* cube = new Object(
+    "Cube",
     b_cube,
     vector<Solid*>{&b_cube}
   );
@@ -259,7 +276,7 @@ int main(int argc, char *argv[])
   */
 
   // Ruby (imported OBJ)
-  Object* ruby = new Object("./obj/sidegem.obj", mat_ruby);
+  Object* ruby = new Object("Ruby", "./obj/sidegem.obj", mat_ruby);
   Point destination = Point(10, 3, 5);
   ruby->translate(Vector3(&origin, &destination));
 
@@ -280,7 +297,10 @@ int main(int argc, char *argv[])
 
   scene = new Scene(resolution, camera, objects, lights);
 
+  clock_t t = clock();
   scene->print(PixelBuffer);
+  t = clock() - t;
+  frametime = ((float)t)/CLOCKS_PER_SEC;
 
   // inicia GLUT
   glutInit(&argc, argv);

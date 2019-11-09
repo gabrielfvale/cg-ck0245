@@ -2,12 +2,12 @@
 #include <cmath>
 #include "Sphere.hpp"
 
-Sphere::Sphere() : Solid("Sphere")
+Sphere::Sphere() : Solid()
 {
   center_ = Point(); // unit vector perpendicular to the plane
   radius_ = 1;
 }
-Sphere::Sphere(Point center, float radius, Material* material) : Solid("Sphere", material)
+Sphere::Sphere(Point center, float radius, Material* material) : Solid(material)
 {
   center_ = center;
   radius_ = radius;

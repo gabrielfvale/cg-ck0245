@@ -17,10 +17,8 @@ class Solid
     RGB calculate_diffuse(Light* light, Point& intersection);
     RGB calculate_specular(Light* light, Point& observer, Point& intersection);
   public:
-    const char* name;
     Solid();
-    Solid(const char* name);
-    Solid(const char* name, Material* material);
+    Solid(Material* material);
     Material* get_material();
     Vector3 light_direction(Light* light, Point& intersection);
     RGB calculate_color(Light* light, Point& observer, Point& intersection);
@@ -28,7 +26,6 @@ class Solid
     virtual bool intersects(Ray& ray, float& t_int) = 0;
     virtual void transform(Matrix4 t_matrix, TransformType t_type = TRANSLATE) = 0;
     virtual Solid* clone() const = 0;
-    friend std::ostream& operator<<(std::ostream& stream, Solid& solid);
 };
 
 #endif
