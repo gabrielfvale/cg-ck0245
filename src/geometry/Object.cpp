@@ -107,7 +107,7 @@ void Object::transform(Matrix4 t_matrix, TransformType t_type)
 
 void Object::translate(Vector3 t_vec)
 {
-  Matrix4 translation_m = Matrix4();
+  Matrix4 translation_m;
   translation_m.identity();
   translation_m(0, 3) = t_vec.get_x();
   translation_m(1, 3) = t_vec.get_y();
@@ -117,11 +117,12 @@ void Object::translate(Vector3 t_vec)
 
 void Object::scale(float sx, float sy, float sz)
 {
-  Matrix4 scale_m = Matrix4();
+  Matrix4 scale_m;
   scale_m(0, 0) = sx;
   scale_m(1, 1) = sy;
   scale_m(2, 2) = sz;
   scale_m(3, 3) = 1;
+  transform(scale_m, SCALE);
 }
 
 std::ostream& operator<<(std::ostream& stream, Object& object)

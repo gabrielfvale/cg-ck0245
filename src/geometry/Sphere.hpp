@@ -9,6 +9,7 @@ class Sphere : public Solid
     Point p0_; // known point of the sphere
     Point center_; // center of the sphere
     float radius_;
+    Point scale_aux;
   public:
     Sphere();
     Sphere(Point center, float radius, Material* material);

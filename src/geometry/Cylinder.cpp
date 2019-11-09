@@ -7,11 +7,12 @@ Cylinder::Cylinder() : Solid()
   u_ = Vector3(0, 1, 0);
   height_ = 1;
   radius_ = 1;
+  scale_aux = Point(radius_, height_, radius_);
   u_.normalize();
 }
 Cylinder::Cylinder(Point b, Vector3 u, float height, float radius, Material* material) : Solid(material)
 {
-  b_ = b; u_ = u; height_ =  height; radius_ = radius;
+  b_ = b; u_ = u; height_ =  height; radius_ = radius; scale_aux = Point(radius_, height_, radius_);
 }
 Point* Cylinder::get_center() { return &b_; }
 Vector3* Cylinder::get_axis() { return &u_; }
@@ -53,6 +54,16 @@ bool Cylinder::intersects(Ray& ray, float& t_min)
   // w = d - (d . u)u
   Point ray_p0 = ray.get_p0();
   Vector3 ray_d = ray.get_d();
+
+/* TODO: Ellipsoid intersection
+  Matrix4 ray_scale;
+  ray_scale(0, 0) = radius_ / scale_aux.get_x();
+  ray_scale(1, 1) = 1;
+  ray_scale(2, 2) = radius_ / scale_aux.get_z();
+  ray_scale(3, 3) = 1;
+
+  ray_d = ray_scale * ray_d;
+*/
 
   Vector3 bp0 = Vector3(&b_, &ray_p0);
 
@@ -122,5 +133,15 @@ bool Cylinder::intersects(Ray& ray, float& t_min)
 
 void Cylinder::transform(Matrix4 t_matrix, TransformType t_type)
 {
-  b_ = t_matrix * b_;
+  switch (t_type)
+  {
+  case TRANSLATE:
+    b_ = t_matrix * b_;
+    break;
+  case SCALE:
+    scale_aux = t_matrix * scale_aux;
+    break;
+  case ROTATE:
+    break;
+  }
 }

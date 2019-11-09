@@ -8,6 +8,7 @@ Cone::Cone() : Solid()
   n_ = Vector3(0, 1, 0);
   height_ = 1;
   radius_ = 1;
+  scale_aux = Point(radius_, height_, radius_);
   n_.normalize();
 }
 Cone::Cone(Point c, Vector3 n, float height, float radius, Material* material) : Solid(material)
@@ -24,6 +25,7 @@ Cone::Cone(Point c, Vector3 n, float height, float radius, Material* material) :
   oy += vy * height_;
   oz += vz * height_;
   vertice_ = Point(ox, oy, oz);
+  scale_aux = Point(radius_, height_, radius_);
 }
 Point* Cone::get_center() { return &c_; }
 Point* Cone::get_vertice() { return &vertice_; }
@@ -58,6 +60,17 @@ bool Cone::intersects(Ray& ray, float& t_min)
 {
   Point p0 = ray.get_p0();
   Vector3 d = ray.get_d();
+
+/* TODO: Ellipsoid intersection
+  Matrix4 ray_scale;
+  ray_scale(0, 0) = radius_ / scale_aux.get_x();
+  ray_scale(1, 1) = 1;
+  ray_scale(2, 2) = radius_ / scale_aux.get_z();
+  ray_scale(3, 3) = 1;
+
+  d = ray_scale * d;
+*/
+
   // v = V - P0
   Vector3 v = Vector3(&p0, &vertice_);
   // cos_theta = adj / sqrt(gˆ2 + rˆ2)
@@ -110,6 +123,16 @@ bool Cone::intersects(Ray& ray, float& t_min)
 
 void Cone::transform(Matrix4 t_matrix, TransformType t_type)
 {
-  c_ = t_matrix * c_;
-  vertice_ = t_matrix * vertice_;
+  switch (t_type)
+  {
+  case TRANSLATE:
+    c_ = t_matrix * c_;
+    vertice_ = t_matrix * vertice_;
+    break;
+  case SCALE:
+    scale_aux = t_matrix * scale_aux;
+    break;
+  case ROTATE:
+    break;
+  }
 }

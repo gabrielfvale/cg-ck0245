@@ -12,6 +12,7 @@ class Cone : public Solid
     Vector3 n_; // cone axis (unit vector)
     float height_;
     float radius_;
+    Point scale_aux;
   public:
     Cone();
     Cone(Point c, Vector3 n, float height, float radius, Material* material);

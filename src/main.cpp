@@ -278,6 +278,7 @@ int main(int argc, char *argv[])
   // Ruby (imported OBJ)
   Object* ruby = new Object("Ruby", "./obj/sidegem.obj", mat_ruby);
   Point destination = Point(10, 3, 5);
+  ruby->scale(0.5, 0.5, 0.5);
   ruby->translate(Vector3(&origin, &destination));
 
   vector<Object*> objects = {

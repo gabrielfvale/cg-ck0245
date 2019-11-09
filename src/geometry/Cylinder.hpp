@@ -11,6 +11,7 @@ class Cylinder : public Solid
     Vector3 u_; // cylinder axis (unit vector)
     float height_;
     float radius_;
+    Point scale_aux;
   public:
     Cylinder();
     Cylinder(Point b, Vector3 u, float height, float radius, Material* material);
