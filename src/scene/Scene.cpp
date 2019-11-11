@@ -1,6 +1,8 @@
 #include "Scene.hpp"
 #include <cmath>
+#include <ctime>
 #include <iostream>
+#include <iomanip>
 
 Scene::Scene(int resolution, Camera* camera, vector<Object*> objects, vector<Light*> lights, float w, float d)
 {
@@ -100,6 +102,10 @@ void Scene::set_pixel(GLubyte* pixels, int x, int y, RGB rgb)
 
 void Scene::print(GLubyte* pixels)
 {
+  std::cout << "[SCENE] Started rendering" << std::endl;
+  float frametime = 0.0f;
+  clock_t t = clock();
+
   for(int y = 0; y < resolution; y++)
   {
     for (int x = 0; x < resolution; x++)
@@ -109,4 +115,8 @@ void Scene::print(GLubyte* pixels)
       set_pixel(pixels, x, y, intersection.color);
     }
   }
+  t = clock() - t;
+  frametime = ((float)t)/CLOCKS_PER_SEC;
+  std::cout << "[SCENE] Rendered in " << std::setprecision(2);
+  std::cout << frametime << "s" << std::endl;
 }

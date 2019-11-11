@@ -26,6 +26,7 @@ class Object
     void transform(Matrix4 t_matrix, TransformType t_type = TRANSLATE);
     void translate(Vector3 t_vec);
     void scale(float sx, float sy, float sz);
+    void rotate(float angle, Vector3 axis);
     friend std::ostream& operator<<(std::ostream& stream, Object& object);
 };
 

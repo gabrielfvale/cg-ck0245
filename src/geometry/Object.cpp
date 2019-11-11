@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <limits>
+#include <cmath>
 
 using namespace std;
 
@@ -123,6 +124,37 @@ void Object::scale(float sx, float sy, float sz)
   scale_m(2, 2) = sz;
   scale_m(3, 3) = 1;
   transform(scale_m, SCALE);
+}
+
+void Object::rotate(float angle, Vector3 axis)
+{
+  angle /= 2;
+  Vector3 qrv = axis * std::sin(angle);
+  float wq = std::cos(angle);
+  float vqx, vqy, vqz;
+  qrv.get_coordinates(&vqx, &vqy, &vqz);
+
+  Matrix4 rotation_matrix;
+  // omitted fields are set to 0 by default
+  rotation_matrix(0, 0) = vqx*vqx - vqy*vqy - vqz*vqz + wq*wq;
+  rotation_matrix(0, 1) = 2*vqx*vqy - 2*vqz*wq;
+  rotation_matrix(0, 2) = 2*vqx*vqz + 2*vqy*wq;
+
+  rotation_matrix(1, 0) = 2*vqz*vqy + 2*vqz*wq;
+  rotation_matrix(1, 1) = -(vqx*vqx) + vqy*vqy - vqz*vqz + wq*wq;
+  rotation_matrix(1, 2) = 2*vqy*vqz - 2*vqx*wq;
+
+  rotation_matrix(2, 0) = 2*vqx*vqz - 2*vqy*wq;
+  rotation_matrix(2, 1) = 2*vqy*vqz + 2*vqx*wq;
+  rotation_matrix(2, 2) = -(vqx*vqx) - vqy*vqy + vqz*vqz + wq*wq;
+
+  rotation_matrix(3, 3) = 1;
+  
+  //bounding_box_.transform(rotation_matrix);
+  for(unsigned i = 0; i < mesh_.size(); i++)
+  {
+    mesh_[0]->transform(rotation_matrix, ROTATE);
+  }
 }
 
 std::ostream& operator<<(std::ostream& stream, Object& object)

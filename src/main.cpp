@@ -1,7 +1,6 @@
 #include <iostream>
 #include <cstdio>
 #include <cmath>
-#include <ctime>
 #include <vector>
 
 #include <GL/freeglut.h>
@@ -25,7 +24,6 @@ using namespace std;
 int resolution = 500;
 float upscaling = 1.0f;
 GLubyte* PixelBuffer;
-float frametime = 0.0f;
 
 static float observerf3[3] = { 10.0f, 4.5f, 10.0f };
 static float lookatf3[3] = { 10.0f, 4.5f, 5.0f };
@@ -76,18 +74,12 @@ const char* object_selected = "No object selected";
 
 void redraw()
 {
-  clock_t t = clock();
   scene->print(PixelBuffer);
-  t = clock() - t;
-  frametime = ((float)t)/CLOCKS_PER_SEC;
   glutPostRedisplay();
 }
 
 void display_gui()
 {
-  char ft_buffer[128];
-  snprintf(ft_buffer, sizeof ft_buffer, "%.2f", frametime);
-
   ImGuiColorEditFlags picker_flags = ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_Float;
   ImGuiWindowFlags window_flags = 0;
   //window_flags |= ImGuiWindowFlags_NoTitleBar;
@@ -102,9 +94,6 @@ void display_gui()
   ImGui::SetNextWindowSize(ImVec2(250, 350), ImGuiCond_Once);
   // Janela de propriedades do cenario
   ImGui::Begin("Scene", NULL, window_flags);
-  ImGui::Text("Frametime: ");
-  ImGui::SameLine(); ImGui::Text(ft_buffer);
-  ImGui::SameLine(); ImGui::Text("s");
   /* Propriedades de camera */
   ImGui::Text("Camera");
   ImGui::InputFloat3("observer", observerf3);
@@ -297,11 +286,7 @@ int main(int argc, char *argv[])
   };
 
   scene = new Scene(resolution, camera, objects, lights);
-
-  clock_t t = clock();
   scene->print(PixelBuffer);
-  t = clock() - t;
-  frametime = ((float)t)/CLOCKS_PER_SEC;
 
   // inicia GLUT
   glutInit(&argc, argv);

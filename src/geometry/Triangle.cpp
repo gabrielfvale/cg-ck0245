@@ -24,7 +24,7 @@ void Triangle::set_vertices(float* vertex0, float* vertex1, float* vertex2)
   this->vertex1 = Point(vertex1);
   this->vertex2 = Point(vertex2);
 }
-Point* Triangle::operator[](int& i)
+Point* Triangle::operator[](int i)
 {
   switch (i)
   {
