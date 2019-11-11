@@ -106,13 +106,19 @@ void Scene::print(GLubyte* pixels)
   float frametime = 0.0f;
   clock_t t = clock();
 
+  float written_pixels = 0;
+  float total_pixels = resolution*resolution;
+  float progress = 0.0f;
+
   for(int y = 0; y < resolution; y++)
   {
     for (int x = 0; x < resolution; x++)
     {
+      written_pixels++;
       Intersection intersection;
       castRay(x, y, intersection);
       set_pixel(pixels, x, y, intersection.color);
+      progress = written_pixels/total_pixels;
     }
   }
   t = clock() - t;

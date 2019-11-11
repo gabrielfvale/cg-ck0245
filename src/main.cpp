@@ -24,6 +24,7 @@ using namespace std;
 int resolution = 500;
 float upscaling = 1.0f;
 GLubyte* PixelBuffer;
+//float frame_progress = 0.0f;
 
 static float observerf3[3] = { 10.0f, 4.5f, 10.0f };
 static float lookatf3[3] = { 10.0f, 4.5f, 5.0f };
@@ -32,8 +33,10 @@ Camera* camera = new Camera(observerf3, lookatf3, viewupf3);
 
 float pl_intensity[3] = {0.05f, 0.05f, 0.05f};
 float rl_intensity[3] = {0.3f, 0.3f, 0.3f};
+float sp_intensity[3] = {0.3f, 0.3f, 0.3f};
 Light* point_light = new Light(pl_intensity, Vector3(10, 20, 5));
 Light* remote_light = new Light(rl_intensity, Vector3(-1, -1, 0), REMOTE);
+Light* spot_light = new Light(sp_intensity, Point(10, 6, 5), Vector3(0, -1, 0), 15, 45, 5);
 
 Scene* scene;
 
@@ -80,6 +83,7 @@ void redraw()
 
 void display_gui()
 {
+  //ImGui::ShowDemoWindow();
   ImGuiColorEditFlags picker_flags = ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_Float;
   ImGuiWindowFlags window_flags = 0;
   //window_flags |= ImGuiWindowFlags_NoTitleBar;
@@ -91,9 +95,12 @@ void display_gui()
   //window_flags |= ImGuiWindowFlags_NoDecoration;
 
   ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Once);
-  ImGui::SetNextWindowSize(ImVec2(250, 350), ImGuiCond_Once);
+  ImGui::SetNextWindowSize(ImVec2(250, 400), ImGuiCond_Once);
   // Janela de propriedades do cenario
   ImGui::Begin("Scene", NULL, window_flags);
+  //ImGui::ProgressBar(frame_progress, ImVec2(0.0f,0.0f));
+  //ImGui::SameLine();
+  ImGui::Text("Render");
   /* Propriedades de camera */
   ImGui::Text("Camera");
   ImGui::InputFloat3("observer", observerf3);
@@ -131,6 +138,14 @@ void display_gui()
   if(ImGui::IsItemDeactivatedAfterEdit())
   {
     point_light->set_intensity(pl_intensity);
+    redraw();
+  }
+  if(ImGui::Checkbox("Spot light", spot_light->active()))
+    redraw();
+  ImGui::ColorEdit3("sp_rgb", sp_intensity);
+  if(ImGui::IsItemDeactivatedAfterEdit())
+  {
+    spot_light->set_intensity(sp_intensity);
     redraw();
   }
 
@@ -282,7 +297,8 @@ int main(int argc, char *argv[])
   vector<Light*> lights = {
     ambient_light,
     point_light,
-    remote_light
+    remote_light,
+    spot_light
   };
 
   scene = new Scene(resolution, camera, objects, lights);

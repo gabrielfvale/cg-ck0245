@@ -1,4 +1,6 @@
 #include "Light.hpp"
+#include <cmath>
+#include <iostream>
 
 Light::Light()
 {
@@ -28,6 +30,21 @@ Light::Light(float* rgb, Vector3 position, LightType light_type)
   active_ = true;
 }
 
+/* Spotlight */
+Light::Light(float* rgb, Point position, Vector3 lookat, float angle, float falloff_angle, float focus)
+{
+  intensity_.r = rgb[0];
+  intensity_.g = rgb[1];
+  intensity_.b = rgb[2];
+  position_ = lookat;
+  spot_pos = position;
+  spot_angle = (M_PI/180) * angle;
+  spot_falloff = (M_PI/180) * falloff_angle;
+  spot_focus = focus;
+  l_type = SPOT;
+  active_ = true;
+}
+
 void Light::set_intensity(RGB intensity)
 {
   intensity_ = intensity;
@@ -39,9 +56,25 @@ void Light::set_intensity(float* rgb)
   intensity_.b = rgb[2];
 }
 
-RGB* Light::get_intensity()
+RGB* Light::get_intensity(Point& point)
 {
   if(!active_) return new RGB();
+
+  if(l_type == SPOT)
+  {
+    Vector3 lpos_p = Vector3(&spot_pos, &point);
+    lpos_p.normalize();
+
+    float angle = std::acos(lpos_p.dot_product(&position_));
+    if(angle > spot_angle + spot_falloff)
+      return new RGB();
+    if(angle > spot_angle)
+    {
+      float gradient = 1 - (spot_focus*(angle - spot_angle)) / spot_falloff;
+      return new RGB(intensity_.r * gradient, intensity_.r * gradient, intensity_.r * gradient);
+    }
+  }
+
   return &intensity_;
 }
 void Light::set_position(Vector3 position) { position_ = position; }
