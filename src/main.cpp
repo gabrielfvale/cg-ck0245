@@ -67,6 +67,18 @@ Material* mat_bronze = new Material(
   RGB(0.393548, 0.271906, 0.166721),
   25.6
 );
+Material* mat_silver = new Material(
+	RGB(0.23125, 0.23125, 0.23125),
+  RGB(0.2775, 0.2775, 0.2775),
+  RGB(0.773911, 0.773911, 0.773911),
+  89.6
+);
+Material* mat_obsidian = new Material(
+	RGB(0.05375, 0.05, 0.06625),
+  RGB(0.18275, 0.17, 0.22525),
+  RGB(0.332741, 0.328634, 0.346435),
+  38.4
+);
 
 float mat_ambient[3] = {0.0f, 0.0f, 0.0f};
 float mat_diffuse[3] = {0.0f, 0.0f, 0.0f};
@@ -264,7 +276,7 @@ int main(int argc, char *argv[])
   tree2->translate(Vector3(6, 0, 0));
 
   // Cube
-  AABB b_cube = AABB(Point(10, 0, 5), g_axis, cube_edge, mat_purple);
+  AABB b_cube = AABB(Point(10, 0, 5), g_axis, cube_edge, mat_obsidian);
   Object* cube = new Object(
     "Cube",
     b_cube,
@@ -285,11 +297,17 @@ int main(int argc, char *argv[])
   ruby->scale(0.5, 0.5, 0.5);
   ruby->translate(Vector3(&origin, &destination));
 
+  Cone* lcone = new Cone(Point(10, 6.1, 5), g_axis, 2, 0.6, mat_silver);
+  Object* lamp = new Object(
+    "Lamp",
+    AABB(Point(10, 6.1, 5), g_axis, 2, Vector3()),
+    vector<Solid*>{lcone}
+  );
+
   vector<Object*> objects = {
-    tree1,
-    tree2,
     cube,
-    ruby
+    ruby,
+    lamp
   };
 
   Light* ambient_light = new Light(RGB(0.5, 0.5, 0.5), Vector3(), AMBIENT);

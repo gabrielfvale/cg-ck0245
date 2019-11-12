@@ -29,6 +29,7 @@ class Light
     bool* active();
     RGB* get_intensity(Point& point);
     Vector3* get_position();
+    Point* get_spotpos();
     LightType type();
 };
 

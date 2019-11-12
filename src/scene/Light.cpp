@@ -80,4 +80,11 @@ RGB* Light::get_intensity(Point& point)
 void Light::set_position(Vector3 position) { position_ = position; }
 bool* Light::active() { return &active_; }
 Vector3* Light::get_position() { return &position_; }
+Point* Light::get_spotpos()
+{
+  if (l_type == SPOT)
+    return &spot_pos;
+  else
+    return new Point();
+}
 LightType Light::type() { return l_type; }

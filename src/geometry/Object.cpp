@@ -153,7 +153,7 @@ void Object::rotate(float angle, Vector3 axis)
   //bounding_box_.transform(rotation_matrix);
   for(unsigned i = 0; i < mesh_.size(); i++)
   {
-    mesh_[0]->transform(rotation_matrix, ROTATE);
+    mesh_[i]->transform(rotation_matrix, ROTATE);
   }
 }
 
