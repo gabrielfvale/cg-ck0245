@@ -12,6 +12,7 @@
 #include "./geometry/Triangle.hpp"
 #include "./geometry/Sphere.hpp"
 #include "./geometry/AABB.hpp"
+#include "./geometry/OBB.hpp"
 #include "./geometry/Cone.hpp"
 #include "./geometry/Cylinder.hpp"
 #include "./geometry/Solid.hpp"
@@ -25,10 +26,14 @@ int resolution = 500;
 float upscaling = 1.0f;
 GLubyte* PixelBuffer;
 //float frame_progress = 0.0f;
-
+/*
 static float observerf3[3] = { 10.0f, 4.5f, 10.0f };
 static float lookatf3[3] = { 10.0f, 4.5f, 5.0f };
 static float viewupf3[3] = { 10.0f, 6.0f, 10.0f };
+*/
+static float observerf3[3] = { 0.0f, 0.0f, 0.0f };
+static float lookatf3[3] = { 0.0f, 0.0f, 0.0f };
+static float viewupf3[3] = { 0.0f, 1.0f, 0.0f };
 Camera* camera = new Camera(observerf3, lookatf3, viewupf3);
 
 float pl_intensity[3] = {0.05f, 0.05f, 0.05f};
@@ -304,10 +309,14 @@ int main(int argc, char *argv[])
     vector<Solid*>{lcone}
   );
 
+  OBB oriented = OBB(Point(-1, -1, -1), Point(1, 1, 1));
+  Object* obb = new Object(
+    "OBB",
+    AABB(),
+    vector<Solid*>{&oriented}
+  );
   vector<Object*> objects = {
-    cube,
-    ruby,
-    lamp
+    obb
   };
 
   Light* ambient_light = new Light(RGB(0.5, 0.5, 0.5), Vector3(), AMBIENT);
