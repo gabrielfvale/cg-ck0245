@@ -26,14 +26,16 @@ int resolution = 500;
 float upscaling = 1.0f;
 GLubyte* PixelBuffer;
 //float frame_progress = 0.0f;
-/*
-static float observerf3[3] = { 10.0f, 4.5f, 10.0f };
-static float lookatf3[3] = { 10.0f, 4.5f, 5.0f };
-static float viewupf3[3] = { 10.0f, 6.0f, 10.0f };
-*/
+
+/* Origin
 static float observerf3[3] = { 0.0f, 0.0f, 5.0f };
 static float lookatf3[3] = { 0.0f, 0.0f, 0.0f };
 static float viewupf3[3] = { 0.0f, 1.0f, 5.0f };
+*/
+static float observerf3[3] = { 10.0f, 4.5f, 10.0f };
+static float lookatf3[3] = { 10.0f, 4.5f, 5.0f };
+static float viewupf3[3] = { 10.0f, 6.0f, 10.0f };
+
 Camera* camera = new Camera(observerf3, lookatf3, viewupf3);
 
 float pl_intensity[3] = {0.05f, 0.05f, 0.05f};
@@ -274,7 +276,7 @@ int main(int argc, char *argv[])
   
   Object* tree1 = new Object(
     "Tree",
-    AABB(Point(7, 0, 9), g_axis, cone_radius*2, Vector3(0, cylinder_height+cone_height-cone_radius*2, 0)),
+    OBB(Point(5, 0, 7), Point(9, 10, 11)),
     vector<Solid*>{&cylinder, &cone}
   );
   Object* tree2 = tree1->clone();
@@ -284,7 +286,7 @@ int main(int argc, char *argv[])
   AABB b_cube = AABB(Point(10, 0, 5), g_axis, cube_edge, mat_obsidian);
   Object* cube = new Object(
     "Cube",
-    b_cube,
+    OBB(Point(8.5, 0, 3.5), Point(11.5, 3, 6.5)),
     vector<Solid*>{&b_cube}
   );
 
@@ -305,19 +307,16 @@ int main(int argc, char *argv[])
   Cone* lcone = new Cone(Point(10, 6.1, 5), g_axis, 2, 0.6, mat_silver);
   Object* lamp = new Object(
     "Lamp",
-    AABB(Point(10, 6.1, 5), g_axis, 2, Vector3()),
+    OBB(Point(9.4, 5, 4.4), Point(10.6, 8, 5.6)),
     vector<Solid*>{lcone}
   );
 
-  OBB oriented = OBB(Point(-1, -1, -1), Point(1, 1, 1));
-  Object* obb = new Object(
-    "OBB",
-    AABB(),
-    vector<Solid*>{&oriented}
-  );
-  obb->rotate(M_PI_4, Vector3(0, 0, 1));
   vector<Object*> objects = {
-    obb
+    tree1,
+    tree2,
+    cube,
+    lamp,
+    ruby
   };
 
   Light* ambient_light = new Light(RGB(0.5, 0.5, 0.5), Vector3(), AMBIENT);

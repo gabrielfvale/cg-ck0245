@@ -27,6 +27,18 @@ Matrix4 Matrix4::operator-(Matrix4& m)
 	return ret;
 }
 
+Matrix4 Matrix4::operator*(Matrix4& m)
+{
+	Matrix4 ret;
+	
+  for(int i = 0; i < 4; i++)
+    for(int j = 0; j < 4; j++)
+      for(int k = 0; k < 4; k++)
+        ret(i, j) += matrix_[i][k] * m(k, j);
+
+	return ret;
+}
+
 float& Matrix4::operator()(int i, int j)
 {
   return matrix_[i][j];

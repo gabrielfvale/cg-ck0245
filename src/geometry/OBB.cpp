@@ -1,40 +1,46 @@
 #include "OBB.hpp"
 #include <cmath>
 
-OBB::OBB(Point min_bound, Point max_bound) : Solid(new Material(RGB(1, 1, 1), RGB(1, 1, 1), RGB(1, 1, 1)))
+OBB::OBB() : Solid()
+{
+  this->min_bound = Point(-0.5, -0.5, -0.5);
+  this->max_bound = Point(0.5, 0.5, 0.5);
+  this->modelmatrix.identity();
+}
+
+OBB::OBB(Point min_bound, Point max_bound) : Solid()
 {
   this->min_bound = min_bound;
   this->max_bound = max_bound;
-  this->center = Point(
-    (max_bound.get_x() + min_bound.get_x())/2,
-    (max_bound.get_y() + min_bound.get_y())/2,
-    (max_bound.get_z() + min_bound.get_z())/2
-  );
-  this->axis[0] = Vector3(1, 0, 0);
-  this->axis[1] = Vector3(0, 1, 0);
-  this->axis[2] = Vector3(0, 0, 1);
+  this->modelmatrix.identity();
 }
 
-Point* OBB::get_center() { return &this->center; }
-Vector3* OBB::get_axis() { return this->axis; }
+OBB::OBB(float* min_bound, float* max_bound) : Solid()
+{
+  this->min_bound = Point(min_bound);
+  this->max_bound = Point(max_bound);
+  this->modelmatrix.identity();
+}
 
 Vector3 OBB::surface_normal(Point& p_int) { return Vector3(); }
 bool OBB::intersects(Ray& ray, float& t_int)
 {
-  float epsilon = 0.001f;
+  float epsilon = 1e-6f;
   float tmin = 0.0f;
   float tmax = 100000.0f;
+  Matrix4 m = this->modelmatrix;
 
   Point ray_p0 = ray.get_p0();
   Vector3 ray_d = ray.get_d();
 
-  Vector3 delta = Vector3(&ray_p0, &center);
+  Point position = Point(m(3, 0), m(3, 1), m(3, 2));
+  Vector3 delta = Vector3(&ray_p0, &position);
 
   // intersections with X planes
   {
-    Vector3 ax = this->axis[0];
-    float e = ax.dot_product(&delta);
-    float f = ray_d.dot_product(&ax);
+    Vector3 x_axis = Vector3(m(0, 0), m(0, 1), m(0, 2));
+    float e = x_axis.dot_product(&delta);
+    float f = ray_d.dot_product(&x_axis);
     if(std::fabs(f) > epsilon)
     {
       float t1 = (e+min_bound.get_x())/f;
@@ -55,9 +61,9 @@ bool OBB::intersects(Ray& ray, float& t_int)
   }
   // intersections with Y planes
   {
-    Vector3 ay = this->axis[1];
-    float e = ay.dot_product(&delta);
-    float f = ray_d.dot_product(&ay);
+    Vector3 y_axis = Vector3(m(1, 0), m(1, 1), m(1, 2));
+    float e = y_axis.dot_product(&delta);
+    float f = ray_d.dot_product(&y_axis);
     if(std::fabs(f) > epsilon)
     {
       float t1 = (e+min_bound.get_y())/f;
@@ -78,9 +84,9 @@ bool OBB::intersects(Ray& ray, float& t_int)
   }
   // intersections with Z planes
   {
-    Vector3 az = this->axis[2];
-    float e = az.dot_product(&delta);
-    float f = ray_d.dot_product(&az);
+    Vector3 z_axis = Vector3(m(2, 0), m(2, 1), m(2, 2));
+    float e = z_axis.dot_product(&delta);
+    float f = ray_d.dot_product(&z_axis);
     if(std::fabs(f) > epsilon)
     {
       float t1 = (e+min_bound.get_z())/f;
@@ -107,15 +113,17 @@ void OBB::transform(Matrix4 t_matrix, TransformType t_type)
   switch (t_type)
   {
   case TRANSLATE:
-    center = t_matrix * center;
+    modelmatrix = modelmatrix * t_matrix;
     min_bound = t_matrix * min_bound;
     max_bound = t_matrix * max_bound;
     break;
   case SCALE:
+    min_bound = t_matrix * min_bound;
+    max_bound = t_matrix * max_bound;
     break;
   case ROTATE:
-    for(int i = 0; i < 2; i++)
-      axis[i] = t_matrix * axis[i];
+    // TODO: Angles are inverted on Y-axis
+    modelmatrix = modelmatrix * t_matrix;
     break;
   }
 }

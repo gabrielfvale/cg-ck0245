@@ -13,6 +13,7 @@ class Matrix4
     Matrix4();
     Matrix4 operator+(Matrix4& m);
     Matrix4 operator-(Matrix4& m);
+    Matrix4 operator*(Matrix4& m);
     float& operator()(int i, int j);
     Point operator*(Point& p);
     Vector3 operator*(Vector3& v);

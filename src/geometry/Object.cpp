@@ -8,7 +8,7 @@
 
 using namespace std;
 
-Object::Object(const char* name, AABB bounding_box, std::vector<Solid*> mesh, bool visible)
+Object::Object(const char* name, OBB bounding_box, std::vector<Solid*> mesh, bool visible)
 {
   this->bounding_box_ = bounding_box;
   this->name = name;
@@ -59,10 +59,10 @@ Object::Object(const char* name, const char* obj_path, Material* material, bool 
   }
   this->name = name;
   this->visible_ = visible;
-  bounding_box_ = AABB(Vector3(0, 1, 0), Point(min_point), Point(max_point));
+  bounding_box_ = OBB(min_point, max_point);
 }
 
-void Object::get(AABB& bb, std::vector<Solid*>& mesh)
+void Object::get(OBB& bb, std::vector<Solid*>& mesh)
 {
   bb = bounding_box_;
   mesh = mesh_;
@@ -81,10 +81,10 @@ bool Object::trace(Ray& ray, Intersection& intersection)
   float t_min = std::numeric_limits<float>::infinity();
   float t_int;
   bool hit = false;
-/*
+
   if(!visible_ || !bounding_box_.intersects(ray, t_int))
     return hit;
-*/
+
   for(unsigned i = 0; i < mesh_.size(); i++)
   {
     if(mesh_[i]->intersects(ray, t_int) && t_int >= 0 && t_int < t_min)
@@ -134,27 +134,23 @@ void Object::rotate(float angle, Vector3 axis)
   float vqx, vqy, vqz;
   qrv.get_coordinates(&vqx, &vqy, &vqz);
 
-  Matrix4 rotation_matrix;
+  Matrix4 rotation_m;
   // omitted fields are set to 0 by default
-  rotation_matrix(0, 0) = vqx*vqx - vqy*vqy - vqz*vqz + wq*wq;
-  rotation_matrix(0, 1) = 2*vqx*vqy - 2*vqz*wq;
-  rotation_matrix(0, 2) = 2*vqx*vqz + 2*vqy*wq;
+  rotation_m(0, 0) = vqx*vqx - vqy*vqy - vqz*vqz + wq*wq;
+  rotation_m(0, 1) = 2*vqx*vqy - 2*vqz*wq;
+  rotation_m(0, 2) = 2*vqx*vqz + 2*vqy*wq;
 
-  rotation_matrix(1, 0) = 2*vqz*vqy + 2*vqz*wq;
-  rotation_matrix(1, 1) = -(vqx*vqx) + vqy*vqy - vqz*vqz + wq*wq;
-  rotation_matrix(1, 2) = 2*vqy*vqz - 2*vqx*wq;
+  rotation_m(1, 0) = 2*vqz*vqy + 2*vqz*wq;
+  rotation_m(1, 1) = -(vqx*vqx) + vqy*vqy - vqz*vqz + wq*wq;
+  rotation_m(1, 2) = 2*vqy*vqz - 2*vqx*wq;
 
-  rotation_matrix(2, 0) = 2*vqx*vqz - 2*vqy*wq;
-  rotation_matrix(2, 1) = 2*vqy*vqz + 2*vqx*wq;
-  rotation_matrix(2, 2) = -(vqx*vqx) - vqy*vqy + vqz*vqz + wq*wq;
+  rotation_m(2, 0) = 2*vqx*vqz - 2*vqy*wq;
+  rotation_m(2, 1) = 2*vqy*vqz + 2*vqx*wq;
+  rotation_m(2, 2) = -(vqx*vqx) - vqy*vqy + vqz*vqz + wq*wq;
 
-  rotation_matrix(3, 3) = 1;
+  rotation_m(3, 3) = 1;
   
-  //bounding_box_.transform(rotation_matrix);
-  for(unsigned i = 0; i < mesh_.size(); i++)
-  {
-    mesh_[i]->transform(rotation_matrix, ROTATE);
-  }
+  transform(rotation_m, ROTATE);
 }
 
 std::ostream& operator<<(std::ostream& stream, Object& object)
