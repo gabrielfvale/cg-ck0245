@@ -31,9 +31,9 @@ static float observerf3[3] = { 10.0f, 4.5f, 10.0f };
 static float lookatf3[3] = { 10.0f, 4.5f, 5.0f };
 static float viewupf3[3] = { 10.0f, 6.0f, 10.0f };
 */
-static float observerf3[3] = { 0.0f, 0.0f, 0.0f };
+static float observerf3[3] = { 0.0f, 0.0f, 5.0f };
 static float lookatf3[3] = { 0.0f, 0.0f, 0.0f };
-static float viewupf3[3] = { 0.0f, 1.0f, 0.0f };
+static float viewupf3[3] = { 0.0f, 1.0f, 5.0f };
 Camera* camera = new Camera(observerf3, lookatf3, viewupf3);
 
 float pl_intensity[3] = {0.05f, 0.05f, 0.05f};
@@ -315,6 +315,7 @@ int main(int argc, char *argv[])
     AABB(),
     vector<Solid*>{&oriented}
   );
+  obb->rotate(M_PI_4, Vector3(0, 0, 1));
   vector<Object*> objects = {
     obb
   };

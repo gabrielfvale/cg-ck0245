@@ -6,9 +6,9 @@ OBB::OBB(Point min_bound, Point max_bound) : Solid(new Material(RGB(1, 1, 1), RG
   this->min_bound = min_bound;
   this->max_bound = max_bound;
   this->center = Point(
-    (max_bound.get_x() - min_bound.get_x())/2,
-    (max_bound.get_y() - min_bound.get_y())/2,
-    (max_bound.get_z() - min_bound.get_z())/2
+    (max_bound.get_x() + min_bound.get_x())/2,
+    (max_bound.get_y() + min_bound.get_y())/2,
+    (max_bound.get_z() + min_bound.get_z())/2
   );
   this->axis[0] = Vector3(1, 0, 0);
   this->axis[1] = Vector3(0, 1, 0);
@@ -47,6 +47,10 @@ bool OBB::intersects(Ray& ray, float& t_int)
         tmin = t1;
       if(tmax < tmin)
         return false;
+    } else
+    {
+      if(-e+min_bound.get_x() > 0.0f || -e+max_bound.get_x() < 0.0f)
+        return false;
     }
   }
   // intersections with Y planes
@@ -65,6 +69,10 @@ bool OBB::intersects(Ray& ray, float& t_int)
       if(t1 > tmin)
         tmin = t1;
       if(tmax < tmin)
+        return false;
+    } else
+    {
+      if(-e+min_bound.get_y() > 0.0f || -e+max_bound.get_y() < 0.0f)
         return false;
     }
   }
@@ -85,6 +93,10 @@ bool OBB::intersects(Ray& ray, float& t_int)
         tmin = t1;
       if(tmax < tmin)
         return false;
+    } else
+    {
+      if(-e+min_bound.get_z() > 0.0f || -e+max_bound.get_z() < 0.0f)
+        return false;
     }
   }
   t_int = tmin;
@@ -92,6 +104,18 @@ bool OBB::intersects(Ray& ray, float& t_int)
 }
 void OBB::transform(Matrix4 t_matrix, TransformType t_type)
 {
-  for(int i = 0; i < 2; i++)
-    axis[i] = t_matrix * axis[i];
+  switch (t_type)
+  {
+  case TRANSLATE:
+    center = t_matrix * center;
+    min_bound = t_matrix * min_bound;
+    max_bound = t_matrix * max_bound;
+    break;
+  case SCALE:
+    break;
+  case ROTATE:
+    for(int i = 0; i < 2; i++)
+      axis[i] = t_matrix * axis[i];
+    break;
+  }
 }
