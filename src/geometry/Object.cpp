@@ -8,22 +8,20 @@
 
 using namespace std;
 
-Object::Object(const char* name, OBB bounding_box, std::vector<Solid*> mesh, bool visible)
-{
-  this->bounding_box_ = bounding_box;
-  this->name = name;
-  this->visible_ = visible;
-  for(unsigned i=0; i<mesh.size(); i++)
-    mesh_.push_back(mesh[i]->clone());
-}
 
-Object::Object(const char* name, const char* obj_path, Material* material, bool visible)
+void Object::load_obj(const char* obj_path, Material* material, Point& c_min, Point& c_max, bool first_time)
 {
   vector<Point> vertices;
 
-  float infinity = std::numeric_limits<float>::infinity();
+  float infinity = numeric_limits<float>::infinity();
   float min_point[3] = {infinity, infinity, infinity};
   float max_point[3] = {-infinity, -infinity, -infinity};
+
+  if(!first_time)
+  {
+    c_min.get_coordinates(&min_point[0], &min_point[1], &min_point[2]);
+    c_max.get_coordinates(&max_point[0], &max_point[1], &max_point[2]);
+  }
 
   ifstream in(obj_path, ios::in);
   if(!in)
@@ -39,13 +37,13 @@ Object::Object(const char* name, const char* obj_path, Material* material, bool 
       istringstream s(line.substr(2));
       float px, py, pz;
       s >> px; s >> py; s >> pz;
-      min_point[0] = std::min(min_point[0], px);
-      min_point[1] = std::min(min_point[1], py);
-      min_point[2] = std::min(min_point[2], pz);
+      min_point[0] = min(min_point[0], px);
+      min_point[1] = min(min_point[1], py);
+      min_point[2] = min(min_point[2], pz);
 
-      max_point[0] = std::max(max_point[0], px);
-      max_point[1] = std::max(max_point[1], py);
-      max_point[2] = std::max(max_point[2], pz);
+      max_point[0] = max(max_point[0], px);
+      max_point[1] = max(max_point[1], py);
+      max_point[2] = max(max_point[2], pz);
       vertices.push_back(Point(px, py, pz));
     }
     else if(line.substr(0, 2) == "f ")
@@ -57,9 +55,28 @@ Object::Object(const char* name, const char* obj_path, Material* material, bool 
       mesh_.push_back(new Triangle(vertices[iv0], vertices[iv1], vertices[iv2], material));
     }
   }
+  vertices.clear();
+  c_min = Point(min_point);
+  c_max = Point(max_point);
+}
+
+Object::Object(const char* name, OBB bounding_box, std::vector<Solid*> mesh, bool visible)
+{
+  this->bounding_box_ = bounding_box;
   this->name = name;
   this->visible_ = visible;
-  bounding_box_ = OBB(min_point, max_point);
+  for(unsigned i=0; i<mesh.size(); i++)
+    mesh_.push_back(mesh[i]->clone());
+}
+
+Object::Object(const char* name, const char* obj_path, Material* material, bool visible)
+{
+  this->name = name;
+  this->visible_ = visible;
+  Point minb;
+  Point maxb;
+  this->load_obj(obj_path, material, minb, maxb, true);
+  bounding_box_ = OBB(minb, maxb);
 }
 
 void Object::get(OBB& bb, std::vector<Solid*>& mesh)
@@ -71,6 +88,14 @@ void Object::get(OBB& bb, std::vector<Solid*>& mesh)
 Object* Object::clone()
 {
   return new Object(name, bounding_box_, mesh_, visible_);
+}
+
+void Object::include(const char* obj_path, Material* material)
+{
+  Point c_min, c_max;
+  bounding_box_.bounds(c_min, c_max);
+  this->load_obj(obj_path, material, c_min, c_max);
+  this->bounding_box_.set_bounds(c_min, c_max);
 }
 
 void Object::set_visible(bool visible) { visible_ = visible; }

@@ -14,11 +14,13 @@ class Object
     OBB bounding_box_;
     std::vector<Solid*> mesh_;
     bool visible_;
+    void load_obj(const char* obj_path, Material* material, Point& c_min, Point& c_max, bool first_time = false);
   public:
     const char* name;
     Object(const char* name, OBB bounding_box, std::vector<Solid*> mesh, bool visible = true);
     Object(const char* name, const char* obj_path, Material* material, bool visible = true);
     Object* clone();
+    void include(const char* obj_path, Material* material);
     void get(OBB& bb, std::vector<Solid*>& mesh);
     void set_visible(bool visible);
     bool visible();

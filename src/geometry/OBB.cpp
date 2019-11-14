@@ -31,6 +31,17 @@ Point OBB::get_ref()
   );
 }
 
+void OBB::bounds(Point& minb, Point& maxb)
+{
+  minb = this->min_bound;
+  maxb = this->max_bound;
+}
+void OBB::set_bounds(Point& minb, Point& maxb)
+{
+  this->min_bound = minb;
+  this->max_bound = maxb;
+}
+
 Vector3 OBB::surface_normal(Point& p_int) { return Vector3(); }
 bool OBB::intersects(Ray& ray, float& t_int)
 {
