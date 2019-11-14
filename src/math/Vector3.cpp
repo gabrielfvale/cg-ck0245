@@ -17,6 +17,11 @@ Vector3::Vector3(Point* o, float x, float y, float z)
   origin_ = *o;
   x_ = x; y_ = y; z_ = z;
 }
+Vector3::Vector3(float* coords){
+  x_ = coords[0];
+  y_ = coords[1];
+  z_ = coords[2];
+}
 Vector3::Vector3(Point* start, Point* end)
 {
   origin_ = *start;

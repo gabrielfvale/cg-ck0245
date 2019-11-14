@@ -25,13 +25,13 @@ using namespace std;
 int resolution = 500;
 float upscaling = 1.0f;
 GLubyte* PixelBuffer;
-//float frame_progress = 0.0f;
 
 /* Origin
 static float observerf3[3] = { 0.0f, 0.0f, 5.0f };
 static float lookatf3[3] = { 0.0f, 0.0f, 0.0f };
 static float viewupf3[3] = { 0.0f, 1.0f, 5.0f };
 */
+/* Spot */
 static float observerf3[3] = { 10.0f, 4.5f, 10.0f };
 static float lookatf3[3] = { 10.0f, 4.5f, 5.0f };
 static float viewupf3[3] = { 10.0f, 6.0f, 10.0f };
@@ -87,12 +87,17 @@ Material* mat_obsidian = new Material(
   38.4
 );
 
-float mat_ambient[3] = {0.0f, 0.0f, 0.0f};
-float mat_diffuse[3] = {0.0f, 0.0f, 0.0f};
-float mat_specular[3] = {0.0f, 0.0f, 0.0f};
+float obj_ambient[3] = {0.0f, 0.0f, 0.0f};
+float obj_diffuse[3] = {0.0f, 0.0f, 0.0f};
+float obj_specular[3] = {0.0f, 0.0f, 0.0f};
+
+float obj_translate[3] = {0.0f, 0.0f, 0.0f};
+float obj_rangle = 0.0f;
+float obj_raxis[3] = {0.0f, 0.0f, 0.0f};
 
 Solid* picked_solid = NULL;
-const char* object_selected = "No object selected";
+Object* picked_object = NULL;
+const char* object_name = "No object selected";
 
 void redraw()
 {
@@ -117,91 +122,105 @@ void display_gui()
   ImGui::SetNextWindowSize(ImVec2(250, 400), ImGuiCond_Once);
   // Janela de propriedades do cenario
   ImGui::Begin("Scene", NULL, window_flags);
-  //ImGui::ProgressBar(frame_progress, ImVec2(0.0f,0.0f));
-  //ImGui::SameLine();
-  ImGui::Text("Render");
   /* Propriedades de camera */
-  ImGui::Text("Camera");
-  ImGui::InputFloat3("observer", observerf3);
-  if(ImGui::IsItemDeactivatedAfterEdit())
+  if(ImGui::CollapsingHeader("Camera"))
   {
-    camera->set_eye(observerf3);
-    redraw();
+    ImGui::InputFloat3("observer", observerf3);
+    if(ImGui::IsItemDeactivatedAfterEdit())
+    {
+      camera->set_eye(observerf3);
+      redraw();
+    }
+    ImGui::InputFloat3("lookat", lookatf3);
+    if(ImGui::IsItemDeactivatedAfterEdit())
+    {
+      camera->set_lookat(lookatf3);
+      redraw();
+    }
+    ImGui::InputFloat3("viewup", viewupf3);
+    if(ImGui::IsItemDeactivatedAfterEdit())
+    {
+      camera->set_viewup(viewupf3);
+      redraw();
+    }
   }
-  ImGui::InputFloat3("lookat", lookatf3);
-  if(ImGui::IsItemDeactivatedAfterEdit())
-  {
-    camera->set_lookat(lookatf3);
-    redraw();
-  }
-  ImGui::InputFloat3("viewup", viewupf3);
-  if(ImGui::IsItemDeactivatedAfterEdit())
-  {
-    camera->set_viewup(viewupf3);
-    redraw();
-  }
-
   /* Configuração de luzes */
-  ImGui::Text("Lights");
-  if(ImGui::Checkbox("Remote light", remote_light->active()))
-    redraw();
-  ImGui::ColorEdit3("rl_rgb", rl_intensity);
-  if(ImGui::IsItemDeactivatedAfterEdit())
+  if(ImGui::CollapsingHeader("Lights"))
   {
-    remote_light->set_intensity(rl_intensity);
-    redraw();
-  }
-  if(ImGui::Checkbox("Point light", point_light->active()))
-    redraw();
-  ImGui::ColorEdit3("pl_rgb", pl_intensity);
-  if(ImGui::IsItemDeactivatedAfterEdit())
-  {
-    point_light->set_intensity(pl_intensity);
-    redraw();
-  }
-  if(ImGui::Checkbox("Spot light", spot_light->active()))
-    redraw();
-  ImGui::ColorEdit3("sp_rgb", sp_intensity);
-  if(ImGui::IsItemDeactivatedAfterEdit())
-  {
-    spot_light->set_intensity(sp_intensity);
-    redraw();
-  }
-
-  /* Propriedades de materiais */
-  ImGui::BeginChild("Material");
-  ImGui::Text("Materials");
-  ImGui::Text(object_selected);
-  if(picked_solid != NULL)
-  {
-    ImGui::ColorEdit3("Ambient", mat_ambient, picker_flags);
+    if(ImGui::Checkbox("Remote light", remote_light->active()))
+      redraw();
+    ImGui::ColorEdit3("rl_rgb", rl_intensity);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
-      Material* material = picked_solid->get_material();
-      material->set_ambient(mat_ambient);
+      remote_light->set_intensity(rl_intensity);
       redraw();
     }
-    ImGui::ColorEdit3("Diffuse", mat_diffuse, picker_flags);
+    if(ImGui::Checkbox("Point light", point_light->active()))
+      redraw();
+    ImGui::ColorEdit3("pl_rgb", pl_intensity);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
-      Material* material = picked_solid->get_material();
-      material->set_diffuse(mat_diffuse);
+      point_light->set_intensity(pl_intensity);
       redraw();
     }
-    ImGui::ColorEdit3("Specular", mat_specular, picker_flags);
+    if(ImGui::Checkbox("Spot light", spot_light->active()))
+      redraw();
+    ImGui::ColorEdit3("sp_rgb", sp_intensity);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
-      Material* material = picked_solid->get_material();
-      material->set_specular(mat_specular);
+      spot_light->set_intensity(sp_intensity);
       redraw();
     }
   }
-  ImGui::EndChild();
-  ImGui::End();
 
   /* Object picking */
+  if(ImGui::CollapsingHeader("Object Picking"))
+  {
+    ImGui::Text(object_name);
+    if(picked_solid != NULL)
+    {
+      if(ImGui::Checkbox("Visible", picked_object->visible_ptr()))
+        redraw();
+      ImGui::ColorEdit3("Ambient", obj_ambient, picker_flags);
+      if(ImGui::IsItemDeactivatedAfterEdit())
+      {
+        Material* material = picked_solid->get_material();
+        material->set_ambient(obj_ambient);
+        redraw();
+      }
+      ImGui::ColorEdit3("Diffuse", obj_diffuse, picker_flags);
+      if(ImGui::IsItemDeactivatedAfterEdit())
+      {
+        Material* material = picked_solid->get_material();
+        material->set_diffuse(obj_diffuse);
+        redraw();
+      }
+      ImGui::ColorEdit3("Specular", obj_specular, picker_flags);
+      if(ImGui::IsItemDeactivatedAfterEdit())
+      {
+        Material* material = picked_solid->get_material();
+        material->set_specular(obj_specular);
+        redraw();
+      }
+      ImGui::Text("Transformations");
+      ImGui::InputFloat3("trl", obj_translate);
+      if(ImGui::IsItemDeactivatedAfterEdit())
+      {
+        Vector3 trl_vector = Vector3(obj_translate);
+        if(trl_vector.norm() != 0)
+          picked_object->translate(trl_vector);
+        redraw();
+        obj_translate[0] = 0.0f;
+        obj_translate[1] = 0.0f;
+        obj_translate[2] = 0.0f;
+      }
+    }
+  }
+  ImGui::End();
+
+  /* Object picking (Ray cast) */
   ImGuiIO& io = ImGui::GetIO();
-  if(ImGui::IsMouseClicked(0))
+  if(ImGui::IsMouseClicked(0) && !ImGui::IsAnyWindowHovered())
   {
     // Manda um raio em MousePos.x, MousePos.y
     Intersection intersection;
@@ -211,20 +230,21 @@ void display_gui()
       cout <<  *(intersection.object_hit) << endl;
       Material* int_material = intersection.solid_hit->get_material();
 
-      mat_ambient[0] = int_material->ambient.r;
-      mat_ambient[1] = int_material->ambient.g;
-      mat_ambient[2] = int_material->ambient.b;
+      obj_ambient[0] = int_material->ambient.r;
+      obj_ambient[1] = int_material->ambient.g;
+      obj_ambient[2] = int_material->ambient.b;
 
-      mat_diffuse[0] = int_material->diffuse.r;
-      mat_diffuse[1] = int_material->diffuse.g;
-      mat_diffuse[2] = int_material->diffuse.b;
+      obj_diffuse[0] = int_material->diffuse.r;
+      obj_diffuse[1] = int_material->diffuse.g;
+      obj_diffuse[2] = int_material->diffuse.b;
 
-      mat_specular[0] = int_material->specular.r;
-      mat_specular[1] = int_material->specular.g;
-      mat_specular[2] = int_material->specular.b;
+      obj_specular[0] = int_material->specular.r;
+      obj_specular[1] = int_material->specular.g;
+      obj_specular[2] = int_material->specular.b;
 
-      object_selected = intersection.object_hit->name;
+      object_name = intersection.object_hit->name;
       picked_solid = intersection.solid_hit;
+      picked_object = intersection.object_hit;
     }
   }
 }

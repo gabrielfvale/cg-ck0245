@@ -22,6 +22,7 @@ class Object
     void get(OBB& bb, std::vector<Solid*>& mesh);
     void set_visible(bool visible);
     bool visible();
+    bool* visible_ptr();
     bool trace(Ray& ray, Intersection& intersection);
     void transform(Matrix4 t_matrix, TransformType t_type = TRANSLATE);
     void translate(Vector3 t_vec);

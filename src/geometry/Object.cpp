@@ -75,6 +75,7 @@ Object* Object::clone()
 
 void Object::set_visible(bool visible) { visible_ = visible; }
 bool Object::visible() { return visible_; }
+bool* Object::visible_ptr() { return &visible_; }
 
 bool Object::trace(Ray& ray, Intersection& intersection)
 {
@@ -128,6 +129,21 @@ void Object::scale(float sx, float sy, float sz)
 
 void Object::rotate(float angle, Vector3 axis)
 {
+
+  Point origin;
+  Point ref = bounding_box_.get_ref();
+  Vector3 p_orig = Vector3(&ref, &origin);
+  Matrix4 to_origin;
+  to_origin.identity();
+  to_origin(0, 3) = p_orig.get_x();
+  to_origin(1, 3) = p_orig.get_y();
+  to_origin(2, 3) = p_orig.get_z();
+  Matrix4 from_origin;
+  from_origin.identity();
+  from_origin(0, 3) = -p_orig.get_x();
+  from_origin(1, 3) = -p_orig.get_y();
+  from_origin(2, 3) = -p_orig.get_z();
+
   angle /= 2;
   Vector3 qrv = axis * std::sin(angle);
   float wq = std::cos(angle);
@@ -149,8 +165,10 @@ void Object::rotate(float angle, Vector3 axis)
   rotation_m(2, 2) = -(vqx*vqx) - vqy*vqy + vqz*vqz + wq*wq;
 
   rotation_m(3, 3) = 1;
-  
+
+  transform(to_origin);
   transform(rotation_m, ROTATE);
+  transform(from_origin);
 }
 
 std::ostream& operator<<(std::ostream& stream, Object& object)
