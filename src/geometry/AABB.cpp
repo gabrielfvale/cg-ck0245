@@ -7,58 +7,33 @@ using std::min; using std::max;
 AABB::AABB() : Solid()
 {
   center_ = Point();
-  n_ = Vector3(0, 1, 0);
   edge_ = 1;
   min_bound = Point(-edge_/2, 0, -edge_/2);
   max_bound = Point(edge_/2, edge_, edge_/2);
 }
-AABB::AABB(Point center, Vector3 n, float edge, Material* material) : Solid(material)
+AABB::AABB(Point center, float edge, Material* material) : Solid(material)
 {
   center_ = center;
-  n_ = n;
   edge_ = edge;
 
   float cx, cy, cz;
   center_.get_coordinates(&cx, &cy, &cz);
   min_bound = Point(cx - edge_/2, cy, cz - edge_/2);
   max_bound = Point(cx + edge_/2, cy + edge_, cz + edge_/2);
-
-  n_.normalize();
 }
-AABB::AABB(Point center, Vector3 n, float edge, Vector3 scale) : Solid()
+AABB::AABB(Point min_point, Point max_point, Material* material) : Solid(material)
 {
-  center_ = center;
-  n_ = n;
-  edge_ = edge;
-
-  float cx, cy, cz;
-  center_.get_coordinates(&cx, &cy, &cz);
-  min_bound = Point(cx - edge_/2, cy, cz - edge_/2);
-  max_bound = Point(cx + edge_/2 + scale.get_x(), cy + edge_ + scale.get_y(), cz + edge_/2 + scale.get_z());
-
-  n_.normalize();
-}
-AABB::AABB(Vector3 n, Point min_point, Point max_point) : Solid()
-{
-  n_ = n;
   edge_ = 1;
   min_bound = min_point;
   max_bound = max_point;
-  center_ = Point(
-    (max_point.get_x() - min_point.get_x())/2,
-    min_point.get_y(),
-    (max_point.get_z() - min_point.get_z())/2
-  );
-  n_.normalize();
+  center_ = (min_bound + max_bound) * 0.5;
 }
 Point* AABB::get_center() { return &center_; }
-Vector3* AABB::get_axis() { return &n_; }
 float* AABB::get_edge() { return &edge_; }
 
 void AABB::set_params(Point* center, Vector3* n, float* edge)
 {
   center_ = *center;
-  n_ = *n;
   edge_ = *edge;
 }
 

@@ -7,17 +7,14 @@ class AABB : public Solid
 {
   private:
     Point center_; // center of the cube
-    Vector3 n_; // AABB axis (unit vector)
     float edge_; // edge length
     Point max_bound;
     Point min_bound;
   public:
     AABB();
-    AABB(Point center, Vector3 n, float edge, Material* material);
-    AABB(Point center, Vector3 n, float edge, Vector3 scale); // Bounding box 1
-    AABB(Vector3 n, Point min_point, Point max_point); // Bounding box 2
+    AABB(Point center, float edge, Material* material);
+    AABB(Point min_point, Point max_point, Material* material);
     Point* get_center();
-    Vector3* get_axis();
     float* get_edge();
     void set_params(Point* center, Vector3* n, float* edge);
     Vector3 surface_normal(Point& p_int) override;
