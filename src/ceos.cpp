@@ -45,11 +45,11 @@ Light* remote_light = new Light(rl_intensity, Vector3(-1, -1, 0), REMOTE);
 Light* spot_light = new Light(sp_intensity, Point(0, 290/2, 180), Vector3(1, 0, 0), 15, 45, 5);
 
 Scene* scene;
+vector<Object*> objects;
 /*
 Material* mat_green = new Material(RGB(0.33, 0.49, 0.18), RGB(0.2, 0.2, 0.2), RGB(0.3, 0.3, 0.3), 10.0f);
 Material* mat_brown = new Material(RGB(0.27, 0.13, 0), RGB(0.27, 0.13, 0), RGB());
 Material* mat_purple = new Material(RGB(0.33, 0.18, 0.49), RGB(0.33, 0.18, 0.49), RGB());
-*/
 Material* mat_gold = new Material(
   RGB(0.24725, 0.1995, 0.0745),
   RGB(0.75164, 0.60648, 0.22648),
@@ -80,6 +80,7 @@ Material* mat_silver = new Material(
   RGB(0.773911, 0.773911, 0.773911),
   89.6
 );
+*/
 Material* mat_obsidian = new Material(
 	RGB(0.05375, 0.05, 0.06625),
   RGB(0.18275, 0.17, 0.22525),
@@ -126,38 +127,35 @@ void redraw()
 void display_gui()
 {
   //ImGui::ShowDemoWindow();
+  ImGuiStyle& style = ImGui::GetStyle();
+  style.FrameRounding = 12.0f;
+  //ImGui::StyleColorsLight();
+
   ImGuiColorEditFlags picker_flags = ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_Float;
   ImGuiWindowFlags window_flags = 0;
   //window_flags |= ImGuiWindowFlags_NoTitleBar;
   //window_flags |= ImGuiWindowFlags_NoMove;
   window_flags |= ImGuiWindowFlags_NoResize;
   //window_flags |= ImGuiWindowFlags_NoCollapse;
-  window_flags |= ImGuiWindowFlags_NoBackground;
+  //window_flags |= ImGuiWindowFlags_NoBackground;
   window_flags |= ImGuiWindowFlags_NoSavedSettings;
   //window_flags |= ImGuiWindowFlags_NoDecoration;
+  window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
 
   ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Once);
-  ImGui::SetNextWindowSize(ImVec2(250, 400), ImGuiCond_Once);
+  //ImGui::SetNextWindowSize(ImVec2(250, 400), ImGuiCond_Once);
   // Janela de propriedades do cenario
   ImGui::Begin("Scene", NULL, window_flags);
   /* Propriedades de camera */
   if(ImGui::CollapsingHeader("Camera"))
   {
     ImGui::InputFloat3("observer", observerf3);
-    if(ImGui::IsItemDeactivatedAfterEdit())
+    ImGui::InputFloat3("lookat", lookatf3);
+    ImGui::InputFloat3("viewup", viewupf3);
+    if(ImGui::Button("Update camera"))
     {
       camera->set_eye(observerf3);
-      redraw();
-    }
-    ImGui::InputFloat3("lookat", lookatf3);
-    if(ImGui::IsItemDeactivatedAfterEdit())
-    {
       camera->set_lookat(lookatf3);
-      redraw();
-    }
-    ImGui::InputFloat3("viewup", viewupf3);
-    if(ImGui::IsItemDeactivatedAfterEdit())
-    {
       camera->set_viewup(viewupf3);
       redraw();
     }
@@ -234,11 +232,20 @@ void display_gui()
       }
     }
   }
+  if(ImGui::CollapsingHeader("Object selection"))
+  {
+    ImGui::BeginChild("selection", ImVec2(0, 100));
+    for (unsigned i = 0; i < objects.size(); i++)
+      ImGui::Selectable(objects[i]->name, objects[i]->visible_ptr());
+    ImGui::EndChild();
+    if(ImGui::Button("Update objects"))
+      redraw();
+  }
   ImGui::End();
 
   /* Object picking (Ray cast) */
   ImGuiIO& io = ImGui::GetIO();
-  if(ImGui::IsMouseClicked(0) && !ImGui::IsAnyWindowHovered())
+  if(ImGui::IsMouseClicked(0) && !ImGui::IsAnyItemHovered())
   {
     // Manda um raio em MousePos.x, MousePos.y
     Intersection intersection;
@@ -385,14 +392,12 @@ int main(int argc, char *argv[])
     vector<Solid*>{back_footer, lfooter1, lfooter2, rfooter1, rfooter2}
   );
 
-  vector<Object*> objects = {
-    ceiling,
-    back_wall,
-    left_wall,
-    right_wall,
-    floor,
-    footer
-  };
+  objects.push_back(ceiling);
+  objects.push_back(back_wall);
+  objects.push_back(left_wall);
+  objects.push_back(right_wall);
+  objects.push_back(floor);
+  objects.push_back(footer);
 
   Light* ambient_light = new Light(RGB(0.5, 0.5, 0.5), Vector3(), AMBIENT);
 
