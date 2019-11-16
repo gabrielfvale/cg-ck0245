@@ -75,13 +75,13 @@ Material* mat_bronze = new Material(
   RGB(0.393548, 0.271906, 0.166721),
   25.6
 );
+*/
 Material* mat_silver = new Material(
 	RGB(0.23125, 0.23125, 0.23125),
   RGB(0.2775, 0.2775, 0.2775),
   RGB(0.773911, 0.773911, 0.773911),
   89.6
 );
-*/
 Material* mat_obsidian = new Material(
 	RGB(0.05375, 0.05, 0.06625),
   RGB(0.18275, 0.17, 0.22525),
@@ -452,15 +452,37 @@ int main(int argc, char *argv[])
   new_ac->include("./obj/AC/AC_plates.obj", mat_white_plastic);
   new_ac->translate(Vector3(left_wall_end.get_x()+90, wall_height-37, 0));
 
-  objects.push_back(ceiling);
-  objects.push_back(back_wall);
-  objects.push_back(left_wall);
-  objects.push_back(right_wall);
-  objects.push_back(floor);
-  objects.push_back(footer);
+
+  /* Grade */
+  AABB* gridBottom = new AABB(Point(right_wall_start.get_x(),130,right_wall_start.get_z()+245), Point(right_wall_start.get_x()+10, 137, right_wall_start.get_z()), mat_silver);
+  AABB* gridMiddle1 = new AABB(Point(right_wall_start.get_x(),180,right_wall_start.get_z()+245), Point(right_wall_start.get_x()+10, 187, right_wall_start.get_z()), mat_silver);
+  AABB* gridMiddle2 = new AABB(Point(right_wall_start.get_x(),230,right_wall_start.get_z()+245), Point(right_wall_start.get_x()+10, 237, right_wall_start.get_z()), mat_silver);
+  AABB* gridTop = new AABB(Point(right_wall_start.get_x(),280,right_wall_start.get_z()+245), Point(right_wall_start.get_x()+10, 287, right_wall_start.get_z()), mat_silver);
+  
+  vector<Solid*> gridSolids = {gridBottom, gridMiddle1, gridMiddle2, gridTop};
+
+  for(int i = 0; i < 21; i++){
+    gridSolids.push_back(new Cylinder(Point(right_wall_start.get_x(),135,right_wall_start.get_z()+240-(i*11)), Vector3(0,1,0), 150.0f, 0.8f, mat_silver));
+  }
+
+  Object* grid = new Object(
+    "Grid",
+    OBB(Point(right_wall_start.get_x(),130,right_wall_start.get_z()+235), Point(right_wall_start.get_x()+10, 287, right_wall_start.get_z())),
+    gridSolids
+  );
+
   objects.push_back(hall_door);
   objects.push_back(old_ac);
   objects.push_back(new_ac);
+  objects.push_back(floor);
+  objects.push_back(footer);
+  objects.push_back(left_wall);
+  objects.push_back(ceiling);
+  objects.push_back(back_wall);
+  
+  objects.push_back(right_wall);
+  objects.push_back(grid);
+
 
   Light* ambient_light = new Light(RGB(0.5, 0.5, 0.5), Vector3(), AMBIENT);
 

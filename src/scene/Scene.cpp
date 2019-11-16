@@ -36,7 +36,7 @@ bool Scene::trace(Ray& ray, Intersection& intersection)
 
   if(object_index != -1)
   {
-    float episilon = 0.001;
+    float episilon = 0.01;
     intersection.color = RGB();
     Point p_int = ray.calc_point(intersection.tint);
     Vector3 surfc_normal = intersection.solid_hit->surface_normal(p_int);
