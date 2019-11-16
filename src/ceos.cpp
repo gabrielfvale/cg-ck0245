@@ -129,6 +129,12 @@ Material* mat_white_plastic = new Material(
   RGB(0.5, 0.5, 0.5),
   32
 );
+Material* mat_steel = new Material(
+	RGB(0.537354, 0.537354, 0.537354),
+  RGB(0.772549, 0.772549, 0.772549),
+  RGB(0.773911, 0.773911, 0.773911),
+  32
+);
 
 float obj_ambient[3] = {0.0f, 0.0f, 0.0f};
 float obj_diffuse[3] = {0.0f, 0.0f, 0.0f};
@@ -365,23 +371,49 @@ int main(int argc, char *argv[])
   );
 
     /* Parede direita */
-  Point right_wall_start = Point(back_wall_end.get_x()-wall_thickness, 0, 0);
-  Point right_wall_end = Point(back_wall_end.get_x(), wall_height, side_wall_dim1+side_wall_section+side_wall_dim2);
+  Point right_wall1_start = Point(back_wall_end.get_x()-wall_thickness, 0, 0);
+  Point right_wall1_end = Point(back_wall_end.get_x(), wall_height-165, side_wall_dim1);
 
-  Point right_sect_start = Point(right_wall_end.get_x()-38, 0, side_wall_dim1);
-  Point right_sect_end = Point(right_wall_end.get_x(), wall_height, side_wall_dim1+side_wall_section);
+  Point right_sect_start = Point(right_wall1_end.get_x()-38, 0, side_wall_dim1);
+  Point right_sect_end = Point(right_wall1_end.get_x(), wall_height, side_wall_dim1+side_wall_section);
 
-  AABB* right_wall_rect = new AABB(right_wall_start, right_wall_end, mat_white_concrete);
+  Point right_wall2_start = Point(right_wall1_start.get_x(), 0, right_sect_end.get_z());
+  Point right_wall2_end = Point(back_wall_end.get_x(), wall_height, right_sect_end.get_z()+side_wall_dim2);
+
+  AABB* right_wall1_rect = new AABB(right_wall1_start, right_wall1_end, mat_white_concrete);
+  AABB* right_wall_r1_rect = new AABB(Point(right_wall1_start.get_x(), 275, 0), Point(back_wall_end.get_x(), wall_height, side_wall_dim1), mat_white_concrete);
+  AABB* right_wall_r2_rect = new AABB(Point(right_wall1_start.get_x(), 125, 0), Point(back_wall_end.get_x(), wall_height, 5), mat_white_concrete);
+  AABB* right_wall_r3_rect = new AABB(Point(right_wall1_start.get_x(), 125, side_wall_dim1-5), Point(back_wall_end.get_x(), wall_height, side_wall_dim1), mat_white_concrete);
+
   AABB* right_wall_sect = new AABB(right_sect_start, right_sect_end, mat_white_concrete);
+  AABB* right_wall2_rect = new AABB(right_wall2_start, right_wall2_end, mat_white_concrete);
+
   Object* right_wall = new Object(
     "Right wall",
-    OBB(Point(right_sect_start.get_x(), 0, 0), right_wall_end),
-    vector<Solid*>{right_wall_rect, right_wall_sect}
+    OBB(Point(right_sect_start.get_x(), 0, 0), right_wall2_end),
+    vector<Solid*>{right_wall1_rect, right_wall_r1_rect, right_wall_r2_rect, right_wall_r3_rect, right_wall_sect, right_wall2_rect}
+  );
+
+  /* Janela direita */
+  float window_thickness = 2;
+  AABB* window_f_cube = new AABB(Point(right_wall1_start.get_x(), wall_height-165, 5), Point(right_wall1_start.get_x()+window_thickness, wall_height-15, 10), mat_steel);
+  AABB* window_ff_cube = new AABB(Point(right_wall1_start.get_x(), wall_height-165, 75), Point(right_wall1_start.get_x()+window_thickness, wall_height-15, 80), mat_steel);
+
+  AABB* window_n_cube = new AABB(Point(right_wall1_start.get_x(), wall_height-165, side_wall_dim1-10), Point(right_wall1_start.get_x()+window_thickness, wall_height-15, side_wall_dim1-5), mat_steel);
+  AABB* window_nn_cube = new AABB(Point(right_wall1_start.get_x(), wall_height-165, side_wall_dim1-75), Point(right_wall1_start.get_x()+window_thickness, wall_height-15, side_wall_dim1-70), mat_steel);
+
+  AABB* window_t_cube = new AABB(Point(right_wall1_start.get_x(), wall_height-165, 5), Point(right_wall1_start.get_x()+window_thickness, wall_height-160, side_wall_dim1-5), mat_steel);
+  AABB* window_b_cube = new AABB(Point(right_wall1_start.get_x(), wall_height-20, 5), Point(right_wall1_start.get_x()+window_thickness, wall_height-15, side_wall_dim1-5), mat_steel);
+  AABB* window_m_cube = new AABB(Point(right_wall1_start.get_x(), wall_height-70, 5), Point(right_wall1_start.get_x()+window_thickness, wall_height-65, side_wall_dim1-5), mat_steel);
+  Object* window = new Object(
+    "Window frame",
+    OBB(Point(right_wall1_start.get_x(), wall_height-165, 5), Point(right_wall1_start.get_x()+window_thickness, wall_height-15, side_wall_dim1-5)),
+    vector<Solid*>{window_t_cube, window_b_cube, window_m_cube, window_f_cube, window_ff_cube, window_n_cube, window_nn_cube}
   );
 
   /* Teto */
   Point ceiling_start = Point(back_wall_start.get_x(), back_wall_end.get_y(), 0);
-  Point ceiling_end = Point(right_wall_end.get_x(), back_wall_end.get_y()+wall_thickness, right_wall_end.get_z());
+  Point ceiling_end = Point(right_wall2_end.get_x(), back_wall_end.get_y()+wall_thickness, right_wall2_end.get_z());
   AABB* ceiling_rect = new AABB(ceiling_start, ceiling_end, mat_white_concrete);
   Object* ceiling = new Object(
     "Ceiling",
@@ -391,7 +423,7 @@ int main(int argc, char *argv[])
 
   /* Piso */
   Point floor_start = Point(back_wall_start.get_x(), -wall_thickness, 0);
-  Point floor_end = Point(right_wall_end.get_x(), 0, right_wall_end.get_z());
+  Point floor_end = Point(right_wall2_end.get_x(), 0, right_wall2_end.get_z());
   AABB* floor_rect = new AABB(floor_start, floor_end, mat_terrazo);
   Object* floor = new Object(
     "Floor",
@@ -408,7 +440,7 @@ int main(int argc, char *argv[])
   AABB* lfooter1 = new AABB(Point(left_wall_end.get_x(), 0, back_wall_end.get_z()+2*footer_height+70), Point(left_wall_end.get_x()+1.1*footer_thickness, footer_height, left_wall_end.get_z()), mat_darkwood);
   AABB* lfooter2 = new AABB(Point(left_sect_start.get_x(), 0, left_sect_start.get_z()-footer_thickness), Point(left_sect_end.get_x()+footer_thickness, footer_height, left_sect_end.get_z()+footer_thickness), mat_darkwood);
 
-  AABB* rfooter1 = new AABB(Point(right_wall_start.get_x()-footer_thickness, 0, 0), Point(right_wall_start.get_x(), footer_height, right_wall_end.get_z()), mat_darkwood);
+  AABB* rfooter1 = new AABB(Point(right_wall1_start.get_x()-footer_thickness, 0, 0), Point(right_wall1_start.get_x(), footer_height, right_wall2_end.get_z()), mat_darkwood);
   AABB* rfooter2 = new AABB(Point(right_sect_start.get_x()-footer_thickness, 0, right_sect_start.get_z()-footer_thickness), Point(right_sect_end.get_x(), footer_height, right_sect_end.get_z()+footer_thickness), mat_darkwood);
   Object* footer = new Object(
     "Footer",
@@ -454,20 +486,22 @@ int main(int argc, char *argv[])
 
 
   /* Grade */
-  AABB* gridBottom = new AABB(Point(right_wall_start.get_x(),130,right_wall_start.get_z()+245), Point(right_wall_start.get_x()+10, 137, right_wall_start.get_z()), mat_silver);
-  AABB* gridMiddle1 = new AABB(Point(right_wall_start.get_x(),180,right_wall_start.get_z()+245), Point(right_wall_start.get_x()+10, 187, right_wall_start.get_z()), mat_silver);
-  AABB* gridMiddle2 = new AABB(Point(right_wall_start.get_x(),230,right_wall_start.get_z()+245), Point(right_wall_start.get_x()+10, 237, right_wall_start.get_z()), mat_silver);
-  AABB* gridTop = new AABB(Point(right_wall_start.get_x(),280,right_wall_start.get_z()+245), Point(right_wall_start.get_x()+10, 287, right_wall_start.get_z()), mat_silver);
-  
+  float grid_offset = right_wall1_start.get_x() + window_thickness + 10;
+  float s_height = 2;
+  AABB* gridBottom = new AABB(Point(grid_offset,120,right_wall1_start.get_z()+245), Point(right_wall1_start.get_x()+10, 128+s_height, right_wall1_start.get_z()), mat_silver);
+  AABB* gridMiddle1 = new AABB(Point(grid_offset,170,right_wall1_start.get_z()+245), Point(right_wall1_start.get_x()+10, 170+s_height, right_wall1_start.get_z()), mat_silver);
+  AABB* gridMiddle2 = new AABB(Point(grid_offset,240,right_wall1_start.get_z()+245), Point(right_wall1_start.get_x()+10, 240+s_height, right_wall1_start.get_z()), mat_silver);
+  AABB* gridTop = new AABB(Point(grid_offset,280,right_wall1_start.get_z()+245), Point(right_wall1_start.get_x()+10, 280+s_height, right_wall1_start.get_z()), mat_silver);
+
   vector<Solid*> gridSolids = {gridBottom, gridMiddle1, gridMiddle2, gridTop};
 
   for(int i = 0; i < 21; i++){
-    gridSolids.push_back(new Cylinder(Point(right_wall_start.get_x(),135,right_wall_start.get_z()+240-(i*11)), Vector3(0,1,0), 150.0f, 0.8f, mat_silver));
+    gridSolids.push_back(new Cylinder(Point(grid_offset,110,right_wall1_start.get_z()+220-(i*11)), Vector3(0,1,0), 165.0f, 0.8f, mat_silver));
   }
 
   Object* grid = new Object(
     "Grid",
-    OBB(Point(right_wall_start.get_x(),130,right_wall_start.get_z()+235), Point(right_wall_start.get_x()+10, 287, right_wall_start.get_z())),
+    OBB(Point(grid_offset,110,right_wall1_start.get_z()+235), Point(grid_offset+10, 285, right_wall1_start.get_z())),
     gridSolids
   );
 
@@ -479,8 +513,8 @@ int main(int argc, char *argv[])
   objects.push_back(left_wall);
   objects.push_back(ceiling);
   objects.push_back(back_wall);
-  
   objects.push_back(right_wall);
+  objects.push_back(window);
   objects.push_back(grid);
 
 
