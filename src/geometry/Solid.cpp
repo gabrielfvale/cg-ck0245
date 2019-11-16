@@ -26,6 +26,7 @@ Vector3 Solid::light_direction(Light* light, Point& intersection)
   default:
     ld = Vector3(&intersection, &light_point); break;
   }
+  ld.normalize();
   return ld;
 }
 
