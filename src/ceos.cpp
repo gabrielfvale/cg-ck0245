@@ -37,12 +37,13 @@ static float viewupf3[3] = { 10.0f, 6.0f, 10.0f };
 */
 Camera* camera = new Camera(observerf3, lookatf3, viewupf3);
 
-float pl_intensity[3] = {0.05f, 0.05f, 0.05f};
+float pl_intensity[3] = {0.3f, 0.3f, 0.3f};
 float rl_intensity[3] = {0.3f, 0.3f, 0.3f};
 float sp_intensity[3] = {0.3f, 0.3f, 0.3f};
-Light* point_light = new Light(pl_intensity, Vector3(0, 280, 180));
+Light* point_light = new Light(pl_intensity, Vector3(0, 250, 80));
+Light* point_light2 = new Light(pl_intensity, Vector3(0, 250, 320));
 Light* remote_light = new Light(rl_intensity, Vector3(-1, -1, 0), REMOTE);
-Light* spot_light = new Light(sp_intensity, Point(0, 290/2, 180), Vector3(1, 0, 0), 15, 45, 5);
+Light* spot_light = new Light(sp_intensity, Point(0, 290/2, 180), Vector3(0, -1, 0), 15, 45, 5);
 
 Scene* scene;
 vector<Object*> objects;
@@ -88,22 +89,45 @@ Material* mat_obsidian = new Material(
   38.4
 );
 
-Material* mat_beige_concrete = new Material(
+Material* mat_white_concrete = new Material(
   RGB(0.847058, 0.819607, 0.756862),
-  RGB(0.01, 0.01, 0.01),
+  RGB(0.854901, 0.843137, 0.815686),
+  RGB()
+);
+Material* mat_beige_paint = new Material(
+  RGB(0.819607, 0.776470, 0.698039),
+  RGB(0.882352, 0.839215, 0.760784),
   RGB()
 );
 Material* mat_terrazo = new Material(
   RGB(0.490196, 0.454901, 0.435294),
-  RGB(0.057254, 0.053725, 0.051764),
+  RGB(0.57254, 0.53725, 0.51764),
   RGB(0.3, 0.3, 0.3),
   38.0
 );
 Material* mat_darkwood = new Material(
   RGB(0.149019, 0.090196, 0.062745),
-  RGB(0.001, 0.001, 0.001),
+  RGB(0.01, 0.01, 0.01),
   RGB(0.1, 0.1, 0.1),
   38.0
+);
+Material* mat_old_plastic = new Material(
+  RGB(0.772549, 0.721568, 0.549019),
+  RGB(0.949019, 0.898039, 0.760784),
+  RGB(0.5, 0.5, 0.5),
+  32
+);
+Material* mat_black_plastic = new Material(
+  RGB(0, 0, 0),
+  RGB(0.01, 0.01, 0.01),
+  RGB(0.5, 0.5, 0.5),
+  32
+);
+Material* mat_white_plastic = new Material(
+  RGB(0.933333, 0.925490, 0.878431),
+  RGB(0.976470, 0.968627, 0.921568),
+  RGB(0.5, 0.5, 0.5),
+  32
 );
 
 float obj_ambient[3] = {0.0f, 0.0f, 0.0f};
@@ -313,7 +337,7 @@ int main(int argc, char *argv[])
     /* Parede de fundo */
   Point back_wall_start = Point(-front_wall_dim/2, 0, -wall_thickness);
   Point back_wall_end = Point(front_wall_dim/2, wall_height, 0);
-  AABB* back_wall_rect = new AABB(back_wall_start, back_wall_end, mat_beige_concrete);
+  AABB* back_wall_rect = new AABB(back_wall_start, back_wall_end, mat_white_concrete);
 
   Object* back_wall = new Object(
     "Back wall",
@@ -332,8 +356,8 @@ int main(int argc, char *argv[])
   Point left_sect_start = Point(left_wall_end.get_x(), 0, side_wall_dim1);
   Point left_sect_end = Point(left_sect_start.get_x()+wall_thickness, wall_height, side_wall_dim1+side_wall_section);
 
-  AABB* left_wall_rect = new AABB(left_wall_start, left_wall_end, mat_beige_concrete);
-  AABB* left_wall_sect = new AABB(left_sect_start, left_sect_end, mat_beige_concrete);
+  AABB* left_wall_rect = new AABB(left_wall_start, left_wall_end, mat_white_concrete);
+  AABB* left_wall_sect = new AABB(left_sect_start, left_sect_end, mat_white_concrete);
   Object* left_wall = new Object(
     "Left wall",
     OBB(left_wall_start, Point(left_sect_end.get_x(), wall_height, left_wall_end.get_z())),
@@ -347,8 +371,8 @@ int main(int argc, char *argv[])
   Point right_sect_start = Point(right_wall_end.get_x()-38, 0, side_wall_dim1);
   Point right_sect_end = Point(right_wall_end.get_x(), wall_height, side_wall_dim1+side_wall_section);
 
-  AABB* right_wall_rect = new AABB(right_wall_start, right_wall_end, mat_beige_concrete);
-  AABB* right_wall_sect = new AABB(right_sect_start, right_sect_end, mat_beige_concrete);
+  AABB* right_wall_rect = new AABB(right_wall_start, right_wall_end, mat_white_concrete);
+  AABB* right_wall_sect = new AABB(right_sect_start, right_sect_end, mat_white_concrete);
   Object* right_wall = new Object(
     "Right wall",
     OBB(Point(right_sect_start.get_x(), 0, 0), right_wall_end),
@@ -358,7 +382,7 @@ int main(int argc, char *argv[])
   /* Teto */
   Point ceiling_start = Point(back_wall_start.get_x(), back_wall_end.get_y(), 0);
   Point ceiling_end = Point(right_wall_end.get_x(), back_wall_end.get_y()+wall_thickness, right_wall_end.get_z());
-  AABB* ceiling_rect = new AABB(ceiling_start, ceiling_end, mat_beige_concrete);
+  AABB* ceiling_rect = new AABB(ceiling_start, ceiling_end, mat_white_concrete);
   Object* ceiling = new Object(
     "Ceiling",
     OBB(ceiling_start, ceiling_end),
@@ -381,7 +405,7 @@ int main(int argc, char *argv[])
 
   AABB* back_footer = new AABB(Point(back_wall_start.get_x(), 0, 0), Point(back_wall_end.get_x(), footer_height, footer_thickness), mat_darkwood);
 
-  AABB* lfooter1 = new AABB(Point(left_wall_end.get_x(), 0, 0), Point(left_wall_end.get_x()+1.1*footer_thickness, footer_height, left_wall_end.get_z()), mat_darkwood);
+  AABB* lfooter1 = new AABB(Point(left_wall_end.get_x(), 0, back_wall_end.get_z()+2*footer_height+70), Point(left_wall_end.get_x()+1.1*footer_thickness, footer_height, left_wall_end.get_z()), mat_darkwood);
   AABB* lfooter2 = new AABB(Point(left_sect_start.get_x(), 0, left_sect_start.get_z()-footer_thickness), Point(left_sect_end.get_x()+footer_thickness, footer_height, left_sect_end.get_z()+footer_thickness), mat_darkwood);
 
   AABB* rfooter1 = new AABB(Point(right_wall_start.get_x()-footer_thickness, 0, 0), Point(right_wall_start.get_x(), footer_height, right_wall_end.get_z()), mat_darkwood);
@@ -392,18 +416,58 @@ int main(int argc, char *argv[])
     vector<Solid*>{back_footer, lfooter1, lfooter2, rfooter1, rfooter2}
   );
 
+  /* Porta pro corredor */
+  Point hall_d_start = Point(left_wall_end.get_x()-5, 0, back_wall_end.get_z()+footer_height);
+  Point hall_d_end = Point(left_wall_end.get_x()+1, 210, back_wall_end.get_z()+footer_height+70);
+
+  AABB* d_rect = new AABB(hall_d_start, hall_d_end, mat_beige_paint);
+  AABB* d_contour_right = new AABB(Point(left_wall_end.get_x(), 0, back_wall_end.get_z()), Point(left_wall_end.get_x()+footer_thickness, hall_d_end.get_y(), back_wall_end.get_z()+footer_height), mat_darkwood);
+  AABB* d_contour_top = new AABB(Point(left_wall_end.get_x(), hall_d_end.get_y(), back_wall_end.get_z()), Point(left_wall_end.get_x()+footer_thickness, hall_d_end.get_y()+footer_height, hall_d_end.get_z()+footer_height), mat_darkwood);
+  AABB* d_contour_left = new AABB(Point(left_wall_end.get_x(), 0, hall_d_end.get_z()), Point(left_wall_end.get_x()+footer_thickness, hall_d_end.get_y(), hall_d_end.get_z()+footer_height), mat_darkwood);
+  Object* hall_door = new Object(
+    "Hall door",
+    OBB(Point(left_wall_end.get_x(), 0, back_wall_end.get_z()), Point(left_wall_end.get_x()+footer_thickness, hall_d_end.get_y()+footer_height, hall_d_end.get_z()+footer_height)),
+    vector<Solid*>{d_rect, d_contour_left, d_contour_right, d_contour_top}
+  );
+
+  /* AC Velho */
+  Point old_acbox[2] = {Point(left_wall_end.get_x(), hall_d_end.get_y()+footer_height+10, hall_d_start.get_z()), Point(left_wall_end.get_x()+10, left_wall_end.get_y(), hall_d_end.get_z())};
+  Point old_acbounds[2] = {Point(old_acbox[1].get_x()-10, old_acbox[0].get_y()+5, old_acbox[0].get_z()+5), Point(old_acbox[1].get_x()+5, old_acbox[0].get_y()+55, old_acbox[1].get_z()-5)};
+
+  AABB* old_acbox_rect = new AABB(old_acbox[0], old_acbox[1], mat_white_concrete);
+  AABB* old_ac_rect = new AABB(old_acbounds[0], old_acbounds[1], mat_old_plastic);
+  Object* old_ac = new Object(
+    "Old AC",
+    OBB(old_acbox[0], Point(old_acbounds[1].get_x(), old_acbox[1].get_y(), old_acbox[1].get_z())),
+    vector<Solid*>{old_acbox_rect, old_ac_rect}
+  );
+
+  /* AC Novo 
+    Largura: 71,3cm
+    Altura: 27cm
+    Profundidade: 19,5cm
+  */
+  Object* new_ac = new Object("New AC", "./obj/AC/AC_chassi.obj", mat_white_plastic);
+  new_ac->include("./obj/AC/AC_pholder.obj", mat_black_plastic);
+  new_ac->include("./obj/AC/AC_plates.obj", mat_white_plastic);
+  new_ac->translate(Vector3(left_wall_end.get_x()+90, wall_height-37, 0));
+
   objects.push_back(ceiling);
   objects.push_back(back_wall);
   objects.push_back(left_wall);
   objects.push_back(right_wall);
   objects.push_back(floor);
   objects.push_back(footer);
+  objects.push_back(hall_door);
+  objects.push_back(old_ac);
+  objects.push_back(new_ac);
 
   Light* ambient_light = new Light(RGB(0.5, 0.5, 0.5), Vector3(), AMBIENT);
 
   vector<Light*> lights = {
     ambient_light,
     point_light,
+    point_light2,
     remote_light,
     spot_light
   };
