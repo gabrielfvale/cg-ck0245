@@ -1,8 +1,15 @@
 #include "Scene.hpp"
+
+#include <thread>
+#include <functional>
+#include <chrono>
+
 #include <cmath>
 #include <ctime>
 #include <iostream>
 #include <iomanip>
+
+using namespace std;
 
 Scene::Scene(int resolution, Camera* camera, vector<Object*> objects, vector<Light*> lights, float w, float d)
 {
@@ -113,27 +120,37 @@ void Scene::set_pixel(GLubyte* pixels, int x, int y, RGB rgb)
 
 void Scene::print(GLubyte* pixels)
 {
-  std::cout << "[SCENE] Started rendering" << std::endl;
-  float frametime = 0.0f;
-  clock_t t = clock();
+  cout << "[SCENE] Started rendering" << endl;
+  chrono::time_point<chrono::system_clock> render_start, render_end;
 
-  float written_pixels = 0;
-  float total_pixels = resolution*resolution;
-  float progress = 0.0f;
+  const size_t nthreads = thread::hardware_concurrency();
+  vector<thread> threads(nthreads);
 
-  for(int y = 0; y < resolution; y++)
+  render_start = chrono::system_clock::now();
+
+  for(size_t t = 0; t < nthreads; t++)
   {
-    for (int x = 0; x < resolution; x++)
+    threads[t] = thread(bind(
+    [&](const int start_i, const int end_i, const int t)
     {
-      written_pixels++;
-      Intersection intersection;
-      castRay(x, y, intersection);
-      set_pixel(pixels, x, y, intersection.color);
-      progress = written_pixels/total_pixels;
+    for(int y = start_i; y < end_i; y++)
+    {
+      for (int x = 0; x < resolution; x++)
+      {
+        Intersection intersection;
+        castRay(x, y, intersection);
+        set_pixel(pixels, x, y, intersection.color);
+      }
     }
+    },t*resolution/nthreads,(t+1)==nthreads?resolution:(t+1)*resolution/nthreads,t));
   }
-  t = clock() - t;
-  frametime = ((float)t)/CLOCKS_PER_SEC;
-  std::cout << "[SCENE] Rendered in " << std::setprecision(2);
-  std::cout << frametime << "s" << std::endl;
+
+  for(size_t i = 0; i < nthreads; i++)
+    threads[i].join();
+
+  render_end = chrono::system_clock::now();
+  chrono::duration<double> elapsed_seconds = render_end - render_start;
+
+  cout << "[SCENE] Rendered in " << setprecision(2);
+  cout << elapsed_seconds.count() << "s\n"; 
 }
