@@ -30,6 +30,7 @@ GLubyte* PixelBuffer;
 static float observerf3[3] = { 0.0f, 160.0f, 500.0f };
 static float lookatf3[3] = { 0.0f, 160.0f, 0.0f };
 static float viewupf3[3] = { 0.0f, 161.0f, 500.0f };
+
 /* Spot 
 static float observerf3[3] = { 10.0f, 4.5f, 10.0f };
 static float lookatf3[3] = { 10.0f, 4.5f, 5.0f };
@@ -505,6 +506,22 @@ int main(int argc, char *argv[])
     gridSolids
   );
 
+  // Esse -40 é a profundidade do armario
+  AABB* locker_body = new AABB(Point(right_wall2_end.get_x()-40,0,right_wall2_end.get_z()-108), Point(right_wall2_end.get_x()-13,150,right_wall2_end.get_z()), mat_beige_paint);
+  AABB* locker_holder = new AABB(Point(right_wall2_end.get_x()-45, 70, right_wall2_end.get_z()-60), Point(right_wall2_end.get_x()-13, 80, right_wall2_end.get_z()-65), mat_silver);
+  AABB* locker_border_top = new AABB(Point(right_wall2_end.get_x()-45,145,right_wall2_end.get_z()-108), Point(right_wall2_end.get_x()-13,150,right_wall2_end.get_z()), mat_beige_paint);
+  AABB* locker_border_bottom = new AABB(Point(right_wall2_end.get_x()-45,0,right_wall2_end.get_z()-108), Point(right_wall2_end.get_x()-13,5,right_wall2_end.get_z()), mat_beige_paint);
+  AABB* locker_border_right = new AABB(Point(right_wall2_end.get_x(),5,right_wall2_end.get_z()-103), Point(right_wall2_end.get_x()-45,145,right_wall2_end.get_z()-108), mat_beige_paint);
+  AABB* locker_border_left = new AABB(Point(right_wall2_end.get_x(),5,right_wall2_end.get_z()), Point(right_wall2_end.get_x()-45,145,right_wall2_end.get_z()-5), mat_beige_paint);
+  AABB* locker_slider = new AABB(Point(right_wall2_end.get_x()-44,0,right_wall2_end.get_z()-108), Point(right_wall2_end.get_x()-13,150,right_wall2_end.get_z()-55), mat_old_plastic);
+  AABB* locker_slider_holder = new AABB(Point(right_wall2_end.get_x()-41, 70, right_wall2_end.get_z()-10), Point(right_wall2_end.get_x()-13, 80, right_wall2_end.get_z()-15), mat_silver);
+  
+  Object* locker = new Object(
+    "Locker",
+    OBB(Point(right_wall2_end.get_x()-40,0,right_wall2_end.get_z()-108), Point(right_wall2_end.get_x()-13,150,right_wall2_end.get_z())),
+    vector<Solid*> {locker_body, locker_border_top, locker_border_bottom, locker_border_right, locker_border_left, locker_slider, locker_slider_holder, locker_holder}
+  );
+
   objects.push_back(hall_door);
   objects.push_back(old_ac);
   objects.push_back(new_ac);
@@ -512,10 +529,11 @@ int main(int argc, char *argv[])
   objects.push_back(footer);
   objects.push_back(left_wall);
   objects.push_back(ceiling);
-  objects.push_back(back_wall);
-  objects.push_back(right_wall);
   objects.push_back(window);
   objects.push_back(grid);
+  objects.push_back(back_wall);
+  objects.push_back(right_wall);
+  objects.push_back(locker);
 
 
   Light* ambient_light = new Light(RGB(0.5, 0.5, 0.5), Vector3(), AMBIENT);
