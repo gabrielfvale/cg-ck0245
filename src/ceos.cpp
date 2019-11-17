@@ -513,7 +513,7 @@ int main(int argc, char *argv[])
   AABB* locker_border_bottom = new AABB(Point(right_wall2_end.get_x()-45,0,right_wall2_end.get_z()-108), Point(right_wall2_end.get_x()-13,5,right_wall2_end.get_z()), mat_beige_paint);
   AABB* locker_border_right = new AABB(Point(right_wall2_end.get_x(),5,right_wall2_end.get_z()-103), Point(right_wall2_end.get_x()-45,145,right_wall2_end.get_z()-108), mat_beige_paint);
   AABB* locker_border_left = new AABB(Point(right_wall2_end.get_x(),5,right_wall2_end.get_z()), Point(right_wall2_end.get_x()-45,145,right_wall2_end.get_z()-5), mat_beige_paint);
-  AABB* locker_slider = new AABB(Point(right_wall2_end.get_x()-44,0,right_wall2_end.get_z()-108), Point(right_wall2_end.get_x()-13,150,right_wall2_end.get_z()-55), mat_old_plastic);
+  AABB* locker_slider = new AABB(Point(right_wall2_end.get_x()-44,5,right_wall2_end.get_z()-108), Point(right_wall2_end.get_x()-13,150,right_wall2_end.get_z()-55), mat_old_plastic);
   AABB* locker_slider_holder = new AABB(Point(right_wall2_end.get_x()-41, 70, right_wall2_end.get_z()-10), Point(right_wall2_end.get_x()-13, 80, right_wall2_end.get_z()-15), mat_silver);
   
   Object* locker = new Object(
