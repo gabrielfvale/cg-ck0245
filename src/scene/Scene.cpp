@@ -128,7 +128,7 @@ void Scene::print(GLubyte* pixels)
 
   render_start = chrono::system_clock::now();
 
-  for(int t = 0; t < nthreads; t++)
+  for(size_t t = 0; t < nthreads; t++)
   {
     threads[t] = thread(bind(
     [&](const int start_i, const int end_i, const int t)
@@ -145,12 +145,11 @@ void Scene::print(GLubyte* pixels)
     },t*resolution/nthreads,(t+1)==nthreads?resolution:(t+1)*resolution/nthreads,t));
   }
 
-  for(int i = 0; i < nthreads; i++)
+  for(size_t i = 0; i < nthreads; i++)
     threads[i].join();
 
   render_end = chrono::system_clock::now();
   chrono::duration<double> elapsed_seconds = render_end - render_start;
-  time_t end_time = chrono::system_clock::to_time_t(render_end);
 
   cout << "[SCENE] Rendered in " << setprecision(2);
   cout << elapsed_seconds.count() << "s\n"; 
