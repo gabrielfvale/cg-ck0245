@@ -27,8 +27,8 @@ float upscaling = 1.0f;
 GLubyte* PixelBuffer;
 
 /* Origin */
-static float observerf3[3] = { 0.0f, 160.0f, 500.0f };
-static float lookatf3[3] = { 0.0f, 160.0f, 0.0f };
+static float observerf3[3] = { 0.0f, 150.0f, 50.0f };
+static float lookatf3[3] = { 0.0f, 155.0f, 500.0f };
 static float viewupf3[3] = { 0.0f, 161.0f, 500.0f };
 
 /* Spot 
@@ -522,6 +522,68 @@ int main(int argc, char *argv[])
     vector<Solid*> {locker_body, locker_border_top, locker_border_bottom, locker_border_right, locker_border_left, locker_slider, locker_slider_holder, locker_holder}
   );
 
+/* SNOWMAN DE TESTES
+  Sphere* esfera1 = new Sphere(Point(0,50,200), 50, mat_old_plastic);
+  Sphere* esfera2 = new Sphere(Point(0,100,200), 30, mat_old_plastic);
+  Sphere* esfera3 = new Sphere(Point(0,130,200), 20, mat_old_plastic);
+  AABB* braco1 = new AABB(Point(0,97.5,197.5), Point(100,102.5,202.5), mat_obsidian);
+  AABB* braco2 = new AABB(Point(0,97.5,197.5), Point(-100,102.5,202.5), mat_obsidian);
+
+  Object* sphere = new Object(
+    "Minha Esfera de Testes",
+    OBB(Point(-100,0,150), Point(100,150,250)),
+    vector<Solid*> {esfera1, esfera2, esfera3, braco1, braco2}
+  );
+
+  objects.push_back(sphere);
+*/
+
+  //coordenadas:  0.0f, 155.0f, 500.0f 
+  //medidas quadro: 195(200)X125
+  //distancia da bancada: 25
+    
+
+
+  float board_x_start = right_wall2_end.get_x()-100;
+  float board_x_end = right_wall2_end.get_x()-300;
+  float board_y_start = right_wall2_end.get_y()-70;
+  float board_y_end = right_wall2_end.get_y()-215;
+  float board_z_start = right_wall2_end.get_z();
+  float board_z_end = right_wall2_end.get_z()+2;
+  
+  AABB* board = new AABB(
+      Point(board_x_start,board_y_start,board_z_start),
+      Point(board_x_end,board_y_end,board_z_end),
+      mat_white_plastic
+  );
+
+  AABB* left_board_border = new AABB(
+    Point(board_x_start,board_y_start,board_z_end),
+    Point(board_x_start-6,board_y_end,board_z_end-4),
+    mat_silver);
+  AABB* right_board_border = new AABB(
+    Point(board_x_end,board_y_start,board_z_end),
+    Point(board_x_end+6,board_y_end,board_z_end-4),
+    mat_silver);
+  AABB* top_board_border = new AABB(
+    Point(board_x_start,board_y_start,board_z_end),
+    Point(board_x_end, board_y_start-6,board_z_end-4),
+    mat_silver);
+  AABB* bottom_board_border = new AABB(
+    Point(board_x_start,board_y_end,board_z_end),
+    Point(board_x_end, board_y_end+6,board_z_end-4),
+    mat_silver); 
+  
+
+  Object* quadroObj = new Object(
+    "Quadro",
+    OBB(Point(board_x_start,board_y_start,board_z_start),
+        Point(board_x_end,board_y_end,board_z_end)),
+    vector<Solid* > {board,left_board_border,right_board_border,top_board_border,bottom_board_border}
+  );
+
+  objects.push_back(quadroObj);
+  
   objects.push_back(hall_door);
   objects.push_back(old_ac);
   objects.push_back(new_ac);
@@ -534,8 +596,7 @@ int main(int argc, char *argv[])
   objects.push_back(back_wall);
   objects.push_back(right_wall);
   objects.push_back(locker);
-
-
+  
   Light* ambient_light = new Light(RGB(0.5, 0.5, 0.5), Vector3(), AMBIENT);
 
   vector<Light*> lights = {
