@@ -143,6 +143,7 @@ Material* mat_mdf = new Material(
   38
 );
 
+
 float obj_ambient[3] = {0.0f, 0.0f, 0.0f};
 float obj_diffuse[3] = {0.0f, 0.0f, 0.0f};
 float obj_specular[3] = {0.0f, 0.0f, 0.0f};
@@ -546,6 +547,53 @@ int main(int argc, char *argv[])
   table->include("./obj/Table_top.obj", mat_mdf);
   table->translate(Vector3(0, 0, 180));
 
+    /* Lâmpadas
+   Comprimento da lampada: 120cm
+   Raio da lampada: 2cm
+   Comprimento da caixa: 130cm
+   Largura da caixa: 12cm
+  */
+  
+  float lampLength = 120.0f;
+  float lampRadius = 2.5f;
+  float lampBoxLength = 130.0f;
+  float lampBoxWidth = 12.0f;
+  float lampBoxHeight = 5.0f;
+  float capRadius = 2.0f;
+  float capLength = 2.0f;
+
+
+  AABB* lampBox = new AABB(Point(lampBoxWidth/2, 0, lampBoxLength/2), Point(-lampBoxWidth/2, -lampBoxHeight, -lampBoxLength/2), mat_steel);
+  Cylinder* lamp1 = new Cylinder(Point(lampBoxWidth/4,-lampBoxHeight-lampRadius-0.2, -lampBoxLength/2 + (lampBoxLength-lampLength)/2), Vector3(0,0,1), lampLength, lampRadius, mat_white_plastic);
+  Cylinder* lamp2 = new Cylinder(Point(-lampBoxWidth/4,-lampBoxHeight-lampRadius-0.2, -lampBoxLength/2 + (lampBoxLength-lampLength)/2), Vector3(0,0,1), lampLength, lampRadius, mat_white_plastic);
+  Cylinder* cap11 = new Cylinder(Point(lampBoxWidth/4,-lampBoxHeight-lampRadius-0.2, -lampBoxLength/2 - capLength + (lampBoxLength-lampLength)/2) , Vector3(0,0,1), capLength, capRadius, mat_silver);
+  Cylinder* cap12 = new Cylinder(Point(lampBoxWidth/4,-lampBoxHeight-lampRadius-0.2, lampLength -lampBoxLength/2 + (lampBoxLength-lampLength)/2) , Vector3(0,0,1), capLength, capRadius, mat_silver);
+  Cylinder* cap21 = new Cylinder(Point(-lampBoxWidth/4,-lampBoxHeight-lampRadius-0.2, -lampBoxLength/2 - capLength + (lampBoxLength-lampLength)/2) , Vector3(0,0,1), capLength, capRadius, mat_silver);
+  Cylinder* cap22 = new Cylinder(Point(-lampBoxWidth/4,-lampBoxHeight-lampRadius-0.2, lampLength -lampBoxLength/2 + (lampBoxLength-lampLength)/2) , Vector3(0,0,1), capLength, capRadius, mat_silver);
+
+  Object* lampObj = new Object(
+    "Lamp",
+    OBB(Point(Point(lampBoxWidth/2, 0, lampBoxLength/2)) ,Point(-lampBoxWidth/2, -lampBoxHeight - 2*lampRadius, -lampBoxLength/2)),
+    vector<Solid*> {lampBox, lamp1, cap11, cap12, lamp2, cap21, cap22}
+  );
+
+  lampObj->translate(Vector3(100,290,back_wall_end.get_z()+90));
+
+  Object* lampObj2 = lampObj->clone();
+
+  lampObj2->translate(Vector3(-200, 0 ,0));
+
+  Object* lampObj3 = lampObj->clone();
+
+  lampObj3->translate(Vector3(0, 0 , 170));
+
+  Object* lampObj4 = lampObj3->clone();
+
+  lampObj4->translate(Vector3(-200, 0 , 0));
+
+
+
+
   objects.push_back(hall_door);
   objects.push_back(old_ac);
   objects.push_back(new_ac);
@@ -559,6 +607,10 @@ int main(int argc, char *argv[])
   objects.push_back(back_wall);
   objects.push_back(right_wall);
   objects.push_back(locker);
+  objects.push_back(lampObj);
+  objects.push_back(lampObj2);
+  objects.push_back(lampObj3);
+  objects.push_back(lampObj4);
 
   Light* ambient_light = new Light(RGB(0.5, 0.5, 0.5), Vector3(), AMBIENT);
 
