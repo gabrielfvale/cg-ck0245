@@ -85,9 +85,12 @@ void Object::get(OBB& bb, std::vector<Solid*>& mesh)
   mesh = mesh_;
 }
 
-Object* Object::clone()
+Object* Object::clone(const char* n_name)
 {
-  return new Object(name, bounding_box_, mesh_, visible_);
+  if(n_name)
+    return new Object(n_name, bounding_box_, mesh_, visible_);
+  else
+    return new Object(name, bounding_box_, mesh_, visible_);
 }
 
 void Object::include(const char* obj_path, Material* material)

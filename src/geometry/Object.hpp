@@ -19,7 +19,7 @@ class Object
     const char* name;
     Object(const char* name, OBB bounding_box, std::vector<Solid*> mesh, bool visible = true);
     Object(const char* name, const char* obj_path, Material* material, bool visible = true);
-    Object* clone();
+    Object* clone(const char* n_name = NULL);
     void include(const char* obj_path, Material* material);
     void get(OBB& bb, std::vector<Solid*>& mesh);
     void set_visible(bool visible);

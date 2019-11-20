@@ -27,9 +27,9 @@ float upscaling = 1.0f;
 GLubyte* PixelBuffer;
 
 /* Origin */
-static float observerf3[3] = { 0.0f, 160.0f, 500.0f };
-static float lookatf3[3] = { 0.0f, 160.0f, 0.0f };
-static float viewupf3[3] = { 0.0f, 161.0f, 500.0f };
+static float observerf3[3] = { -100.0f, 180.0f, 355.0f };
+static float lookatf3[3] = { 100.0f, 160.0f, 0.0f };
+static float viewupf3[3] = { -100.0f, 181.0f, 355.0f };
 
 /* Spot 
 static float observerf3[3] = { 10.0f, 4.5f, 10.0f };
@@ -41,8 +41,8 @@ Camera* camera = new Camera(observerf3, lookatf3, viewupf3);
 float pl_intensity[3] = {0.3f, 0.3f, 0.3f};
 float rl_intensity[3] = {0.3f, 0.3f, 0.3f};
 float sp_intensity[3] = {0.3f, 0.3f, 0.3f};
-Light* point_light = new Light(pl_intensity, Vector3(0, 250, 80));
-Light* point_light2 = new Light(pl_intensity, Vector3(0, 250, 320));
+Light* point_light = new Light(pl_intensity, Vector3(0, 270, 90+65));
+Light* point_light2 = new Light(pl_intensity, Vector3(0, 270, 360-65));
 Light* remote_light = new Light(rl_intensity, Vector3(-1, -1, 0), REMOTE);
 Light* spot_light = new Light(sp_intensity, Point(0, 290/2, 180), Vector3(0, -1, 0), 15, 45, 5);
 
@@ -211,6 +211,8 @@ void display_gui()
     }
     if(ImGui::Checkbox("Point light", point_light->active()))
       redraw();
+    if(ImGui::Checkbox("Point light2", point_light2->active()))
+      redraw();
     ImGui::ColorEdit3("pl_rgb", pl_intensity);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
@@ -358,6 +360,8 @@ int main(int argc, char *argv[])
     OBB(back_wall_start, back_wall_end),
     vector<Solid*>{back_wall_rect}
   );
+  Object* front_wall = back_wall->clone("Front wall");
+  front_wall->translate(Vector3(0, 0, 360+wall_thickness));
 
   /* Paredes laterais (alinhadas com eixo X) */
   float side_wall_dim1 = 230.0;
@@ -492,7 +496,6 @@ int main(int argc, char *argv[])
   new_ac->include("./obj/AC/AC_plates.obj", mat_white_plastic);
   new_ac->translate(Vector3(left_wall_end.get_x()+90, wall_height-37, 0));
 
-
   /* Grade */
   float grid_offset = right_wall1_start.get_x() + window_thickness + 10;
   float s_height = 2;
@@ -547,13 +550,12 @@ int main(int argc, char *argv[])
   table->include("./obj/Table_top.obj", mat_mdf);
   table->translate(Vector3(0, 0, 180));
 
-    /* Lâmpadas
+  /* Lâmpadas
    Comprimento da lampada: 120cm
    Raio da lampada: 2cm
    Comprimento da caixa: 130cm
    Largura da caixa: 12cm
   */
-  
   float lampLength = 120.0f;
   float lampRadius = 2.5f;
   float lampBoxLength = 130.0f;
@@ -561,7 +563,6 @@ int main(int argc, char *argv[])
   float lampBoxHeight = 5.0f;
   float capRadius = 2.0f;
   float capLength = 2.0f;
-
 
   AABB* lampBox = new AABB(Point(lampBoxWidth/2, 0, lampBoxLength/2), Point(-lampBoxWidth/2, -lampBoxHeight, -lampBoxLength/2), mat_steel);
   Cylinder* lamp1 = new Cylinder(Point(lampBoxWidth/4,-lampBoxHeight-lampRadius-0.2, -lampBoxLength/2 + (lampBoxLength-lampLength)/2), Vector3(0,0,1), lampLength, lampRadius, mat_white_plastic);
@@ -572,41 +573,79 @@ int main(int argc, char *argv[])
   Cylinder* cap22 = new Cylinder(Point(-lampBoxWidth/4,-lampBoxHeight-lampRadius-0.2, lampLength -lampBoxLength/2 + (lampBoxLength-lampLength)/2) , Vector3(0,0,1), capLength, capRadius, mat_silver);
 
   Object* lampObj = new Object(
-    "Lamp",
+    "Lamp Backg R",
     OBB(Point(Point(lampBoxWidth/2, 0, lampBoxLength/2)) ,Point(-lampBoxWidth/2, -lampBoxHeight - 2*lampRadius, -lampBoxLength/2)),
     vector<Solid*> {lampBox, lamp1, cap11, cap12, lamp2, cap21, cap22}
   );
-
   lampObj->translate(Vector3(100,290,back_wall_end.get_z()+90));
 
-  Object* lampObj2 = lampObj->clone();
-
+  Object* lampObj2 = lampObj->clone("Lamp Backg L");
   lampObj2->translate(Vector3(-200, 0 ,0));
 
-  Object* lampObj3 = lampObj->clone();
-
+  Object* lampObj3 = lampObj->clone("Lamp Foreg R");
   lampObj3->translate(Vector3(0, 0 , 170));
 
-  Object* lampObj4 = lampObj3->clone();
-
+  Object* lampObj4 = lampObj3->clone("Lamp Foreg L");
   lampObj4->translate(Vector3(-200, 0 , 0));
 
+  /* Quadro */
+  float board_x_start = right_wall2_end.get_x()-80;
+  float board_x_end = right_wall2_end.get_x()-280;
+  float board_y_start = right_wall2_end.get_y()-70;
+  float board_y_end = right_wall2_end.get_y()-215;
+  float board_z_start = right_wall2_end.get_z()-2;
+  float board_z_end = right_wall2_end.get_z();
+  
+  AABB* board = new AABB(
+    Point(board_x_start,board_y_start,board_z_start),
+    Point(board_x_end,board_y_end,board_z_end),
+    mat_white_plastic
+  );
 
+  AABB* left_board_border = new AABB(
+    Point(board_x_start,board_y_start,board_z_end),
+    Point(board_x_start-6,board_y_end,board_z_end-4),
+    mat_steel);
+  AABB* right_board_border = new AABB(
+    Point(board_x_end,board_y_start,board_z_end),
+    Point(board_x_end+6,board_y_end,board_z_end-4),
+    mat_steel);
+  AABB* top_board_border = new AABB(
+    Point(board_x_start,board_y_start,board_z_end),
+    Point(board_x_end, board_y_start-6,board_z_end-4),
+    mat_steel);
+  AABB* bottom_board_border = new AABB(
+    Point(board_x_start,board_y_end,board_z_end),
+    Point(board_x_end, board_y_end+6,board_z_end-4),
+    mat_steel); 
 
+  Object* boardObj = new Object(
+    "Board",
+    OBB(Point(board_x_start,board_y_start,board_z_start),
+    Point(board_x_end,board_y_end,board_z_end)),
+    vector<Solid*>{board,left_board_border,right_board_border,top_board_border,bottom_board_border}
+  );
 
-  objects.push_back(hall_door);
-  objects.push_back(old_ac);
+  /* Paredes frontais */
+  objects.push_back(back_wall);
+  objects.push_back(front_wall);
   objects.push_back(new_ac);
-  objects.push_back(floor);
-  objects.push_back(footer);
-  objects.push_back(left_wall);
-  objects.push_back(ceiling);
-  objects.push_back(table);
+  objects.push_back(boardObj);
+  /* Parede direita */
+  objects.push_back(right_wall);
   objects.push_back(window);
   objects.push_back(grid);
-  objects.push_back(back_wall);
-  objects.push_back(right_wall);
   objects.push_back(locker);
+  /* Parede esquerda */
+  objects.push_back(left_wall);
+  objects.push_back(hall_door);
+  objects.push_back(old_ac);
+  /* Piso */
+  objects.push_back(floor);
+  objects.push_back(footer);
+  objects.push_back(table);
+  /* Teto */
+  objects.push_back(ceiling);
   objects.push_back(lampObj);
   objects.push_back(lampObj2);
   objects.push_back(lampObj3);
