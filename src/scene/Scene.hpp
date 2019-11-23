@@ -5,9 +5,9 @@
 #include <limits>
 #include <GL/freeglut.h>
 
-#include "RGB.hpp"
-#include "Camera.hpp"
+#include "../util/RGB.hpp"
 #include "../geometry/Object.hpp"
+#include "Camera.hpp"
 #include "Light.hpp"
 #include "Intersection.hpp"
 

@@ -74,3 +74,14 @@ void Sphere::transform(Matrix4 t_matrix, TransformType t_type)
     break;
   }
 }
+
+void Sphere::uv(Point& p_int, float& u, float&v)
+{
+  Vector3 n = Vector3(&center_, &p_int);
+  n.normalize();
+
+	float phi = std::atan2(n.get_z(), n.get_x());
+	float theta = std::asin(n.get_y());
+	u = 1 - (phi + M_PI) / (2 * M_PI);
+	v = (theta + M_PI_2) / M_PI;
+}

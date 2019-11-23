@@ -1,7 +1,7 @@
 #ifndef LIGHT_HPP
 #define LIGHT_HPP
 
-#include "RGB.hpp"
+#include "../util/RGB.hpp"
 #include "../math/Point.hpp"
 #include "../math/Vector3.hpp"
 

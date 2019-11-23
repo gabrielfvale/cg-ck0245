@@ -19,6 +19,7 @@ class Sphere : public Solid
     Vector3 surface_normal(Point& p_int) override;
     bool intersects(Ray& ray, float& t_int) override;
     void transform(Matrix4 t_matrix, TransformType t_type) override;
+    void uv(Point& p_int, float& u, float&v) override;
     virtual Sphere* clone() const {return new Sphere(*this);}
 };
 

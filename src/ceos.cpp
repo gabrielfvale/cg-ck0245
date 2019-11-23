@@ -8,6 +8,11 @@
 #include "./imgui/imgui_impl_glut.h"
 #include "./imgui/imgui_impl_opengl2.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "./util/stb_image.h"
+
+#include "./util/Texture.hpp"
+
 #include "./geometry/Plane.hpp"
 #include "./geometry/Triangle.hpp"
 #include "./geometry/Sphere.hpp"
@@ -27,9 +32,9 @@ float upscaling = 1.0f;
 GLubyte* PixelBuffer;
 
 /* Origin */
-static float observerf3[3] = { -100.0f, 180.0f, 355.0f };
-static float lookatf3[3] = { 100.0f, 160.0f, 0.0f };
-static float viewupf3[3] = { -100.0f, 181.0f, 355.0f };
+static float observerf3[3] = { 0.0f, 180.0f, 355.0f };
+static float lookatf3[3] = { 0.0f, 160.0f, 0.0f };
+static float viewupf3[3] = { 0.0f, 181.0f, 355.0f };
 
 /* Spot 
 static float observerf3[3] = { 10.0f, 4.5f, 10.0f };
@@ -48,35 +53,7 @@ Light* spot_light = new Light(sp_intensity, Point(0, 290/2, 180), Vector3(0, -1,
 
 Scene* scene;
 vector<Object*> objects;
-/*
-Material* mat_green = new Material(RGB(0.33, 0.49, 0.18), RGB(0.2, 0.2, 0.2), RGB(0.3, 0.3, 0.3), 10.0f);
-Material* mat_brown = new Material(RGB(0.27, 0.13, 0), RGB(0.27, 0.13, 0), RGB());
-Material* mat_purple = new Material(RGB(0.33, 0.18, 0.49), RGB(0.33, 0.18, 0.49), RGB());
-Material* mat_gold = new Material(
-  RGB(0.24725, 0.1995, 0.0745),
-  RGB(0.75164, 0.60648, 0.22648),
-  RGB(0.628281, 0.555802, 0.366065),
-  128*0.4
-);
-Material* mat_jade = new Material(
-  RGB(0.135, 0.2225, 0.1575),
-  RGB(0.54, 0.89, 0.63),
-  RGB(0.316228, 0.316228, 0.316228),
-  12.8
-);
-Material* mat_ruby = new Material(
-  RGB(0.1745, 0.01175, 0.01175),
-  RGB(0.61424, 0.04136, 0.04136),
-  RGB(0.727811, 0.626959, 0.626959),
-  76.8
-);
-Material* mat_bronze = new Material(
-  RGB(0.2125, 0.1275, 0.054),
-  RGB(0.714, 0.4284, 0.18144),
-  RGB(0.393548, 0.271906, 0.166721),
-  25.6
-);
-*/
+
 Material* mat_silver = new Material(
 	RGB(0.23125, 0.23125, 0.23125),
   RGB(0.2775, 0.2775, 0.2775),
@@ -142,7 +119,6 @@ Material* mat_mdf = new Material(
   RGB(0.3, 0.3, 0.3),
   38
 );
-
 
 float obj_ambient[3] = {0.0f, 0.0f, 0.0f};
 float obj_diffuse[3] = {0.0f, 0.0f, 0.0f};
@@ -625,6 +601,34 @@ int main(int argc, char *argv[])
     Point(board_x_end,board_y_end,board_z_end)),
     vector<Solid*>{board,left_board_border,right_board_border,top_board_border,bottom_board_border}
   );
+
+  int w = 400, h = 200;
+  int comp = 3;
+  unsigned char* image = stbi_load("./textures/earth-400x200.jpg", &w, &h, &comp, STBI_rgb);
+
+  if(!image)
+  {
+    cout << "Could not open texture" << endl;
+    exit(1);
+  }
+
+  Material* mat_earth = new Material(
+    RGB(0.1, 0.1, 0.1),
+    RGB(),
+    new Texture(image, w, h)
+  );
+
+  Sphere* gbase = new Sphere(
+    Point(0, 100, 180),
+    20,
+    mat_earth
+  );
+  Object* globe = new Object(
+    "Globe",
+    OBB(Point(-20, 80, 160), Point(20, 140, 200)),
+    vector<Solid*>{gbase}
+  );
+  objects.push_back(globe);
 
   /* Paredes frontais */
   objects.push_back(back_wall);

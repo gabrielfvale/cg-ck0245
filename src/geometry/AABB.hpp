@@ -17,6 +17,7 @@ class AABB : public Solid
     Point* get_center();
     float* get_edge();
     void set_params(Point* center, Vector3* n, float* edge);
+    void uv(Point& p_int, float& u, float&v) override {};
     Vector3 surface_normal(Point& p_int) override;
     bool intersects(Ray& ray, float& t_int) override;
     void transform(Matrix4 t_matrix, TransformType t_type = TRANSLATE) override;

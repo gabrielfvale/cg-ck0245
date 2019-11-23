@@ -14,6 +14,7 @@ class Plane : public Solid
     Point get_p0();
     Vector3 get_n();
     void set_params(Point* p0, Vector3* n);
+    void uv(Point& p_int, float& u, float&v) override {};
     Vector3 surface_normal(Point& p_int) override {return n_;};
     bool intersects(Ray& ray, float& t_int) override;
     void transform(Matrix4 t_matrix, TransformType t_type = TRANSLATE) override;

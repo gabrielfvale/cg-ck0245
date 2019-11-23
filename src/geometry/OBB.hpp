@@ -16,6 +16,7 @@ class OBB : public Solid
     Point get_ref();
     void bounds(Point& minb, Point& maxb);
     void set_bounds(Point& minb, Point& maxb);
+    void uv(Point& p_int, float& u, float&v) override {};
     Vector3 surface_normal(Point& p_int) override;
     bool intersects(Ray& ray, float& t_int) override;
     void transform(Matrix4 t_matrix, TransformType t_type = TRANSLATE) override;

@@ -5,7 +5,7 @@ class Object; // foward declaration, avoiding dependency cycle
 
 #include "../geometry/Solid.hpp"
 #include "../geometry/Object.hpp"
-#include "RGB.hpp"
+#include "../util/RGB.hpp"
 
 class Intersection
 {

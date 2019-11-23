@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "../scene/Material.hpp"
+#include "../util/Material.hpp"
 #include "../scene/Light.hpp"
 #include "../math/Matrix4.hpp"
 #include "../math/Ray.hpp"
@@ -22,6 +22,7 @@ class Solid
     Material* get_material();
     Vector3 light_direction(Light* light, Point& intersection);
     RGB calculate_color(Light* light, Point& observer, Point& intersection);
+    virtual void uv(Point& p_int, float& u, float&v) = 0;
     virtual Vector3 surface_normal(Point& p_int) = 0;
     virtual bool intersects(Ray& ray, float& t_int) = 0;
     virtual void transform(Matrix4 t_matrix, TransformType t_type = TRANSLATE) = 0;

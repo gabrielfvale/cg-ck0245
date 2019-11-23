@@ -15,6 +15,7 @@ class Triangle : public Solid
     Triangle(float* vertex0, float* vertex1, float* vertex2, Material* material);
     void set_vertices(float* vertex0, float* vertex1, float* vertex2);
     Point* operator[](int i);
+    void uv(Point& p_int, float& u, float&v) override {};
     Vector3 surface_normal(Point& p_int) override;
     bool intersects(Ray& ray, float& t_int) override;
     void transform(Matrix4 t_matrix, TransformType t_type = TRANSLATE) override;

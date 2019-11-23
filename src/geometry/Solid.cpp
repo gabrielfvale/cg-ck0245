@@ -42,7 +42,11 @@ RGB Solid::calculate_diffuse(Light* light, Point& intersection)
   float fd = normal.dot_product(&ld);
   fd = fd < 0 ? 0 : fd;
 
-  RGB Id = intensity * material_->diffuse * fd;
+  float u, v;
+  this->uv(intersection, u, v);
+
+  RGB material_diffuse = material_->lambertian(u, v, intersection);
+  RGB Id = intensity * material_diffuse * fd;
   return Id;
 }
 
