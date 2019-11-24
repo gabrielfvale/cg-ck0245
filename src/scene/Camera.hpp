@@ -10,11 +10,12 @@ class Camera
   private:
     Point eye_;
     Point lookat_;
-    Vector3 up_;
+    Point up_;
     Vector3 cx_, cy_, cz_;
+    void update();
   public:
     Camera();
-    Camera(Point eye, Point lookat, Vector3 up);
+    Camera(Point eye, Point lookat, Point up);
     Camera(float* eye, float* lookat, float* up);
     Matrix4 camera_to_world();
     Matrix4 world_to_camera();

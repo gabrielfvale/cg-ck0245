@@ -157,7 +157,6 @@ void Object::scale(float sx, float sy, float sz)
 
 void Object::rotate(float angle, Vector3 axis)
 {
-
   Point origin;
   Point ref = bounding_box_.get_ref();
   Vector3 p_orig = Vector3(&ref, &origin);

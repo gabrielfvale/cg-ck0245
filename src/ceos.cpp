@@ -357,8 +357,8 @@ void display_gui()
         ImGui::Text("Scale");
         ImGui::InputFloat3("###scl", obj_translate);
         ImGui::Text("Rotate");
-        ImGui::SliderAngle("Angle", new float);
-        ImGui::InputFloat3("Axis", obj_translate);
+        ImGui::SliderAngle("Angle", &obj_rangle);
+        ImGui::InputFloat3("Axis", obj_raxis);
         if(ImGui::Button("Apply transformations"))
         {
           Vector3 trl_vector = Vector3(obj_translate);
@@ -731,34 +731,6 @@ int main(int argc, char *argv[])
     Point(board_x_end,board_y_end,board_z_end)),
     vector<Solid*>{board,left_board_border,right_board_border,top_board_border,bottom_board_border}
   );
-
-  int w = 400, h = 200;
-  int comp = 3;
-  unsigned char* image = stbi_load("./textures/earth-400x200.jpg", &w, &h, &comp, STBI_rgb);
-
-  if(!image)
-  {
-    cout << "Could not open texture" << endl;
-    exit(1);
-  }
-
-  Material* mat_earth = new Material(
-    RGB(0.1, 0.1, 0.1),
-    RGB(),
-    new Texture(image, w, h)
-  );
-
-  Sphere* gbase = new Sphere(
-    Point(0, 100, 180),
-    20,
-    mat_earth
-  );
-  Object* globe = new Object(
-    "Globe",
-    OBB(Point(-20, 80, 160), Point(20, 140, 200)),
-    vector<Solid*>{gbase}
-  );
-  objects.push_back(globe);
 
   /* Paredes frontais */
   objects.push_back(back_wall);
