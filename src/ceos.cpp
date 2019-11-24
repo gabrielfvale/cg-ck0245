@@ -36,24 +36,59 @@ static float observerf3[3] = { 0.0f, 180.0f, 355.0f };
 static float lookatf3[3] = { 0.0f, 160.0f, 0.0f };
 static float viewupf3[3] = { 0.0f, 181.0f, 355.0f };
 
-/* Spot 
-static float observerf3[3] = { 10.0f, 4.5f, 10.0f };
-static float lookatf3[3] = { 10.0f, 4.5f, 5.0f };
-static float viewupf3[3] = { 10.0f, 6.0f, 10.0f };
+/* Top 
+static float observerf3[3] = { 0.0f, 280.0f, 180.0f };
+static float lookatf3[3] = { 0.0f, 0.0f, 180.0f };
+static float viewupf3[3] = { 0.0f, 280.0f, 200.0f };
 */
+
 Camera* camera = new Camera(observerf3, lookatf3, viewupf3);
 
-float pl_intensity[3] = {0.3f, 0.3f, 0.3f};
+/* Lights */
+  /* Point lights */
+float pl_intensity[4][3] = {
+  {0.2f, 0.2f, 0.2f},
+  {0.2f, 0.2f, 0.2f},
+  {0.2f, 0.2f, 0.2f},
+  {0.2f, 0.2f, 0.2f}
+};
+float pl_pos[4][3] = {
+  {100, 270, 90},
+  {-100, 270, 90},
+  {100, 270, 260},
+  {-100, 270, 260}
+};
+vector<Light*> point_lights = {
+  new Light(pl_intensity[0], Vector3(pl_pos[0])),
+  new Light(pl_intensity[1], Vector3(pl_pos[1])),
+  new Light(pl_intensity[2], Vector3(pl_pos[2])),
+  new Light(pl_intensity[3], Vector3(pl_pos[3]))
+};
+  /* Remote light */
 float rl_intensity[3] = {0.3f, 0.3f, 0.3f};
+float rl_dir[3] = {-1, -1, 0};
+Light* remote_light = new Light(rl_intensity, Vector3(rl_dir), REMOTE);
+  /* Spotlight */
 float sp_intensity[3] = {0.3f, 0.3f, 0.3f};
-Light* point_light = new Light(pl_intensity, Vector3(0, 270, 90+65));
-Light* point_light2 = new Light(pl_intensity, Vector3(0, 270, 360-65));
-Light* remote_light = new Light(rl_intensity, Vector3(-1, -1, 0), REMOTE);
-Light* spot_light = new Light(sp_intensity, Point(0, 290/2, 180), Vector3(0, -1, 0), 15, 45, 5);
+float sp_pos[3] = {0, 145, 180};
+float sp_dir[3] = {0, -1, 0};
+float sp_angle = M_PI_4/3; float sp_falloff = M_PI_2/3; float sp_focus = 1;
+Light* spot_light = new Light(sp_intensity, Point(sp_pos), Vector3(sp_dir), sp_angle, sp_falloff, sp_focus);
+
+  /* Ambient light */
+Light* ambient_light = new Light(RGB(0.5, 0.5, 0.5), Vector3(), AMBIENT);
+
+vector<Light*> lights = {
+  ambient_light,
+  remote_light,
+  spot_light
+};
+bool global_switch = true;
 
 Scene* scene;
 vector<Object*> objects;
 
+/* Materials */
 Material* mat_silver = new Material(
 	RGB(0.23125, 0.23125, 0.23125),
   RGB(0.2775, 0.2775, 0.2775),
@@ -66,7 +101,6 @@ Material* mat_obsidian = new Material(
   RGB(0.332741, 0.328634, 0.346435),
   38.4
 );
-
 Material* mat_white_concrete = new Material(
   RGB(0.847058, 0.819607, 0.756862),
   RGB(0.854901, 0.843137, 0.815686),
@@ -113,6 +147,12 @@ Material* mat_steel = new Material(
   RGB(0.773911, 0.773911, 0.773911),
   32
 );
+Material* mat_marble = new Material(
+  RGB(0.901960, 0.901960, 0.901960),
+  RGB(0.949019, 0.949019, 0.949019),
+  RGB(0.7, 0.7, 0.7),
+  89.6
+);
 Material* mat_mdf = new Material(
   RGB(0.560784, 0.392156, 0.235294),
   RGB(0.901960, 0.811764, 0.662745),
@@ -140,7 +180,7 @@ void redraw()
 
 void display_gui()
 {
-  //ImGui::ShowDemoWindow();
+  ImGui::ShowDemoWindow();
   ImGuiStyle& style = ImGui::GetStyle();
   style.FrameRounding = 12.0f;
   //ImGui::StyleColorsLight();
@@ -160,102 +200,191 @@ void display_gui()
   //ImGui::SetNextWindowSize(ImVec2(250, 400), ImGuiCond_Once);
   // Janela de propriedades do cenario
   ImGui::Begin("Scene", NULL, window_flags);
-  /* Propriedades de camera */
-  if(ImGui::CollapsingHeader("Camera"))
+  if(ImGui::BeginTabBar("Main tab bar"))
   {
-    ImGui::InputFloat3("observer", observerf3);
-    ImGui::InputFloat3("lookat", lookatf3);
-    ImGui::InputFloat3("viewup", viewupf3);
-    if(ImGui::Button("Update camera"))
+    /* Propriedades de camera */
+    if(ImGui::BeginTabItem("Camera"))
     {
-      camera->set_eye(observerf3);
-      camera->set_lookat(lookatf3);
-      camera->set_viewup(viewupf3);
-      redraw();
+      ImGui::InputFloat3("observer", observerf3);
+      ImGui::InputFloat3("lookat", lookatf3);
+      ImGui::InputFloat3("viewup", viewupf3);
+      if(ImGui::Button("Update camera"))
+      {
+        camera->set_eye(observerf3);
+        camera->set_lookat(lookatf3);
+        camera->set_viewup(viewupf3);
+        redraw();
+      }
+      ImGui::EndTabItem();
     }
-  }
-  /* Configuração de luzes */
-  if(ImGui::CollapsingHeader("Lights"))
-  {
-    if(ImGui::Checkbox("Remote light", remote_light->active()))
-      redraw();
-    ImGui::ColorEdit3("rl_rgb", rl_intensity);
-    if(ImGui::IsItemDeactivatedAfterEdit())
-    {
-      remote_light->set_intensity(rl_intensity);
-      redraw();
-    }
-    if(ImGui::Checkbox("Point light", point_light->active()))
-      redraw();
-    if(ImGui::Checkbox("Point light2", point_light2->active()))
-      redraw();
-    ImGui::ColorEdit3("pl_rgb", pl_intensity);
-    if(ImGui::IsItemDeactivatedAfterEdit())
-    {
-      point_light->set_intensity(pl_intensity);
-      redraw();
-    }
-    if(ImGui::Checkbox("Spot light", spot_light->active()))
-      redraw();
-    ImGui::ColorEdit3("sp_rgb", sp_intensity);
-    if(ImGui::IsItemDeactivatedAfterEdit())
-    {
-      spot_light->set_intensity(sp_intensity);
-      redraw();
-    }
-  }
 
-  /* Object picking */
-  if(ImGui::CollapsingHeader("Object Picking"))
-  {
-    ImGui::Text(object_name);
-    if(picked_solid != NULL)
+    /* Configuração de luzes */
+    if(ImGui::BeginTabItem("Lights"))
     {
-      if(ImGui::Checkbox("Visible", picked_object->visible_ptr()))
-        redraw();
-      ImGui::ColorEdit3("Ambient", obj_ambient, picker_flags);
-      if(ImGui::IsItemDeactivatedAfterEdit())
+      if(ImGui::Checkbox("Toggle all", &global_switch))
       {
-        Material* material = picked_solid->get_material();
-        material->set_ambient(obj_ambient);
+        for(auto light : lights)
+          if(light->type() != AMBIENT)
+            *(light->active()) = global_switch;
+
         redraw();
       }
-      ImGui::ColorEdit3("Diffuse", obj_diffuse, picker_flags);
-      if(ImGui::IsItemDeactivatedAfterEdit())
+      /* Point lights */
+      if(ImGui::CollapsingHeader("Point lights"))
       {
-        Material* material = picked_solid->get_material();
-        material->set_diffuse(obj_diffuse);
-        redraw();
+        for(unsigned i = 0; i < point_lights.size(); i++)
+        {
+          string uid = "##pl_" + to_string(i+1);
+          string i_light = "Point light " + uid;
+          if(ImGui::TreeNode(i_light.c_str()))
+          {
+            string label_enabled = "Enabled" + uid;
+            string label_position = "Position" + uid;
+            string label_intensity = "Intensity" + uid;
+            if(ImGui::Checkbox(label_enabled.c_str(), point_lights[i]->active()))
+              redraw();
+            ImGui::InputFloat3(label_position.c_str(), pl_pos[i]);
+            if(ImGui::IsItemDeactivatedAfterEdit())
+            {
+              point_lights[i]->set_position(pl_pos[i]);
+              redraw();
+            }
+            ImGui::ColorEdit3(label_intensity.c_str(), pl_intensity[i]);
+            if(ImGui::IsItemDeactivatedAfterEdit())
+            {
+              point_lights[i]->set_intensity(pl_intensity[i]);
+              redraw();
+            }
+            ImGui::TreePop();
+          }
+        }
       }
-      ImGui::ColorEdit3("Specular", obj_specular, picker_flags);
-      if(ImGui::IsItemDeactivatedAfterEdit())
+      /* Remote light */
+      if(ImGui::CollapsingHeader("Remote light"))
       {
-        Material* material = picked_solid->get_material();
-        material->set_specular(obj_specular);
-        redraw();
+        if(ImGui::Checkbox("Enabled##rl_toggle", remote_light->active()))
+          redraw();
+        ImGui::InputFloat3("Direction##rl_dir", rl_dir, 3);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+          remote_light->set_position(Vector3(rl_dir));
+          redraw();
+        }
+        ImGui::ColorEdit3("Intensity##rl_rgb", rl_intensity);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+          remote_light->set_intensity(rl_intensity);
+          redraw();
+        }
       }
-      ImGui::Text("Transformations");
-      ImGui::InputFloat3("trl", obj_translate);
-      if(ImGui::IsItemDeactivatedAfterEdit())
+      /* Spotlight */
+      if(ImGui::CollapsingHeader("Spot light"))
       {
-        Vector3 trl_vector = Vector3(obj_translate);
-        if(trl_vector.norm() != 0)
-          picked_object->translate(trl_vector);
-        redraw();
-        obj_translate[0] = 0.0f;
-        obj_translate[1] = 0.0f;
-        obj_translate[2] = 0.0f;
+        if(ImGui::Checkbox("Enabled##sp_toggle", spot_light->active()))
+          redraw();
+        ImGui::SliderAngle("Angle", &sp_angle, 0.0f);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+          spot_light->set_spot(sp_pos, sp_angle, sp_falloff, sp_focus);
+          redraw();
+        }
+        ImGui::SliderAngle("Falloff", &sp_falloff, (180/M_PI) * sp_angle);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+          spot_light->set_spot(sp_pos, sp_angle, sp_falloff, sp_focus);
+          redraw();
+        }
+        ImGui::DragFloat("Focus", &sp_focus, 1, 1, 10);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+          spot_light->set_spot(sp_pos, sp_angle, sp_falloff, sp_focus);
+          redraw();
+        }
+        ImGui::InputFloat3("Direction##sp_dir", sp_dir, 3);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+          spot_light->set_position(Vector3(sp_dir));
+          redraw();
+        }
+        ImGui::InputFloat3("Position", sp_pos, 3);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+          spot_light->set_spot(sp_pos, sp_angle, sp_falloff, sp_focus);
+          redraw();
+        }
+        ImGui::ColorEdit3("Intensity##sp_rgb ", sp_intensity);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+          spot_light->set_intensity(sp_intensity);
+          redraw();
+        }
       }
+      ImGui::EndTabItem();
     }
-  }
-  if(ImGui::CollapsingHeader("Object selection"))
-  {
-    ImGui::BeginChild("selection", ImVec2(0, 100));
-    for (unsigned i = 0; i < objects.size(); i++)
-      ImGui::Selectable(objects[i]->name, objects[i]->visible_ptr());
-    ImGui::EndChild();
-    if(ImGui::Button("Update objects"))
-      redraw();
+
+    /* Object picking */
+    if(ImGui::BeginTabItem("Object Picking"))
+    {
+      ImGui::Text(object_name);
+      if(picked_solid != NULL)
+      {
+        if(ImGui::Checkbox("Visible", picked_object->visible_ptr()))
+          redraw();
+        ImGui::ColorEdit3("Ambient", obj_ambient, picker_flags);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+          Material* material = picked_solid->get_material();
+          material->set_ambient(obj_ambient);
+          redraw();
+        }
+        ImGui::ColorEdit3("Diffuse", obj_diffuse, picker_flags);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+          Material* material = picked_solid->get_material();
+          material->set_diffuse(obj_diffuse);
+          redraw();
+        }
+        ImGui::ColorEdit3("Specular", obj_specular, picker_flags);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+          Material* material = picked_solid->get_material();
+          material->set_specular(obj_specular);
+          redraw();
+        }
+        ImGui::Text("Transformations");
+        ImGui::Text("Translate");
+        ImGui::InputFloat3("##trl", obj_translate);
+        ImGui::Text("Scale");
+        ImGui::InputFloat3("###scl", obj_translate);
+        ImGui::Text("Rotate");
+        ImGui::SliderAngle("Angle", new float);
+        ImGui::InputFloat3("Axis", obj_translate);
+        if(ImGui::Button("Apply transformations"))
+        {
+          Vector3 trl_vector = Vector3(obj_translate);
+          if(trl_vector.norm() != 0)
+          {
+            picked_object->translate(trl_vector);
+            redraw();
+            obj_translate[0] = 0.0f;
+            obj_translate[1] = 0.0f;
+            obj_translate[2] = 0.0f;
+          }
+        }
+      }
+      ImGui::EndTabItem();
+    }
+    if(ImGui::BeginTabItem("Object selection"))
+    {
+      ImGui::BeginChild("selection", ImVec2(0, 100));
+      for (unsigned i = 0; i < objects.size(); i++)
+        ImGui::Selectable(objects[i]->name, objects[i]->visible_ptr());
+      ImGui::EndChild();
+      if(ImGui::Button("Update objects"))
+        redraw();
+      ImGui::EndTabItem();
+    }
+    ImGui::EndTabBar();
   }
   ImGui::End();
 
@@ -316,9 +445,10 @@ int main(int argc, char *argv[])
     upscaling = atof(argv[2]);
   PixelBuffer = new GLubyte[resolution * resolution * 3];
 
-  // definições de objetos
   Point origin;
-  Vector3 g_axis = Vector3(0, 1, 0);
+
+  for(auto point_light : point_lights)
+    lights.push_back(point_light);
 
   /* CEOS */
   /* Paredes */
@@ -551,7 +681,7 @@ int main(int argc, char *argv[])
   Object* lampObj = new Object(
     "Lamp Backg R",
     OBB(Point(Point(lampBoxWidth/2, 0, lampBoxLength/2)) ,Point(-lampBoxWidth/2, -lampBoxHeight - 2*lampRadius, -lampBoxLength/2)),
-    vector<Solid*> {lampBox, lamp1, cap11, cap12, lamp2, cap21, cap22}
+    vector<Solid*>{lampBox, lamp1, cap11, cap12, lamp2, cap21, cap22}
   );
   lampObj->translate(Vector3(100,290,back_wall_end.get_z()+90));
 
@@ -632,8 +762,8 @@ int main(int argc, char *argv[])
 
   /* Paredes frontais */
   objects.push_back(back_wall);
-  objects.push_back(front_wall);
   objects.push_back(new_ac);
+  objects.push_back(front_wall);
   objects.push_back(boardObj);
   /* Parede direita */
   objects.push_back(right_wall);
@@ -654,16 +784,6 @@ int main(int argc, char *argv[])
   objects.push_back(lampObj2);
   objects.push_back(lampObj3);
   objects.push_back(lampObj4);
-
-  Light* ambient_light = new Light(RGB(0.5, 0.5, 0.5), Vector3(), AMBIENT);
-
-  vector<Light*> lights = {
-    ambient_light,
-    point_light,
-    point_light2,
-    remote_light,
-    spot_light
-  };
 
   scene = new Scene(resolution, camera, objects, lights);
   scene->print(PixelBuffer);

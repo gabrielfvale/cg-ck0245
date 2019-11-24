@@ -38,8 +38,8 @@ Light::Light(float* rgb, Point position, Vector3 lookat, float angle, float fall
   intensity_.b = rgb[2];
   position_ = lookat;
   spot_pos = position;
-  spot_angle = (M_PI/180) * angle;
-  spot_falloff = (M_PI/180) * falloff_angle;
+  spot_angle = angle;
+  spot_falloff = falloff_angle;
   spot_focus = focus;
   l_type = SPOT;
   active_ = true;
@@ -80,6 +80,13 @@ RGB* Light::get_intensity(Point& point)
 void Light::set_position(Vector3 position) { position_ = position; }
 bool* Light::active() { return &active_; }
 Vector3* Light::get_position() { return &position_; }
+void Light::set_spot(float* pos, float angle, float falloff, float focus)
+{
+  this->spot_pos = Point(pos);
+  this->spot_angle = angle;
+  this->spot_falloff = falloff;
+  this->spot_focus = focus;
+}
 Point* Light::get_spotpos()
 {
   if (l_type == SPOT)

@@ -26,6 +26,7 @@ class Light
     void set_intensity(RGB new_intensity);
     void set_intensity(float* rgb);
     void set_position(Vector3 position);
+    void set_spot(float* pos, float angle, float falloff, float focus);
     bool* active();
     RGB* get_intensity(Point& point);
     Vector3* get_position();
