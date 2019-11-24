@@ -64,6 +64,7 @@ void Sphere::transform(Matrix4 t_matrix, TransformType t_type)
 {
   switch (t_type)
   {
+  case ORIG_TRANSLATE:
   case TRANSLATE:
     center_ = t_matrix * center_;
     break;

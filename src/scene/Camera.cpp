@@ -22,6 +22,31 @@ Camera::Camera(float* eye, float* lookat, float* up)
   update();
 }
 
+void Camera::calculate_matrices()
+{
+  camtoworld(0, 0) = cx_.get_x();
+  camtoworld(1, 0) = cx_.get_y();
+  camtoworld(2, 0) = cx_.get_z();
+  camtoworld(3, 0) = 0;
+
+  camtoworld(0, 1) = cy_.get_x();
+  camtoworld(1, 1) = cy_.get_y();
+  camtoworld(2, 1) = cy_.get_z();
+  camtoworld(3, 1) = 0;
+
+  camtoworld(0, 2) = cz_.get_x();
+  camtoworld(1, 2) = cz_.get_y();
+  camtoworld(2, 2) = cz_.get_z();
+  camtoworld(3, 2) = 0;
+
+  camtoworld(0, 3) = eye_.get_x();
+  camtoworld(1, 3) = eye_.get_y();
+  camtoworld(2, 3) = eye_.get_z();
+  camtoworld(3, 3) = 1;
+
+  worldtocam = camtoworld.inverse();
+}
+
 void Camera::update()
 {
   Vector3 v = Vector3(&eye_, &up_);
@@ -31,63 +56,17 @@ void Camera::update()
   cx_ = v.cross_product(&cz_);
   cx_.normalize();
   cy_ = cz_.cross_product(&cx_);
+  calculate_matrices();
 }
 
 Matrix4 Camera::world_to_camera()
 {
-  float ex, ey, ez;
-  eye_.get_coordinates(&ex, &ey, &ez);
-  Vector3 eye_vector = Vector3(ex, ey, ez);
-  Matrix4 matrix;
-
-  matrix(0, 0) = cx_.get_x();
-  matrix(0, 1) = cx_.get_y();
-  matrix(0, 2) = cx_.get_z();
-  matrix(0, 3) = -eye_vector.dot_product(&cx_);
-
-  matrix(1, 0) = cy_.get_x();
-  matrix(1, 1) = cy_.get_y();
-  matrix(1, 2) = cy_.get_z();
-  matrix(1, 3) = -eye_vector.dot_product(&cy_);
-
-  matrix(2, 0) = cz_.get_x();
-  matrix(2, 1) = cz_.get_y();
-  matrix(2, 2) = cz_.get_z();
-  matrix(2, 3) = -eye_vector.dot_product(&cz_);
-
-  matrix(3, 0) = 0;
-  matrix(3, 1) = 0;
-  matrix(3, 2) = 0;
-  matrix(3, 3) = 1;
-
-  return matrix;
+  return this->worldtocam;
 }
 
 Matrix4 Camera::camera_to_world()
 {
-  Matrix4 matrix;
-
-  matrix(0, 0) = cx_.get_x();
-  matrix(1, 0) = cx_.get_y();
-  matrix(2, 0) = cx_.get_z();
-  matrix(3, 0) = 0;
-
-  matrix(0, 1) = cy_.get_x();
-  matrix(1, 1) = cy_.get_y();
-  matrix(2, 1) = cy_.get_z();
-  matrix(3, 1) = 0;
-
-  matrix(0, 2) = cz_.get_x();
-  matrix(1, 2) = cz_.get_y();
-  matrix(2, 2) = cz_.get_z();
-  matrix(3, 2) = 0;
-
-  matrix(0, 3) = eye_.get_x();
-  matrix(1, 3) = eye_.get_y();
-  matrix(2, 3) = eye_.get_z();
-  matrix(3, 3) = 1;
-
-  return matrix;
+  return this->camtoworld;
 }
 
 Vector3* Camera::x_axis() { return &cx_; }

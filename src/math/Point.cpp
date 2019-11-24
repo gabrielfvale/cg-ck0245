@@ -22,6 +22,11 @@ void Point::get_coordinates(float* x, float* y, float* z)
 }
 void Point::set_coordinates(float x, float y, float z) { x_ = x; y_ = y; z_ = z; }
 
+void Point::to_float(float* cpy)
+{
+  cpy[0] = x_; cpy[1] = y_; cpy[2] = z_;
+}
+
 float Point::distance_from(Point* p)
 {
   float x1, y1, z1;

@@ -8,7 +8,7 @@
 #include "../math/Matrix4.hpp"
 #include "../math/Ray.hpp"
 
-enum TransformType { TRANSLATE, SCALE, ROTATE };
+enum TransformType { ORIG_TRANSLATE, TRANSLATE, SCALE, ROTATE };
 
 class Solid
 {

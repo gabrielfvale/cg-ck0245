@@ -20,6 +20,7 @@ class Vector3
     float get_z();
     void get_coordinates(float* x, float* y, float* z);
     void set_coordinates(float x,  float y, float z);
+    void to_float(float* cpy);
     Vector3 operator+(Vector3& v);
     Vector3 operator-(Vector3& v);
     Vector3 operator*(float value);

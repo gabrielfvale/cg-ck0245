@@ -17,6 +17,7 @@ class Point
     float get_z();
     void get_coordinates(float* x, float* y, float* z);
     void set_coordinates(float x, float y, float z);
+    void to_float(float* cpy);
     float distance_from(Point* p);
     Point operator+(Point& p2);
     Point operator-(Point& p2);

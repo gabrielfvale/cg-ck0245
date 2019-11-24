@@ -10,6 +10,8 @@ class AABB : public Solid
     float edge_; // edge length
     Point max_bound;
     Point min_bound;
+    Matrix4 model_matrix;
+    Matrix4 inv_matrix;
   public:
     AABB();
     AABB(Point center, float edge, Material* material);

@@ -357,18 +357,31 @@ void display_gui()
         ImGui::Text("Scale");
         ImGui::InputFloat3("###scl", obj_translate);
         ImGui::Text("Rotate");
-        ImGui::SliderAngle("Angle", &obj_rangle);
+        ImGui::DragFloat("Angle", &obj_rangle, 1, -360.0f, 360.0f);
         ImGui::InputFloat3("Axis", obj_raxis);
-        if(ImGui::Button("Apply transformations"))
+        if(ImGui::Button("Apply"))
         {
+          // Translate
           Vector3 trl_vector = Vector3(obj_translate);
           if(trl_vector.norm() != 0)
-          {
             picked_object->translate(trl_vector);
-            redraw();
-            obj_translate[0] = 0.0f;
-            obj_translate[1] = 0.0f;
-            obj_translate[2] = 0.0f;
+          // Rotate
+          Vector3 rot_axis = Vector3(obj_raxis);
+          if(obj_rangle != 0 && rot_axis.norm() != 0)
+          {
+            float rad_angle = obj_rangle * (M_PI/180);
+            picked_object->rotate(rad_angle, rot_axis);
+          }
+          redraw();
+        }
+        ImGui::SameLine();
+        if(ImGui::Button("Reset"))
+        {
+          obj_rangle = 0.0f;
+          for(int i = 0; i < 3; i++)
+          {
+            obj_translate[i] = 0.0f;
+            obj_raxis[i] = 0.0f;
           }
         }
       }

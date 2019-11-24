@@ -9,6 +9,7 @@ class OBB : public Solid
     Point max_bound;
     Point min_bound;
     Matrix4 modelmatrix;
+    Matrix4 invmatrix;
   public:
     OBB();
     OBB(Point min_bound, Point max_bound); // Bounding box 1

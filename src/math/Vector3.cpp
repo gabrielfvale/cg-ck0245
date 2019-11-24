@@ -48,6 +48,11 @@ void Vector3::set_coordinates(float x, float y, float z)
   z_ = z;
 }
 
+void Vector3::to_float(float* cpy)
+{
+  cpy[0] = x_; cpy[1] = y_; cpy[2] = z_;
+}
+
 float Vector3::norm() { return std::sqrt(dot_product(this)); }
 
 void Vector3::normalize()

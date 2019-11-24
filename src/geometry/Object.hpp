@@ -13,6 +13,7 @@ class Object
   private:
     OBB bounding_box_;
     std::vector<Solid*> mesh_;
+    Point pivot;
     bool visible_;
     void load_obj(const char* obj_path, Material* material, Point& c_min, Point& c_max, bool first_time = false);
   public:

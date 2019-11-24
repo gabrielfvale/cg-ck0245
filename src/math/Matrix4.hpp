@@ -8,7 +8,7 @@
 class Matrix4
 {
   private:
-    float matrix_[4][4];
+    float m[4][4];
   public:
     Matrix4();
     Matrix4 operator+(Matrix4& m);
@@ -19,6 +19,8 @@ class Matrix4
     Vector3 operator*(Vector3& v);
     Quaternion operator*(Quaternion& q);
     void identity();
+    Matrix4 inverse();
+    friend std::ostream& operator<< (std::ostream& stream, Matrix4& matrix);
 };
 
 #endif

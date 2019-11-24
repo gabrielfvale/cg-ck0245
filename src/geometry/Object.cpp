@@ -76,7 +76,7 @@ Object::Object(const char* name, const char* obj_path, Material* material, bool 
   Point minb;
   Point maxb;
   this->load_obj(obj_path, material, minb, maxb, true);
-  bounding_box_ = OBB(minb, maxb);
+  this->bounding_box_ = OBB(minb, maxb);
 }
 
 void Object::get(OBB& bb, std::vector<Solid*>& mesh)
@@ -165,11 +165,7 @@ void Object::rotate(float angle, Vector3 axis)
   to_origin(0, 3) = p_orig.get_x();
   to_origin(1, 3) = p_orig.get_y();
   to_origin(2, 3) = p_orig.get_z();
-  Matrix4 from_origin;
-  from_origin.identity();
-  from_origin(0, 3) = -p_orig.get_x();
-  from_origin(1, 3) = -p_orig.get_y();
-  from_origin(2, 3) = -p_orig.get_z();
+  Matrix4 from_origin = to_origin.inverse();
 
   angle /= 2;
   Vector3 qrv = axis * std::sin(angle);
@@ -193,9 +189,9 @@ void Object::rotate(float angle, Vector3 axis)
 
   rotation_m(3, 3) = 1;
 
-  transform(to_origin);
+  transform(to_origin, ORIG_TRANSLATE);
   transform(rotation_m, ROTATE);
-  transform(from_origin);
+  transform(from_origin, ORIG_TRANSLATE);
 }
 
 std::ostream& operator<<(std::ostream& stream, Object& object)

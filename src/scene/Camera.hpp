@@ -12,7 +12,10 @@ class Camera
     Point lookat_;
     Point up_;
     Vector3 cx_, cy_, cz_;
+    Matrix4 camtoworld;
+    Matrix4 worldtocam;
     void update();
+    void calculate_matrices();
   public:
     Camera();
     Camera(Point eye, Point lookat, Point up);

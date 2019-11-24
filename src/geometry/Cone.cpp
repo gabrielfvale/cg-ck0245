@@ -125,14 +125,15 @@ void Cone::transform(Matrix4 t_matrix, TransformType t_type)
 {
   switch (t_type)
   {
+  case ROTATE:
+    n_ = t_matrix * n_;
+  case ORIG_TRANSLATE:
   case TRANSLATE:
     c_ = t_matrix * c_;
     vertice_ = t_matrix * vertice_;
     break;
   case SCALE:
     scale_aux = t_matrix * scale_aux;
-    break;
-  case ROTATE:
     break;
   }
 }
