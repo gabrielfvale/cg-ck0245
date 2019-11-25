@@ -358,7 +358,26 @@ void display_gui()
         ImGui::InputFloat3("###scl", obj_translate);
         ImGui::Text("Rotate");
         ImGui::DragFloat("Angle", &obj_rangle, 1, -360.0f, 360.0f);
-        ImGui::InputFloat3("Axis", obj_raxis);
+        const char* axis_label[4] = {"X Axis", "Y Axis", "Z Axis", "Custom"};
+        static const char* curr_axis = axis_label[0];
+        float u_axis[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+        string custom_str = "Custom";
+        if (ImGui::BeginCombo("Axis##combo", curr_axis))
+        {
+          for (int i = 0; i < 4; i++)
+          {
+            bool is_selected = (curr_axis == axis_label[i]);
+            if (ImGui::Selectable(axis_label[i], is_selected))
+            {
+              curr_axis = axis_label[i];
+              for(int k = 0; k < 3; k++)
+                obj_raxis[k] = u_axis[i][k];
+            }
+          }
+          ImGui::EndCombo();
+        }
+        if(custom_str.compare(curr_axis) == 0)
+          ImGui::InputFloat3("##custom_axis", obj_raxis);
         if(ImGui::Button("Apply"))
         {
           // Translate
