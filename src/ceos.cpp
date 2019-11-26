@@ -136,6 +136,11 @@ Material* mat_white_plastic = new Material(
   RGB(0.5, 0.5, 0.5),
   32
 );
+Material* mat_white_lamp = new Material(
+  RGB(1, 1, 1),
+  RGB(1, 1, 1),
+  RGB(1, 1, 1)
+);
 Material* mat_steel = new Material(
 	RGB(0.537354, 0.537354, 0.537354),
   RGB(0.772549, 0.772549, 0.772549),
@@ -175,7 +180,7 @@ void redraw()
 
 void display_gui()
 {
-  ImGui::ShowDemoWindow();
+  //ImGui::ShowDemoWindow();
   ImGuiStyle& style = ImGui::GetStyle();
   style.FrameRounding = 12.0f;
   //ImGui::StyleColorsLight();
@@ -705,8 +710,8 @@ int main(int argc, char *argv[])
   float capLength = 2.0f;
 
   AABB* lampBox = new AABB(Point(lampBoxWidth/2, 0, lampBoxLength/2), Point(-lampBoxWidth/2, -lampBoxHeight, -lampBoxLength/2), mat_steel);
-  Cylinder* lamp1 = new Cylinder(Point(lampBoxWidth/4,-lampBoxHeight-lampRadius-0.2, -lampBoxLength/2 + (lampBoxLength-lampLength)/2), Vector3(0,0,1), lampLength, lampRadius, mat_white_plastic);
-  Cylinder* lamp2 = new Cylinder(Point(-lampBoxWidth/4,-lampBoxHeight-lampRadius-0.2, -lampBoxLength/2 + (lampBoxLength-lampLength)/2), Vector3(0,0,1), lampLength, lampRadius, mat_white_plastic);
+  Cylinder* lamp1 = new Cylinder(Point(lampBoxWidth/4,-lampBoxHeight-lampRadius-0.2, -lampBoxLength/2 + (lampBoxLength-lampLength)/2), Vector3(0,0,1), lampLength, lampRadius, mat_white_lamp);
+  Cylinder* lamp2 = new Cylinder(Point(-lampBoxWidth/4,-lampBoxHeight-lampRadius-0.2, -lampBoxLength/2 + (lampBoxLength-lampLength)/2), Vector3(0,0,1), lampLength, lampRadius, mat_white_lamp);
   Cylinder* cap11 = new Cylinder(Point(lampBoxWidth/4,-lampBoxHeight-lampRadius-0.2, -lampBoxLength/2 - capLength + (lampBoxLength-lampLength)/2) , Vector3(0,0,1), capLength, capRadius, mat_silver);
   Cylinder* cap12 = new Cylinder(Point(lampBoxWidth/4,-lampBoxHeight-lampRadius-0.2, lampLength -lampBoxLength/2 + (lampBoxLength-lampLength)/2) , Vector3(0,0,1), capLength, capRadius, mat_silver);
   Cylinder* cap21 = new Cylinder(Point(-lampBoxWidth/4,-lampBoxHeight-lampRadius-0.2, -lampBoxLength/2 - capLength + (lampBoxLength-lampLength)/2) , Vector3(0,0,1), capLength, capRadius, mat_silver);
