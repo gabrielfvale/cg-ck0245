@@ -8,11 +8,6 @@
 #include "./imgui/imgui_impl_glut.h"
 #include "./imgui/imgui_impl_opengl2.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "./util/stb_image.h"
-
-#include "./util/Texture.hpp"
-
 #include "./geometry/Plane.hpp"
 #include "./geometry/Triangle.hpp"
 #include "./geometry/Sphere.hpp"
@@ -587,7 +582,8 @@ int main(int argc, char *argv[])
 
   AABB* back_footer = new AABB(Point(back_wall_start.get_x(), 0, 0), Point(back_wall_end.get_x(), footer_height, footer_thickness), mat_darkwood);
 
-  AABB* lfooter1 = new AABB(Point(left_wall_end.get_x(), 0, back_wall_end.get_z()+2*footer_height+70), Point(left_wall_end.get_x()+1.1*footer_thickness, footer_height, left_wall_end.get_z()), mat_darkwood);
+  AABB* lfooter0 = new AABB(Point(left_wall_end.get_x(), 0, back_wall_end.get_z()), Point(left_wall_end.get_x()+1.1*footer_thickness, footer_height, back_wall_end.get_z()+6), mat_darkwood);
+  AABB* lfooter1 = new AABB(Point(left_wall_end.get_x(), 0, back_wall_end.get_z()+2*footer_height+86), Point(left_wall_end.get_x()+1.1*footer_thickness, footer_height, left_wall_end.get_z()), mat_darkwood);
   AABB* lfooter2 = new AABB(Point(left_sect_start.get_x(), 0, left_sect_start.get_z()-footer_thickness), Point(left_sect_end.get_x()+footer_thickness, footer_height, left_sect_end.get_z()+footer_thickness), mat_darkwood);
 
   AABB* rfooter1 = new AABB(Point(right_wall1_start.get_x()-footer_thickness, 0, 0), Point(right_wall1_start.get_x(), footer_height, right_wall2_end.get_z()), mat_darkwood);
@@ -595,21 +591,27 @@ int main(int argc, char *argv[])
   Object* footer = new Object(
     "Footer",
     OBB(Point(back_wall_start.get_x(), 0, 0), Point(back_wall_end.get_x(), 6, 360)),
-    vector<Solid*>{back_footer, lfooter1, lfooter2, rfooter1, rfooter2}
+    vector<Solid*>{back_footer, lfooter0, lfooter1, lfooter2, rfooter1, rfooter2}
   );
 
   /* Porta pro corredor */
-  Point hall_d_start = Point(left_wall_end.get_x()-5, 0, back_wall_end.get_z()+footer_height);
-  Point hall_d_end = Point(left_wall_end.get_x()+1, 210, back_wall_end.get_z()+footer_height+70);
+  Point hall_d_start = Point(left_wall_end.get_x()-5, 0, back_wall_end.get_z()+footer_height+6);
+  Point hall_d_end = Point(left_wall_end.get_x()+1, 210, back_wall_end.get_z()+footer_height+86);
 
   AABB* d_rect = new AABB(hall_d_start, hall_d_end, mat_beige_paint);
-  AABB* d_contour_right = new AABB(Point(left_wall_end.get_x(), 0, back_wall_end.get_z()), Point(left_wall_end.get_x()+footer_thickness, hall_d_end.get_y(), back_wall_end.get_z()+footer_height), mat_darkwood);
-  AABB* d_contour_top = new AABB(Point(left_wall_end.get_x(), hall_d_end.get_y(), back_wall_end.get_z()), Point(left_wall_end.get_x()+footer_thickness, hall_d_end.get_y()+footer_height, hall_d_end.get_z()+footer_height), mat_darkwood);
+  AABB* d_contour_right = new AABB(Point(left_wall_end.get_x(), 0, back_wall_end.get_z()+6), Point(left_wall_end.get_x()+footer_thickness, hall_d_end.get_y(), back_wall_end.get_z()+footer_height+6), mat_darkwood);
+  AABB* d_contour_top = new AABB(Point(left_wall_end.get_x(), hall_d_end.get_y(), back_wall_end.get_z()+6), Point(left_wall_end.get_x()+footer_thickness, hall_d_end.get_y()+footer_height, hall_d_end.get_z()+footer_height), mat_darkwood);
   AABB* d_contour_left = new AABB(Point(left_wall_end.get_x(), 0, hall_d_end.get_z()), Point(left_wall_end.get_x()+footer_thickness, hall_d_end.get_y(), hall_d_end.get_z()+footer_height), mat_darkwood);
+
+  AABB* handlebox = new AABB(Point(hall_d_end.get_x(), 80, hall_d_end.get_z()-2), Point(hall_d_end.get_x()+0.5, 97, hall_d_end.get_z()-6), mat_steel);
+  Cylinder* handlecyl1 = new Cylinder(Point(hall_d_end.get_x()+0.5, 88.5, hall_d_end.get_z()-4), Vector3(1, 0, 0), 3, 1, mat_steel);
+  Sphere* handlecurve = new Sphere(Point(hall_d_end.get_x()+3.5, 88.5, hall_d_end.get_z()-4), 1, mat_steel);
+  Cylinder* handlecyl2 = new Cylinder(Point(hall_d_end.get_x()+3.5, 88.5, hall_d_end.get_z()-4), Vector3(0, 0, -1), 10, 1, mat_steel);
+
   Object* hall_door = new Object(
     "Hall door",
-    OBB(Point(left_wall_end.get_x(), 0, back_wall_end.get_z()), Point(left_wall_end.get_x()+footer_thickness, hall_d_end.get_y()+footer_height, hall_d_end.get_z()+footer_height)),
-    vector<Solid*>{d_rect, d_contour_left, d_contour_right, d_contour_top}
+    OBB(Point(left_wall_end.get_x(), 0, back_wall_end.get_z()), Point(left_wall_end.get_x()+4, hall_d_end.get_y()+footer_height, hall_d_end.get_z()+footer_height)),
+    vector<Solid*>{d_rect, d_contour_left, d_contour_right, d_contour_top, handlebox, handlecyl1, handlecurve, handlecyl2}
   );
 
   /* AC Velho */
