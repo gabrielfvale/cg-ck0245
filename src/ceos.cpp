@@ -79,6 +79,9 @@ vector<Light*> lights = {
   spot_light
 };
 bool global_switch = true;
+// Used for scene interaction
+OBB* switch_top_bound = new OBB(Point(0, 0, -3.6), Point(0.6, 5.75, 3.6));
+OBB* switch_bottom_bound = new OBB(Point(0, -5.75, -3.6), Point(0.6, 0, 3.6));
 
 Scene* scene;
 vector<Object*> objects;
@@ -447,6 +450,21 @@ void display_gui()
       object_name = intersection.object_hit->name;
       picked_solid = intersection.solid_hit;
       picked_object = intersection.object_hit;
+      string str_obj(object_name);
+      if(str_obj.compare("Light switch_0") == 0)
+      {
+        cout << "Switching back lights" << endl;
+        *(point_lights[0]->active()) = ! *(point_lights[0]->active());
+        *(point_lights[1]->active()) = ! *(point_lights[1]->active());
+        redraw();
+      } else if (str_obj.compare("Light switch_1") == 0)
+      {
+        cout << "Switching front lights" << endl;
+        *(point_lights[2]->active()) = ! *(point_lights[2]->active());
+        *(point_lights[3]->active()) = ! *(point_lights[3]->active());
+        redraw();
+      }
+      
     }
   }
 }
@@ -619,6 +637,25 @@ int main(int argc, char *argv[])
     vector<Solid*>{d_rect, d_contour_left, d_contour_right, d_contour_top, handlebox, handlecyl1, handlecurve, handlecyl2}
   );
 
+  /* Interruptor */
+  AABB* switchbox_rect = new AABB(Point(0, -5.75, -3.6), Point(0.6, 5.75, 3.6), mat_white_plastic);
+  AABB* switch_t_toggle = new AABB(Point(0.6-0.25, 0.3, -1.75), Point(0.6+0.25, 1.3, 1.75), mat_old_plastic);
+  AABB* switch_b_toggle = new AABB(Point(0.6-0.25, -1.3, -1.75), Point(0.6+0.25, -0.3, 1.75), mat_old_plastic);
+  Object* light_switch_t = new Object(
+    "Light switch_0",
+    OBB(Point(0, 0, -3.6), Point(0.6+0.25, 5.75, 3.6)),
+    vector<Solid*>{switchbox_rect, switch_t_toggle},
+    mat_white_plastic
+  );
+  Object* light_switch_b = new Object(
+    "Light switch_1",
+    OBB(Point(0, -5.75, -3.6), Point(0.6+0.25, 0, 3.6)),
+    vector<Solid*>{switchbox_rect, switch_b_toggle},
+    mat_white_plastic
+  );
+  Vector3 switch_trl = Vector3(left_wall_end.get_x(), 105, hall_d_end.get_z()+footer_thickness+11.5);
+  light_switch_t->translate(switch_trl); light_switch_b->translate(switch_trl);
+
   /* AC Velho */
   Point old_acbox[2] = {Point(left_wall_end.get_x(), hall_d_end.get_y()+footer_height+10, hall_d_start.get_z()), Point(left_wall_end.get_x()+10, left_wall_end.get_y(), hall_d_end.get_z())};
   Point old_acbounds[2] = {Point(old_acbox[1].get_x()-10, old_acbox[0].get_y()+5, old_acbox[0].get_z()+5), Point(old_acbox[1].get_x()+5, old_acbox[0].get_y()+55, old_acbox[1].get_z()-5)};
@@ -785,6 +822,8 @@ int main(int argc, char *argv[])
   objects.push_back(left_wall);
   objects.push_back(hall_door);
   objects.push_back(old_ac);
+  objects.push_back(light_switch_t);
+  objects.push_back(light_switch_b);
   /* Piso */
   objects.push_back(floor);
   objects.push_back(footer);
