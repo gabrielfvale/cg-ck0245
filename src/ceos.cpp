@@ -571,7 +571,7 @@ int main(int argc, char *argv[])
   Point right_wall1_start = Point(back_wall_end.get_x()-wall_thickness, 0, 0);
   Point right_wall1_end = Point(back_wall_end.get_x(), wall_height-165, side_wall_dim1);
 
-  Point right_sect_start = Point(right_wall1_end.get_x()-38, 0, side_wall_dim1);
+  Point right_sect_start = Point(right_wall1_end.get_x()-wall_thickness-40, 0, side_wall_dim1);
   Point right_sect_end = Point(right_wall1_end.get_x(), wall_height, side_wall_dim1+side_wall_section);
 
   Point right_wall2_start = Point(right_wall1_start.get_x(), 0, right_sect_end.get_z());
@@ -726,21 +726,30 @@ int main(int argc, char *argv[])
     gridSolids
   );
 
-  // Esse -40 é a profundidade do armario
-  AABB* locker_body = new AABB(Point(right_wall2_end.get_x()-40,0,right_wall2_end.get_z()-108), Point(right_wall2_end.get_x()-13,150,right_wall2_end.get_z()), mat_beige_paint);
-  AABB* locker_holder = new AABB(Point(right_wall2_end.get_x()-45, 70, right_wall2_end.get_z()-60), Point(right_wall2_end.get_x()-13, 80, right_wall2_end.get_z()-65), mat_silver);
-  AABB* locker_border_top = new AABB(Point(right_wall2_end.get_x()-45,145,right_wall2_end.get_z()-108), Point(right_wall2_end.get_x()-13,150,right_wall2_end.get_z()), mat_beige_paint);
-  AABB* locker_border_bottom = new AABB(Point(right_wall2_end.get_x()-45,0,right_wall2_end.get_z()-108), Point(right_wall2_end.get_x()-13,5,right_wall2_end.get_z()), mat_beige_paint);
-  AABB* locker_border_right = new AABB(Point(right_wall2_end.get_x(),5,right_wall2_end.get_z()-103), Point(right_wall2_end.get_x()-45,145,right_wall2_end.get_z()-108), mat_beige_paint);
-  AABB* locker_border_left = new AABB(Point(right_wall2_end.get_x(),5,right_wall2_end.get_z()), Point(right_wall2_end.get_x()-45,145,right_wall2_end.get_z()-5), mat_beige_paint);
-  AABB* locker_slider = new AABB(Point(right_wall2_end.get_x()-44,5,right_wall2_end.get_z()-108), Point(right_wall2_end.get_x()-13,150,right_wall2_end.get_z()-55), mat_old_plastic);
-  AABB* locker_slider_holder = new AABB(Point(right_wall2_end.get_x()-41, 70, right_wall2_end.get_z()-10), Point(right_wall2_end.get_x()-13, 80, right_wall2_end.get_z()-15), mat_silver);
+  /* Armário */
+  float lockerWidth = 108;
+  float lockerHeight = 108;
+  float lockerDepth = 40;
   
+  AABB* locker_base = new AABB(Point(-lockerDepth/2+15, 0, -lockerWidth/2), Point(lockerDepth/2, 10, lockerWidth/2), mat_beige_paint);
+  AABB* locker_back = new AABB(Point(lockerDepth/2-2, 10, -lockerWidth/2), Point(lockerDepth/2, 10+lockerHeight, lockerWidth/2), mat_beige_paint);
+  AABB* locker_left = new AABB(Point(-lockerDepth/2,10,-lockerWidth/2), Point(lockerDepth/2,8+lockerHeight,-lockerWidth/2+2), mat_beige_paint);
+  AABB* locker_right = new AABB(Point(-lockerDepth/2,10,lockerWidth/2-2), Point(lockerDepth/2,8+lockerHeight,lockerWidth/2), mat_beige_paint);
+  AABB* locker_bottom = new AABB(Point(-lockerDepth/2, 10, -lockerWidth/2), Point(lockerDepth/2, 12, lockerWidth/2), mat_beige_paint);
+  AABB* locker_middle = new AABB(Point(-lockerDepth/2+5, 10+lockerHeight/2, -lockerWidth/2), Point(lockerDepth/2, 12+lockerHeight/2, lockerWidth/2), mat_beige_paint);
+  AABB* locker_top = new AABB(Point(-lockerDepth/2, 8+lockerHeight, -lockerWidth/2), Point(lockerDepth/2, 10+lockerHeight, lockerWidth/2), mat_beige_paint);
+  AABB* locker_slider_left = new AABB(Point(-lockerDepth/2+3, 10, -lockerWidth/2+2), Point(-lockerDepth/2, 10+lockerHeight, 0), mat_old_plastic);
+  AABB* locker_slider_right = new AABB(Point(-lockerDepth/2+3, 10, 0), Point(-lockerDepth/2+5, 10+lockerHeight, lockerWidth/2-2), mat_beige_paint);
+  AABB* locker_holder_left = new AABB(Point(-lockerDepth/2-.5,7+lockerHeight/2,-lockerWidth/2+10), Point(-lockerDepth/2,12+lockerHeight/2,-lockerWidth/2+15), mat_silver);
+  AABB* locker_holder_right = new AABB(Point(-lockerDepth/2+2.5,7+lockerHeight/2,lockerWidth/2-10), Point(-lockerDepth/2+3,12+lockerHeight/2,lockerWidth/2-15), mat_silver);
+
   Object* locker = new Object(
     "Locker",
-    OBB(Point(right_wall2_end.get_x()-40,0,right_wall2_end.get_z()-108), Point(right_wall2_end.get_x()-13,150,right_wall2_end.get_z())),
-    vector<Solid*> {locker_body, locker_border_top, locker_border_bottom, locker_border_right, locker_border_left, locker_slider, locker_slider_holder, locker_holder}
+    OBB(Point(-lockerDepth/2, 0, -lockerWidth/2), Point(lockerDepth/2, 10+lockerHeight, lockerWidth/2)),
+    vector<Solid*> {locker_base, locker_back, locker_left, locker_right, locker_bottom, locker_middle, locker_top, locker_slider_left, locker_slider_right, locker_holder_left, locker_holder_right}
   );
+  
+  locker->translate(Vector3(right_wall1_end.get_x()-lockerDepth+8,0,306));
 
   /* Mesa central */
   float t_support = 3;
