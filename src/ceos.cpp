@@ -162,6 +162,11 @@ Material* mat_mdf = new Material(
   RGB(0.3, 0.3, 0.3),
   38
 );
+Material* mat_blue_chair = new Material(
+  RGB(0.1921, 0.2588, 0.4274),
+  RGB(0.2509, 0.4, 0.4980),
+  RGB()
+);
 
 float obj_ambient[3] = {0.0f, 0.0f, 0.0f};
 float obj_diffuse[3] = {0.0f, 0.0f, 0.0f};
@@ -831,6 +836,32 @@ int main(int argc, char *argv[])
     vector<Solid*>{board,left_board_border,right_board_border,top_board_border,bottom_board_border}
   );
 
+  Object* chair1 = new Object(
+    "Chair 1",
+    "./obj/Chair/Chair_Frame.obj",
+    mat_black_plastic
+  );
+  chair1->include("./obj/Chair/Chair_Back.obj", mat_blue_chair);
+  chair1->include("./obj/Chair/Chair_Seat.obj", mat_blue_chair);
+  Object* chair2 = chair1->clone("Chair 2");
+  Object* chair3 = chair1->clone("Chair 3");
+  Object* chair4 = chair1->clone("Chair 4");
+  Object* chair5 = chair1->clone("Chair 5");
+
+  chair1->translate(Vector3(0, 0, 70));
+
+  chair2->translate(Vector3(-80, 0, 160));
+  chair2->rotate(80 * (M_PI/180), Vector3(0, 1, 0));
+
+  chair3->translate(Vector3(-70, 0, 220));
+  chair3->rotate(107 * (M_PI/180), Vector3(0, 1, 0));
+
+  chair4->translate(Vector3(60, 0, 160));
+  chair4->rotate(-M_PI_2, Vector3(0, 1, 0));
+
+  chair5->translate(Vector3(70, 0, 220));
+  chair5->rotate(-M_PI_2, Vector3(0, 1, 0));
+
   /* Paredes frontais */
   objects.push_back(back_wall);
   objects.push_back(new_ac);
@@ -853,6 +884,13 @@ int main(int argc, char *argv[])
   objects.push_back(floor);
   objects.push_back(footer);
   objects.push_back(table);
+
+  objects.push_back(chair1);
+  objects.push_back(chair2);
+  objects.push_back(chair3);
+  objects.push_back(chair4);
+  objects.push_back(chair5);
+
   /* Teto */
   objects.push_back(ceiling);
   objects.push_back(lampObj);

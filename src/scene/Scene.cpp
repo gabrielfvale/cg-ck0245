@@ -58,6 +58,7 @@ bool Scene::trace(Ray& ray, Intersection& intersection)
     // cast shadow rays for each light
     for(unsigned i = 0; i < lights.size(); i++)
     {
+      if(! *(lights[i]->active()) ) continue;
       if(lights[i]->type() == AMBIENT)
       {
         intersection.color += intersection.solid_hit->calculate_color(lights[i], observer, p_int);
