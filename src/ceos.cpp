@@ -523,6 +523,7 @@ int main(int argc, char *argv[])
   float side_wall_dim1 = 230.0;
   float side_wall_section = 22.0;
   float side_wall_dim2 = 108.0;
+  float window_thickness = 2;
     /* Parede esquerda */
   Point left_wall_start = Point(back_wall_start.get_x(), 0, 0);
   Point left_wall_end = Point(back_wall_start.get_x()+wall_thickness, wall_height, side_wall_dim1+side_wall_section+side_wall_dim2);
@@ -530,13 +531,36 @@ int main(int argc, char *argv[])
   Point left_sect_start = Point(left_wall_end.get_x(), 0, side_wall_dim1);
   Point left_sect_end = Point(left_sect_start.get_x()+wall_thickness, wall_height, side_wall_dim1+side_wall_section);
 
-  AABB* left_wall_rect = new AABB(left_wall_start, left_wall_end, mat_white_concrete);
+  AABB* left_wall_rect1 = new AABB(left_wall_start, Point(left_wall_end.get_x(), left_wall_end.get_y()-60, left_wall_end.get_z()), mat_white_concrete);
+  AABB* left_wall_rect2 = new AABB(Point(left_wall_start.get_x(), left_wall_end.get_y()-60, left_wall_start.get_z()), Point(left_wall_end.get_x(), left_wall_end.get_y(), left_wall_start.get_z()+112), mat_white_concrete);
+  AABB* left_wall_rect3 = new AABB(Point(left_wall_start.get_x(), left_wall_end.get_y()-60, left_sect_start.get_z()-9), Point(left_wall_end.get_x(), left_wall_end.get_y(), left_sect_start.get_z()), mat_white_concrete);
   AABB* left_wall_sect = new AABB(left_sect_start, left_sect_end, mat_white_concrete);
   Object* left_wall = new Object(
     "Left wall",
     OBB(left_wall_start, Point(left_sect_end.get_x(), wall_height, left_wall_end.get_z())),
-    vector<Solid*>{left_wall_rect, left_wall_sect}
+    vector<Solid*>{left_wall_rect1, left_wall_rect2, left_wall_rect3, left_wall_sect}
   );
+
+  /* Janelas da esquerda */
+  Object* left_nwindow = new Object(
+    "Left near window",
+    OBB(Point(-window_thickness, 0, -54), Point(3, 60, 54)),
+    vector<Solid*>{
+      new AABB(Point(-window_thickness, 0, -54), Point(0, 5, 54), mat_steel), //bottom
+      new AABB(Point(-window_thickness, 55, -54), Point(0, 60, 54), mat_steel), //top
+      new AABB(Point(-window_thickness, 0, 54), Point(0, 60, 54-5), mat_steel), //left
+      new AABB(Point(-window_thickness, 0, -54), Point(0, 60, -54+5), mat_steel), //right
+      new AABB(Point(-window_thickness, 0, -4.5), Point(-0.5, 60, 4.5), mat_steel), //middle1
+      new AABB(Point(-window_thickness, 0, -2.5), Point(0, 60, 2.5), mat_steel), //middle2
+      new AABB(Point(0, 1, (54/2)-1), Point(0.5, 4.5, (54/2)+1), mat_black_plastic), //handle1_1
+      new AABB(Point(0.5, 2.5, (54/2)-10), Point(1, 4, (54/2)+1), mat_steel), //handle1_2
+      new AABB(Point(0, 1, (-54/2)-1), Point(0.5, 4.5, (-54/2)+1), mat_black_plastic), //handle2_1
+      new AABB(Point(0.5, 2.5, (-54/2)-10), Point(1, 4, (-54/2)+1), mat_steel), //handle2_2
+    }
+  );
+  Object* left_fwindow = left_nwindow->clone();
+  left_nwindow->translate(Vector3(left_wall_end.get_x(), left_wall_end.get_y()-60, left_wall_end.get_z()-54));
+  left_fwindow->translate(Vector3(left_wall_end.get_x(), left_wall_end.get_y()-60, left_wall_end.get_z()-193));
 
     /* Parede direita */
   Point right_wall1_start = Point(back_wall_end.get_x()-wall_thickness, 0, 0);
@@ -563,7 +587,6 @@ int main(int argc, char *argv[])
   );
 
   /* Janela direita */
-  float window_thickness = 2;
   AABB* window_f_cube = new AABB(Point(right_wall1_start.get_x(), wall_height-165, 5), Point(right_wall1_start.get_x()+window_thickness, wall_height-15, 10), mat_steel);
   AABB* window_ff_cube = new AABB(Point(right_wall1_start.get_x(), wall_height-165, 75), Point(right_wall1_start.get_x()+window_thickness, wall_height-15, 80), mat_steel);
 
@@ -657,7 +680,7 @@ int main(int argc, char *argv[])
   light_switch_t->translate(switch_trl); light_switch_b->translate(switch_trl);
 
   /* AC Velho */
-  Point old_acbox[2] = {Point(left_wall_end.get_x(), hall_d_end.get_y()+footer_height+10, hall_d_start.get_z()), Point(left_wall_end.get_x()+10, left_wall_end.get_y(), hall_d_end.get_z())};
+  Point old_acbox[2] = {Point(left_wall_end.get_x(), hall_d_end.get_y()+footer_height+10, hall_d_start.get_z()), Point(left_wall_end.get_x()+10, ceiling_end.get_y(), hall_d_end.get_z())};
   Point old_acbounds[2] = {Point(old_acbox[1].get_x()-10, old_acbox[0].get_y()+5, old_acbox[0].get_z()+5), Point(old_acbox[1].get_x()+5, old_acbox[0].get_y()+55, old_acbox[1].get_z()-5)};
 
   AABB* old_acbox_rect = new AABB(old_acbox[0], old_acbox[1], mat_white_concrete);
@@ -820,6 +843,8 @@ int main(int argc, char *argv[])
   objects.push_back(locker);
   /* Parede esquerda */
   objects.push_back(left_wall);
+  objects.push_back(left_nwindow);
+  objects.push_back(left_fwindow);
   objects.push_back(hall_door);
   objects.push_back(old_ac);
   objects.push_back(light_switch_t);
