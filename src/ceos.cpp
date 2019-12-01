@@ -900,6 +900,28 @@ int main(int argc, char *argv[])
   Object* monitor2 = monitor->clone();
   monitor2->translate(Vector3(0,0,-50));
 
+  /* Teclados */
+
+  AABB* tecladoBase = new AABB(Point(-6.0f,0.0f,-21.5f), Point(6.0f,2.0f,21.5f), mat_white_plastic);
+  AABB* tecladoTecla1 = new AABB(Point(5.5f,2.0f,-20.5f), Point(4.5f,3.0f,-19.5f), mat_old_plastic);
+  AABB* tecladoTecla2= new AABB(Point(5.5f,2.0f,-18.5f), Point(4.5f,3.0f,5.0f), mat_old_plastic);
+  AABB* tecladoTecla3= new AABB(Point(5.5f,2.0f, 6.0f), Point(0.0f,3.0f, 11.5f), mat_old_plastic);
+  AABB* tecladoTecla4= new AABB(Point(-5.5,2.0f, -20.5), Point(3.5,3.0f, 5.0f), mat_old_plastic);
+  AABB* tecladoTecla5= new AABB(Point(-5.5,2.0f, 6.0f), Point(-4.0f,3.0f, 11.0f), mat_old_plastic);
+  AABB* tecladoTecla6= new AABB(Point(-4.0,2.0f, 7.6f), Point(-2.5f,3.0f, 9.2f), mat_old_plastic);
+  AABB* tecladoTecla7= new AABB(Point(-5.5f,2.0f, 12.5f), Point(3.5f,3.0f, 20.5f), mat_old_plastic);
+  
+  
+  Object* teclado = new Object(
+    "Teclado",
+    OBB(Point(-6.0f,0.0f,-21.5f), Point(6.0f,3.0f,21.5f)),
+    vector<Solid*>{tecladoBase, tecladoTecla1, tecladoTecla2, tecladoTecla3, tecladoTecla4, tecladoTecla5, tecladoTecla6, tecladoTecla7}
+  );
+
+  teclado->translate(Vector3(-30,table_height+3,200));
+  Object* teclado2 = teclado->clone();
+  teclado2->translate(Vector3(0,0,-50));
+
   /* Paredes frontais */
   objects.push_back(back_wall);
   objects.push_back(new_ac);
@@ -922,19 +944,16 @@ int main(int argc, char *argv[])
   objects.push_back(floor);
   objects.push_back(footer);
   objects.push_back(table);
-
-  /*Monitores
-  objects.push_back(monitor);
-  objects.push_back(monitor2);*/
-
   objects.push_back(chair1);
   objects.push_back(chair2);
   objects.push_back(chair3);
   objects.push_back(chair4);
   objects.push_back(chair5);
-  
-
-
+  /* Monitores e Teclados */
+  objects.push_back(monitor);
+  objects.push_back(monitor2);
+  objects.push_back(teclado);
+  objects.push_back(teclado2);
   /* Teto */
   objects.push_back(ceiling);
   objects.push_back(lampObj);
