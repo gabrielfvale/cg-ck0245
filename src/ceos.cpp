@@ -871,6 +871,35 @@ int main(int argc, char *argv[])
   chair5->translate(Vector3(70, 0, 220));
   chair5->rotate(-M_PI_2, Vector3(0, 1, 0));
 
+  /* Monitores */
+  
+  float baseRadius = 10.0f;
+  float monitorNeckRadius = 2.0f;
+  float monitorNeckHeight = 6.0f;
+  float monitorScreenHeight = 23.0f;
+  float monitorScreenWidth = 40.0f;
+  float monitorBorderWidth = 2.0f;
+  float monitorScreenDepth = 5.0f;
+
+  AABB* monitorBase = new AABB(Point(-baseRadius,0,-baseRadius),Point(baseRadius,1,baseRadius), mat_black_plastic);
+  Cone* monitorNeck = new Cone(Point(0,0,0), Vector3(0,1,0), monitorNeckHeight+2, monitorNeckRadius,  mat_black_plastic);
+  AABB* monitorBorderBottom = new AABB(Point(-monitorBorderWidth/2,monitorNeckHeight, -monitorScreenWidth/2),Point(monitorBorderWidth/2,monitorNeckHeight+monitorBorderWidth, monitorScreenWidth/2), mat_black_plastic);
+  AABB* monitorBorderTop = new AABB(Point(-monitorBorderWidth/2,monitorNeckHeight+monitorBorderWidth+monitorScreenHeight, -monitorScreenWidth/2),Point(monitorBorderWidth/2,monitorNeckHeight+2*monitorBorderWidth+monitorScreenHeight, monitorScreenWidth/2), mat_black_plastic);
+  AABB* monitorBorderLeft = new AABB(Point(-monitorBorderWidth/2,monitorNeckHeight+monitorBorderWidth, -monitorScreenWidth/2),Point(monitorBorderWidth/2,monitorNeckHeight+monitorBorderWidth+monitorScreenHeight, -monitorScreenWidth/2+monitorBorderWidth), mat_black_plastic);
+  AABB* monitorBorderRight = new AABB(Point(-monitorBorderWidth/2,monitorNeckHeight+monitorBorderWidth, monitorScreenWidth/2),Point(monitorBorderWidth/2,monitorNeckHeight+monitorBorderWidth+monitorScreenHeight, monitorScreenWidth/2-monitorBorderWidth), mat_black_plastic);
+  AABB* monitorScreen = new AABB(Point(-0.5,monitorNeckHeight+monitorBorderWidth, -monitorScreenWidth/2),Point(monitorBorderWidth/2-0.5,monitorNeckHeight+monitorBorderWidth+monitorScreenHeight, monitorScreenWidth/2-monitorBorderWidth), mat_white_lamp);
+  AABB* monitorBack = new AABB(Point(monitorBorderWidth/2-1,monitorNeckHeight+monitorBorderWidth, -monitorScreenWidth/2),Point(monitorBorderWidth/2,monitorNeckHeight+monitorBorderWidth+monitorScreenHeight, monitorScreenWidth/2-monitorBorderWidth),  mat_black_plastic);
+
+  Object* monitor = new Object(
+    "Monitor",
+    OBB(Point(-baseRadius,0, -monitorScreenWidth/2),Point(baseRadius,monitorNeckHeight+2*monitorBorderWidth+monitorScreenHeight, monitorScreenWidth/2)),
+    vector<Solid*>{monitorBase, monitorNeck, monitorBorderBottom, monitorBorderTop, monitorBorderLeft, monitorBorderRight, monitorScreen, monitorBack}
+  );
+
+  monitor->translate(Vector3(0,table_height+3,200));
+  Object* monitor2 = monitor->clone();
+  monitor2->translate(Vector3(0,0,-50));
+
   /* Paredes frontais */
   objects.push_back(back_wall);
   objects.push_back(new_ac);
@@ -881,24 +910,30 @@ int main(int argc, char *argv[])
   objects.push_back(window);
   objects.push_back(grid);
   objects.push_back(locker);
-  /* Parede esquerda */
+  /* Parede esquerda*/
   objects.push_back(left_wall);
   objects.push_back(left_nwindow);
   objects.push_back(left_fwindow);
   objects.push_back(hall_door);
   objects.push_back(old_ac);
   objects.push_back(light_switch_t);
-  objects.push_back(light_switch_b);
+  objects.push_back(light_switch_b); 
   /* Piso */
   objects.push_back(floor);
   objects.push_back(footer);
   objects.push_back(table);
+
+  /*Monitores
+  objects.push_back(monitor);
+  objects.push_back(monitor2);*/
 
   objects.push_back(chair1);
   objects.push_back(chair2);
   objects.push_back(chair3);
   objects.push_back(chair4);
   objects.push_back(chair5);
+  
+
 
   /* Teto */
   objects.push_back(ceiling);
