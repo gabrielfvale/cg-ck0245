@@ -748,8 +748,113 @@ int main(int argc, char *argv[])
     OBB(Point(-lockerDepth/2, 0, -lockerWidth/2), Point(lockerDepth/2, 10+lockerHeight, lockerWidth/2)),
     vector<Solid*> {locker_base, locker_back, locker_left, locker_right, locker_bottom, locker_middle, locker_top, locker_slider_left, locker_slider_right, locker_holder_left, locker_holder_right}
   );
-  
   locker->translate(Vector3(right_wall1_end.get_x()-lockerDepth+8,0,306));
+
+  /* Objetos em cima do armário */
+    /* Porta retrato */
+  Object* pic_frame = new Object(
+    "Picture frame",
+    OBB(Point(-1, 0, -6), Point(1, 20, 6)),
+    vector<Solid*>{
+      new AABB(Point(-0.9, 2, -4), Point(0.9, 13, 4), mat_white_plastic), // center
+      new AABB(Point(-1, 0, -6), Point(1, 2, 6), mat_mdf), // bottom
+      new AABB(Point(-1, 13, -6), Point(1, 15, 6), mat_mdf), // top
+      new AABB(Point(-1, 0, -6), Point(1, 15, -4), mat_mdf), // left
+      new AABB(Point(-1, 0, 4), Point(1, 15, 6), mat_mdf), // right
+    }
+  );
+  pic_frame->translate(Vector3(180, 118, 270));
+  pic_frame->rotate(15 * (M_PI/180), Vector3(0, 1, -1));
+
+    /* Garrafa BTG */
+  Object* btg_bottle = new Object(
+    "BTG Bottle",
+    OBB(Point(-3.5, 0, -3.5), Point(3.5, 22, 3.5)),
+    vector<Solid*>{
+      new Cylinder(Point(), Vector3(), 18.5, 3, mat_white_plastic),
+      new Cylinder(Point(0, 8, 0), Vector3(), 10.5, 3.2, mat_white_plastic),
+      new Cylinder(Point(0, 10, 0), Vector3(), 8.5, 3.4, mat_white_plastic),
+      new Cylinder(Point(0, 12, 0), Vector3(), 6.5, 3.5, mat_white_plastic),
+      new Cylinder(Point(0, 14, 0), Vector3(), 4.5, 3.5, mat_white_plastic),
+      new Cylinder(Point(0, 18.5, 0), Vector3(), 0.5, 3, mat_white_plastic),
+      new Cylinder(Point(0, 19, 0), Vector3(), 3, 3, mat_blue_chair)
+    }
+  );
+  btg_bottle->translate(Vector3(190, 118, 298));
+  Object* btg_bottle2 = btg_bottle->clone();
+  btg_bottle2->translate(Vector3(0, 0, -7.5));
+  Object* btg_bottle3 = btg_bottle2->clone();
+  btg_bottle3->translate(Vector3(0, 0, -7.5));
+
+    /* Copo vermelho */
+  Object* red_cup = new Object(
+    "Red cup",
+    OBB(Point(-3, 0, -3), Point(3, 15, 3)),
+    vector<Solid*>{
+      new Cylinder(Point(), Vector3(), 15, 3, new Material(
+        RGB(0.4588, 0.1803, 0.1960),
+        RGB(0.6117, 0.1686, 0.2470),
+        RGB(0.5, 0.5, 0.5),
+        32
+      ))
+    }
+  );
+  red_cup->translate(Vector3(190, 118, 306));
+
+    /* Copo turquesa */
+  Object* turquoise_cup = new Object(
+    "Turquoise cup",
+    OBB(Point(-3.5, 0, -3.5), Point(3.5, 12, 3.5)),
+    vector<Solid*>{
+      new Cone(Point(), Vector3(), 40, 3.5, new Material(
+        RGB(0.0666, 0.6078, 0.6196),
+        RGB(0.0627, 0.6274, 0.6274),
+        RGB()
+      ))
+    }
+  );
+  turquoise_cup->translate(Vector3(190, 118, 306+6.5));
+
+    /* Copo branco */
+  Object* white_cup = new Object(
+    "White cup",
+    OBB(Point(-3.5, 0, -3.5), Point(3.5, 15, 3.5)),
+    vector<Solid*>{
+      new Cone(Point(0, 15, 0), Vector3(0, -1, 0), 70, 3.5, new Material(
+        RGB(0.9294, 0.9058, 0.8470),
+        RGB(1, 0.9803, 0.9294),
+        RGB()
+      ))
+    }
+  );
+  white_cup->translate(Vector3(190, 118, 327));
+
+    /* Apagador */
+  Object* board_eraser = new Object(
+    "Eraser",
+    OBB(Point(-7.5, 0, -3), Point(7.5, 4, 3)),
+    vector<Solid*>{
+      new AABB(Point(-6.5, 0, -2), Point(6.5, 3, 2), mat_black_plastic),
+      new AABB(Point(-7, 2.5, -2.5), Point(7, 3, 2.5), mat_black_plastic),
+      new AABB(Point(-6.5, 3, -2), Point(6.5, 3.5, 2), mat_black_plastic),
+    }
+  );
+  board_eraser->translate(Vector3(176, 118, 340));
+  board_eraser->rotate(7 * (M_PI/180), Vector3(0, 1, 0));
+
+    /* Caneca */
+  Object* white_mug = new Object(
+    "White mug",
+    OBB(Point(-3.5, 0, -3.5), Point(3.5, 12, 6.5)),
+    vector<Solid*>{
+      new Cylinder(Point(), Vector3(), 12, 3.5, mat_white_plastic),
+      new AABB(Point(-0.5, 9, 3.5), Point(0.5, 9.5, 6), mat_white_plastic), // handle_t
+      new AABB(Point(-0.5, 3, 3.5), Point(0.5, 3.5, 6), mat_white_plastic), // handle_b
+      new AABB(Point(-0.5, 2.5, 6), Point(0.5, 10, 6.5), mat_white_plastic), // handle_m
+    }
+  );
+  white_mug->translate(Vector3(178, 118, 332));
+  white_mug->rotate(-M_PI_4, Vector3(0, 1, 0));
 
   /* Mesa central */
   float t_support = 3;
@@ -872,14 +977,13 @@ int main(int argc, char *argv[])
   chair5->rotate(-M_PI_2, Vector3(0, 1, 0));
 
   /* Monitores */
-  
   float baseRadius = 10.0f;
   float monitorNeckRadius = 2.0f;
   float monitorNeckHeight = 6.0f;
   float monitorScreenHeight = 23.0f;
   float monitorScreenWidth = 40.0f;
   float monitorBorderWidth = 2.0f;
-  float monitorScreenDepth = 5.0f;
+  //float monitorScreenDepth = 5.0f;
 
   AABB* monitorBase = new AABB(Point(-baseRadius,0,-baseRadius),Point(baseRadius,1,baseRadius), mat_black_plastic);
   Cone* monitorNeck = new Cone(Point(0,0,0), Vector3(0,1,0), monitorNeckHeight+2, monitorNeckRadius,  mat_black_plastic);
@@ -895,26 +999,23 @@ int main(int argc, char *argv[])
     OBB(Point(-baseRadius,0, -monitorScreenWidth/2),Point(baseRadius,monitorNeckHeight+2*monitorBorderWidth+monitorScreenHeight, monitorScreenWidth/2)),
     vector<Solid*>{monitorBase, monitorNeck, monitorBorderBottom, monitorBorderTop, monitorBorderLeft, monitorBorderRight, monitorScreen, monitorBack}
   );
-
   monitor->translate(Vector3(0,table_height+3,200));
   Object* monitor2 = monitor->clone();
   monitor2->translate(Vector3(0,0,-50));
 
   /* Teclados */
-
   AABB* tecladoBase = new AABB(Point(-6.0f,0.0f,-21.5f), Point(6.0f,2.0f,21.5f), mat_white_plastic);
-  AABB* tecladoTecla1 = new AABB(Point(5.5f,2.0f,-20.5f), Point(4.5f,3.0f,-19.5f), mat_old_plastic);
-  AABB* tecladoTecla2= new AABB(Point(5.5f,2.0f,-18.5f), Point(4.5f,3.0f,5.0f), mat_old_plastic);
-  AABB* tecladoTecla3= new AABB(Point(5.5f,2.0f, 6.0f), Point(0.0f,3.0f, 11.5f), mat_old_plastic);
-  AABB* tecladoTecla4= new AABB(Point(-5.5,2.0f, -20.5), Point(3.5,3.0f, 5.0f), mat_old_plastic);
-  AABB* tecladoTecla5= new AABB(Point(-5.5,2.0f, 6.0f), Point(-4.0f,3.0f, 11.0f), mat_old_plastic);
-  AABB* tecladoTecla6= new AABB(Point(-4.0,2.0f, 7.6f), Point(-2.5f,3.0f, 9.2f), mat_old_plastic);
-  AABB* tecladoTecla7= new AABB(Point(-5.5f,2.0f, 12.5f), Point(3.5f,3.0f, 20.5f), mat_old_plastic);
-  
-  
+  AABB* tecladoTecla1 = new AABB(Point(5.5f,2.0f,-20.5f), Point(4.5f,2.5f,-19.5f), mat_old_plastic);
+  AABB* tecladoTecla2= new AABB(Point(5.5f,2.0f,-18.5f), Point(4.5f,2.5f,5.0f), mat_old_plastic);
+  AABB* tecladoTecla3= new AABB(Point(5.5f,2.0f, 6.0f), Point(0.0f,2.5f, 11.5f), mat_old_plastic);
+  AABB* tecladoTecla4= new AABB(Point(-5.5,2.0f, -20.5), Point(3.5,2.5f, 5.0f), mat_old_plastic);
+  AABB* tecladoTecla5= new AABB(Point(-5.5,2.0f, 6.0f), Point(-4.0f,2.5f, 11.0f), mat_old_plastic);
+  AABB* tecladoTecla6= new AABB(Point(-4.0,2.0f, 7.6f), Point(-2.5f,2.5f, 9.2f), mat_old_plastic);
+  AABB* tecladoTecla7= new AABB(Point(-5.5f,2.0f, 12.5f), Point(3.5f,2.5f, 20.5f), mat_old_plastic);
+
   Object* teclado = new Object(
     "Teclado",
-    OBB(Point(-6.0f,0.0f,-21.5f), Point(6.0f,3.0f,21.5f)),
+    OBB(Point(-6.0f,0.0f,-21.5f), Point(6.0f,2.5f,21.5f)),
     vector<Solid*>{tecladoBase, tecladoTecla1, tecladoTecla2, tecladoTecla3, tecladoTecla4, tecladoTecla5, tecladoTecla6, tecladoTecla7}
   );
 
@@ -932,6 +1033,16 @@ int main(int argc, char *argv[])
   objects.push_back(window);
   objects.push_back(grid);
   objects.push_back(locker);
+  /* Objetos em cima do armário */
+  objects.push_back(pic_frame);
+  objects.push_back(btg_bottle);
+  objects.push_back(btg_bottle2);
+  objects.push_back(btg_bottle3);
+  objects.push_back(red_cup);
+  objects.push_back(turquoise_cup);
+  objects.push_back(white_cup);
+  objects.push_back(white_mug);
+  objects.push_back(board_eraser);
   /* Parede esquerda*/
   objects.push_back(left_wall);
   objects.push_back(left_nwindow);
