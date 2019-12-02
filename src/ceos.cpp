@@ -461,7 +461,9 @@ void display_gui()
     }
   } else if (ImGui::IsMouseClicked(1) && !ImGui::IsAnyItemHovered())
   {
-    string str_obj(object_name);
+    Intersection intersection;
+    scene->castRay(io.MousePos.x/upscaling, io.MousePos.y/upscaling, intersection);
+    string str_obj(intersection.object_hit->name);
     if(str_obj.compare("Light switch_0") == 0)
     {
       cout << "Switching back lights" << endl;
