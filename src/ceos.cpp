@@ -28,7 +28,7 @@ GLubyte* PixelBuffer;
 
 /* Origin */
 static float observerf3[3] = { 0.0f, 180.0f, 355.0f };
-static float lookatf3[3] = { 0.0f, 160.0f, 0.0f };
+static float lookatf3[3] = { 300.0f, 160.0f, 0.0f };
 static float viewupf3[3] = { 0.0f, 181.0f, 355.0f };
 
 /* Top 
@@ -82,6 +82,9 @@ bool global_switch = true;
 // Used for scene interaction
 OBB* switch_top_bound = new OBB(Point(0, 0, -3.6), Point(0.6, 5.75, 3.6));
 OBB* switch_bottom_bound = new OBB(Point(0, -5.75, -3.6), Point(0.6, 0, 3.6));
+Object* open_locker;
+Object* closed_locker;
+bool locker_open = false;
 
 Scene* scene;
 vector<Object*> objects;
@@ -455,21 +458,37 @@ void display_gui()
       object_name = intersection.object_hit->name;
       picked_solid = intersection.solid_hit;
       picked_object = intersection.object_hit;
-      string str_obj(object_name);
-      if(str_obj.compare("Light switch_0") == 0)
+    }
+  } else if (ImGui::IsMouseClicked(1) && !ImGui::IsAnyItemHovered())
+  {
+    string str_obj(object_name);
+    if(str_obj.compare("Light switch_0") == 0)
+    {
+      cout << "Switching back lights" << endl;
+      *(point_lights[0]->active()) = ! *(point_lights[0]->active());
+      *(point_lights[1]->active()) = ! *(point_lights[1]->active());
+      redraw();
+    } else if (str_obj.compare("Light switch_1") == 0)
+    {
+      cout << "Switching front lights" << endl;
+      *(point_lights[2]->active()) = ! *(point_lights[2]->active());
+      *(point_lights[3]->active()) = ! *(point_lights[3]->active());
+      redraw();
+    } else if (str_obj.compare("Locker") == 0)
+    {
+      if (locker_open)
       {
-        cout << "Switching back lights" << endl;
-        *(point_lights[0]->active()) = ! *(point_lights[0]->active());
-        *(point_lights[1]->active()) = ! *(point_lights[1]->active());
-        redraw();
-      } else if (str_obj.compare("Light switch_1") == 0)
+        cout << "Closing locker" << endl;
+        scene->objects.pop_back();
+        scene->objects.push_back(closed_locker);
+      } else
       {
-        cout << "Switching front lights" << endl;
-        *(point_lights[2]->active()) = ! *(point_lights[2]->active());
-        *(point_lights[3]->active()) = ! *(point_lights[3]->active());
-        redraw();
+        cout << "Opening locker" << endl;
+        scene->objects.pop_back();
+        scene->objects.push_back(open_locker);
       }
-      
+      locker_open = !locker_open;
+      redraw();
     }
   }
 }
@@ -743,12 +762,21 @@ int main(int argc, char *argv[])
   AABB* locker_holder_left = new AABB(Point(-lockerDepth/2-.5,7+lockerHeight/2,-lockerWidth/2+10), Point(-lockerDepth/2,12+lockerHeight/2,-lockerWidth/2+15), mat_silver);
   AABB* locker_holder_right = new AABB(Point(-lockerDepth/2+2.5,7+lockerHeight/2,lockerWidth/2-10), Point(-lockerDepth/2+3,12+lockerHeight/2,lockerWidth/2-15), mat_silver);
 
-  Object* locker = new Object(
+  AABB* openlocker_slider_left = new AABB(Point(-lockerDepth/2+3, 10, 0), Point(-lockerDepth/2, 10+lockerHeight, lockerWidth/2-2), mat_old_plastic);
+  AABB* openlocker_holder_left = new AABB(Point(-lockerDepth/2-.5,7+lockerHeight/2, 8), Point(-lockerDepth/2,12+lockerHeight/2, 13), mat_silver);
+
+  closed_locker = new Object(
     "Locker",
     OBB(Point(-lockerDepth/2, 0, -lockerWidth/2), Point(lockerDepth/2, 10+lockerHeight, lockerWidth/2)),
     vector<Solid*> {locker_base, locker_back, locker_left, locker_right, locker_bottom, locker_middle, locker_top, locker_slider_left, locker_slider_right, locker_holder_left, locker_holder_right}
   );
-  locker->translate(Vector3(right_wall1_end.get_x()-lockerDepth+8,0,306));
+  open_locker = new Object(
+    "Locker",
+    OBB(Point(-lockerDepth/2, 0, -lockerWidth/2), Point(lockerDepth/2, 10+lockerHeight, lockerWidth/2)),
+    vector<Solid*> {locker_base, locker_back, locker_left, locker_right, locker_bottom, locker_middle, locker_top, openlocker_slider_left, locker_slider_right, openlocker_holder_left, locker_holder_right}
+  );
+  closed_locker->translate(Vector3(right_wall1_end.get_x()-lockerDepth+8,0,306));
+  open_locker->translate(Vector3(right_wall1_end.get_x()-lockerDepth+8,0,306));
 
   /* Objetos em cima do armário */
     /* Porta retrato */
@@ -1032,7 +1060,6 @@ int main(int argc, char *argv[])
   objects.push_back(right_wall);
   objects.push_back(window);
   objects.push_back(grid);
-  objects.push_back(locker);
   /* Objetos em cima do armário */
   objects.push_back(pic_frame);
   objects.push_back(btg_bottle);
@@ -1071,6 +1098,8 @@ int main(int argc, char *argv[])
   objects.push_back(lampObj2);
   objects.push_back(lampObj3);
   objects.push_back(lampObj4);
+  /* Armáro TEM QUE SER O ÚLTIMO */
+  objects.push_back(closed_locker);
 
   scene = new Scene(resolution, camera, objects, lights);
   scene->print(PixelBuffer);
