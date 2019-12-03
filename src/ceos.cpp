@@ -170,6 +170,23 @@ Material* mat_blue_chair = new Material(
   RGB(0.2509, 0.4, 0.4980),
   RGB()
 );
+/* Table materials */
+Material* mat_table_top = new Material(
+  RGB(0.1921, 0.2588, 0.4274),
+  RGB(0.2509, 0.4, 0.4980),
+  RGB()
+);
+Material* mat_table_border = new Material(
+  RGB(0.847058, 0.819607, 0.756862),
+  RGB(0.854901, 0.843137, 0.815686),
+  RGB()
+);
+Material* mat_table_sup = new Material(
+	RGB(0.537354, 0.537354, 0.537354),
+  RGB(0.772549, 0.772549, 0.772549),
+  RGB(0.773911, 0.773911, 0.773911),
+  32
+);
 
 float obj_ambient[3] = {0.0f, 0.0f, 0.0f};
 float obj_diffuse[3] = {0.0f, 0.0f, 0.0f};
@@ -1010,8 +1027,8 @@ int main(int argc, char *argv[])
   float baseRadius = 10.0f;
   float monitorNeckRadius = 2.0f;
   float monitorNeckHeight = 6.0f;
-  float monitorScreenHeight = 23.0f;
-  float monitorScreenWidth = 40.0f;
+  float monitorScreenHeight = 33.0f;
+  float monitorScreenWidth = 50.0f;
   float monitorBorderWidth = 2.0f;
   //float monitorScreenDepth = 5.0f;
 
@@ -1029,9 +1046,9 @@ int main(int argc, char *argv[])
     OBB(Point(-baseRadius,0, -monitorScreenWidth/2),Point(baseRadius,monitorNeckHeight+2*monitorBorderWidth+monitorScreenHeight, monitorScreenWidth/2)),
     vector<Solid*>{monitorBase, monitorNeck, monitorBorderBottom, monitorBorderTop, monitorBorderLeft, monitorBorderRight, monitorScreen, monitorBack}
   );
-  monitor->translate(Vector3(0,table_height+3,200));
+  monitor->translate(Vector3(215-30, 75, 100.5));
   Object* monitor2 = monitor->clone();
-  monitor2->translate(Vector3(0,0,-50));
+  monitor2->translate(Vector3(0, 0, 80.5));
 
   /* Teclados */
   AABB* tecladoBase = new AABB(Point(-6.0f,0.0f,-21.5f), Point(6.0f,2.0f,21.5f), mat_white_plastic);
@@ -1049,9 +1066,67 @@ int main(int argc, char *argv[])
     vector<Solid*>{tecladoBase, tecladoTecla1, tecladoTecla2, tecladoTecla3, tecladoTecla4, tecladoTecla5, tecladoTecla6, tecladoTecla7}
   );
 
-  teclado->translate(Vector3(-30,table_height+3,200));
+  teclado->translate(Vector3(215-52.5, 75, 100.5));
   Object* teclado2 = teclado->clone();
-  teclado2->translate(Vector3(0,0,-50));
+  teclado2->translate(Vector3(0, 0, 80.5));
+  teclado2->rotate(5 * (M_PI/180), Vector3(0, 1, 0));
+
+  float pct_h = 75;
+  Object* pc_table = new Object(
+    "PC Table",
+    OBB(Point(-30, 0, -40), Point(30, pct_h, 40)),
+    vector<Solid*>{
+      new AABB(Point(-29, pct_h-1, -39), Point(29, pct_h-0.1, 39), mat_table_top),
+      new Sphere(Point(-29, pct_h-1, -39), 1, mat_table_border), // lb corner
+      new Sphere(Point(-29, pct_h-1, 39), 1, mat_table_border), // rb corner
+      new Sphere(Point(29, pct_h-1, -39), 1, mat_table_border), // lt corner
+      new Sphere(Point(29, pct_h-1, 39), 1, mat_table_border), // rt corner
+      new Cylinder(Point(-29, pct_h-1, -39), Vector3(0, 0, 1), 78, 1, mat_table_border), // bottom border
+      new Cylinder(Point(29, pct_h-1, -39), Vector3(0, 0, 1), 78, 1, mat_table_border), // top border
+      new Cylinder(Point(-29, pct_h-1, -39), Vector3(1, 0, 0), 58, 1, mat_table_border), // left border
+      new Cylinder(Point(-29, pct_h-1, 39), Vector3(1, 0, 0), 58, 1, mat_table_border), // right border
+
+      new AABB(Point(-29.5, pct_h-10, -25), Point(0, pct_h-2, -23), mat_white_concrete), // kb holder left
+      new AABB(Point(-29.5, pct_h-10, 23), Point(0, pct_h-2, 25), mat_white_concrete), // kb holder right
+      new AABB(Point(-29.5, pct_h-4, -23), Point(0, pct_h-2, 23), mat_white_concrete), //kb holder top
+      new AABB(Point(-28.5, pct_h-10, -23), Point(0, pct_h-8, 23), mat_table_top), //kb holder bottom
+      new AABB(Point(-29.5, pct_h-10, -23), Point(-28.5, pct_h-8, 23), mat_white_concrete), //kb holder bottom border
+
+      new AABB(Point(5, 0, -39), Point(9, pct_h-2, -35), mat_table_sup), // left_sp height
+      new AABB(Point(-20, 0, -39), Point(29, 4, -35), mat_table_sup), // left_sp bottom
+      new AABB(Point(5, 0, 35), Point(9, pct_h-2, 39), mat_table_sup), // right_sp height
+      new AABB(Point(-20, 0, 35), Point(29, 4, 39), mat_table_sup), // right_sp bottom
+    }
+  );
+  pc_table->translate(Vector3(215-45, 0, 100.5));
+
+  Object* pc_table2 = pc_table->clone();
+  pc_table2->translate(Vector3(0, 0, 80.5));
+
+  Object* sw_pc_table = new Object(
+    "PC Table",
+    OBB(Point(-60, 0, -30), Point(60, pct_h, 30)),
+    vector<Solid*>{
+      new AABB(Point(-59, pct_h-1, -29), Point(59, pct_h-0.1, 29), mat_table_top),
+
+      new Sphere(Point(-59, pct_h-1, 29), 1, mat_table_border), // lb corner
+      new Sphere(Point(59, pct_h-1, 29), 1, mat_table_border), // rb corner
+      new Sphere(Point(-59, pct_h-1, -29), 1, mat_table_border), // lt corner
+      new Sphere(Point(59, pct_h-1, 29), 1, mat_table_border), // rt corner
+
+      new Cylinder(Point(-59, pct_h-1, 29), Vector3(1, 0, 0), 158, 1, mat_table_border), // bottom border
+      new Cylinder(Point(-59, pct_h-1, -29), Vector3(1, 0, 0), 158, 1, mat_table_border), // top border
+      new Cylinder(Point(-59, pct_h-1, 29), Vector3(0, 0, -1), 58, 1, mat_table_border), // left border
+      new Cylinder(Point(59, pct_h-1, 29), Vector3(0, 0, -1), 58, 1, mat_table_border), // right border
+
+      new AABB(Point(-59, 0, -9), Point(-55, pct_h-2, -5), mat_table_sup), // left_sp height
+      new AABB(Point(-59, 0, -29), Point(-55, 4, 20), mat_table_sup), // left_sp bottom
+      new AABB(Point(55, 0, -9), Point(59, pct_h-2, -5), mat_table_sup), // right_sp height
+      new AABB(Point(55, 0, -29), Point(59, 4, 20), mat_table_sup), // right_sp bottom
+    }
+  );
+  sw_pc_table->translate(Vector3(215-60-15, 0, 30));
+
 
   /* Paredes frontais */
   objects.push_back(back_wall);
@@ -1062,6 +1137,14 @@ int main(int argc, char *argv[])
   objects.push_back(right_wall);
   objects.push_back(window);
   objects.push_back(grid);
+  objects.push_back(sw_pc_table);
+  objects.push_back(pc_table);
+  objects.push_back(pc_table2);
+  /* Monitores e Teclados */
+  objects.push_back(monitor);
+  objects.push_back(monitor2);
+  objects.push_back(teclado);
+  objects.push_back(teclado2);
   /* Objetos em cima do armário */
   objects.push_back(pic_frame);
   objects.push_back(btg_bottle);
@@ -1089,11 +1172,6 @@ int main(int argc, char *argv[])
   objects.push_back(chair3);
   objects.push_back(chair4);
   objects.push_back(chair5);
-  /* Monitores e Teclados */
-  objects.push_back(monitor);
-  objects.push_back(monitor2);
-  objects.push_back(teclado);
-  objects.push_back(teclado2);
   /* Teto */
   objects.push_back(ceiling);
   objects.push_back(lampObj);
