@@ -739,9 +739,9 @@ int main(int argc, char *argv[])
     Altura: 27cm
     Profundidade: 19,5cm
   */
-  Object* new_ac = new Object("New AC", "./obj/AC/AC_chassi.obj", mat_white_plastic);
-  new_ac->include("./obj/AC/AC_pholder.obj", mat_black_plastic);
-  new_ac->include("./obj/AC/AC_plates.obj", mat_white_plastic);
+  Object* new_ac = new Object("New AC", "./models/obj/AC/AC_chassi.obj", mat_white_plastic);
+  new_ac->include("./models/obj/AC/AC_pholder.obj", mat_black_plastic);
+  new_ac->include("./models/obj/AC/AC_plates.obj", mat_white_plastic);
   new_ac->translate(Vector3(left_wall_end.get_x()+90, wall_height-37, 0));
 
   /* Grade */
@@ -918,7 +918,7 @@ int main(int argc, char *argv[])
     OBB(Point(-110/2, 0, -60-t_support), Point(110/2, table_height, 60+t_support)),
     vector<Solid*>{table_supf, table_supfh, table_mid_rect, table_supn, table_supnh}
   );
-  table->include("./obj/Table_top.obj", mat_mdf);
+  table->include("./models/obj/Table_top.obj", mat_mdf);
   table->translate(Vector3(0, 0, 180));
 
   /* Lâmpadas
@@ -999,11 +999,11 @@ int main(int argc, char *argv[])
 
   Object* chair1 = new Object(
     "Chair 1",
-    "./obj/Chair/Chair_Frame.obj",
+    "./models/obj/Chair/Chair_Frame.obj",
     mat_black_plastic
   );
-  chair1->include("./obj/Chair/Chair_Back.obj", mat_blue_chair);
-  chair1->include("./obj/Chair/Chair_Seat.obj", mat_blue_chair);
+  chair1->include("./models/obj/Chair/Chair_Back.obj", mat_blue_chair);
+  chair1->include("./models/obj/Chair/Chair_Seat.obj", mat_blue_chair);
   Object* chair2 = chair1->clone("Chair 2");
   Object* chair3 = chair1->clone("Chair 3");
   Object* chair4 = chair1->clone("Chair 4");
