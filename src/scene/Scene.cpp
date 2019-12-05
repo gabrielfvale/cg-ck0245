@@ -68,8 +68,8 @@ bool Scene::trace(Ray& ray, Intersection& intersection)
       Vector3 light_dir = intersection.solid_hit->light_direction(lights[i], p_int);
       Ray shadowray = Ray(p_int, light_dir);
 
-      Vector3 lvp = *(lights[i]->get_position());
-      Point light_point = lights[i]->type() == SPOT ? *(lights[i]->get_spotpos()) : Point(lvp.get_x(), lvp.get_y(), lvp.get_z());
+      Vector3 lvp = lights[i]->get_position();
+      Point light_point = lights[i]->type() == SPOT ? lights[i]->get_spotpos() : Point(lvp.get_x(), lvp.get_y(), lvp.get_z());
 
       int visible = 1;
       unsigned k = 0;
