@@ -28,7 +28,7 @@ GLubyte* PixelBuffer;
 
 /* Origin */
 static float observerf3[3] = { 0.0f, 180.0f, 355.0f };
-static float lookatf3[3] = { 0.0f, 160.0f, 0.0f };
+static float lookatf3[3] = { 300.0f, 160.0f, 0.0f };
 static float viewupf3[3] = { 0.0f, 181.0f, 355.0f };
 
 /* Top 
@@ -82,6 +82,9 @@ bool global_switch = true;
 // Used for scene interaction
 OBB* switch_top_bound = new OBB(Point(0, 0, -3.6), Point(0.6, 5.75, 3.6));
 OBB* switch_bottom_bound = new OBB(Point(0, -5.75, -3.6), Point(0.6, 0, 3.6));
+Object* open_locker;
+Object* closed_locker;
+bool locker_open = false;
 
 Scene* scene;
 vector<Object*> objects;
@@ -166,6 +169,23 @@ Material* mat_blue_chair = new Material(
   RGB(0.1921, 0.2588, 0.4274),
   RGB(0.2509, 0.4, 0.4980),
   RGB()
+);
+/* Table materials */
+Material* mat_table_top = new Material(
+  RGB(0.1921, 0.2588, 0.4274),
+  RGB(0.2509, 0.4, 0.4980),
+  RGB()
+);
+Material* mat_table_border = new Material(
+  RGB(0.847058, 0.819607, 0.756862),
+  RGB(0.854901, 0.843137, 0.815686),
+  RGB()
+);
+Material* mat_table_sup = new Material(
+	RGB(0.537354, 0.537354, 0.537354),
+  RGB(0.772549, 0.772549, 0.772549),
+  RGB(0.773911, 0.773911, 0.773911),
+  32
 );
 
 float obj_ambient[3] = {0.0f, 0.0f, 0.0f};
@@ -455,21 +475,39 @@ void display_gui()
       object_name = intersection.object_hit->name;
       picked_solid = intersection.solid_hit;
       picked_object = intersection.object_hit;
-      string str_obj(object_name);
-      if(str_obj.compare("Light switch_0") == 0)
+    }
+  } else if (ImGui::IsMouseClicked(1) && !ImGui::IsAnyItemHovered())
+  {
+    Intersection intersection;
+    scene->castRay(io.MousePos.x/upscaling, io.MousePos.y/upscaling, intersection);
+    string str_obj(intersection.object_hit->name);
+    if(str_obj.compare("Light switch_0") == 0)
+    {
+      cout << "Switching back lights" << endl;
+      *(point_lights[0]->active()) = ! *(point_lights[0]->active());
+      *(point_lights[1]->active()) = ! *(point_lights[1]->active());
+      redraw();
+    } else if (str_obj.compare("Light switch_1") == 0)
+    {
+      cout << "Switching front lights" << endl;
+      *(point_lights[2]->active()) = ! *(point_lights[2]->active());
+      *(point_lights[3]->active()) = ! *(point_lights[3]->active());
+      redraw();
+    } else if (str_obj.compare("Locker") == 0)
+    {
+      if (locker_open)
       {
-        cout << "Switching back lights" << endl;
-        *(point_lights[0]->active()) = ! *(point_lights[0]->active());
-        *(point_lights[1]->active()) = ! *(point_lights[1]->active());
-        redraw();
-      } else if (str_obj.compare("Light switch_1") == 0)
+        cout << "Closing locker" << endl;
+        scene->objects.pop_back();
+        scene->objects.push_back(closed_locker);
+      } else
       {
-        cout << "Switching front lights" << endl;
-        *(point_lights[2]->active()) = ! *(point_lights[2]->active());
-        *(point_lights[3]->active()) = ! *(point_lights[3]->active());
-        redraw();
+        cout << "Opening locker" << endl;
+        scene->objects.pop_back();
+        scene->objects.push_back(open_locker);
       }
-      
+      locker_open = !locker_open;
+      redraw();
     }
   }
 }
@@ -701,9 +739,9 @@ int main(int argc, char *argv[])
     Altura: 27cm
     Profundidade: 19,5cm
   */
-  Object* new_ac = new Object("New AC", "./obj/AC/AC_chassi.obj", mat_white_plastic);
-  new_ac->include("./obj/AC/AC_pholder.obj", mat_black_plastic);
-  new_ac->include("./obj/AC/AC_plates.obj", mat_white_plastic);
+  Object* new_ac = new Object("New AC", "./models/obj/AC/AC_chassi.obj", mat_white_plastic);
+  new_ac->include("./models/obj/AC/AC_pholder.obj", mat_black_plastic);
+  new_ac->include("./models/obj/AC/AC_plates.obj", mat_white_plastic);
   new_ac->translate(Vector3(left_wall_end.get_x()+90, wall_height-37, 0));
 
   /* Grade */
@@ -743,13 +781,127 @@ int main(int argc, char *argv[])
   AABB* locker_holder_left = new AABB(Point(-lockerDepth/2-.5,7+lockerHeight/2,-lockerWidth/2+10), Point(-lockerDepth/2,12+lockerHeight/2,-lockerWidth/2+15), mat_silver);
   AABB* locker_holder_right = new AABB(Point(-lockerDepth/2+2.5,7+lockerHeight/2,lockerWidth/2-10), Point(-lockerDepth/2+3,12+lockerHeight/2,lockerWidth/2-15), mat_silver);
 
-  Object* locker = new Object(
+  AABB* openlocker_slider_left = new AABB(Point(-lockerDepth/2+3, 10, 0), Point(-lockerDepth/2, 10+lockerHeight, lockerWidth/2-2), mat_old_plastic);
+  AABB* openlocker_holder_left = new AABB(Point(-lockerDepth/2-.5,7+lockerHeight/2, 8), Point(-lockerDepth/2,12+lockerHeight/2, 13), mat_silver);
+
+  closed_locker = new Object(
     "Locker",
     OBB(Point(-lockerDepth/2, 0, -lockerWidth/2), Point(lockerDepth/2, 10+lockerHeight, lockerWidth/2)),
     vector<Solid*> {locker_base, locker_back, locker_left, locker_right, locker_bottom, locker_middle, locker_top, locker_slider_left, locker_slider_right, locker_holder_left, locker_holder_right}
   );
-  
-  locker->translate(Vector3(right_wall1_end.get_x()-lockerDepth+8,0,306));
+  open_locker = new Object(
+    "Locker",
+    OBB(Point(-lockerDepth/2, 0, -lockerWidth/2), Point(lockerDepth/2, 10+lockerHeight, lockerWidth/2)),
+    vector<Solid*> {locker_base, locker_back, locker_left, locker_right, locker_bottom, locker_middle, locker_top, openlocker_slider_left, locker_slider_right, openlocker_holder_left, locker_holder_right}
+  );
+  closed_locker->translate(Vector3(right_wall1_end.get_x()-lockerDepth+8,0,306));
+  open_locker->translate(Vector3(right_wall1_end.get_x()-lockerDepth+8,0,306));
+
+  /* Objetos em cima do armário */
+    /* Porta retrato */
+  Object* pic_frame = new Object(
+    "Picture frame",
+    OBB(Point(-1, 0, -6), Point(1, 20, 6)),
+    vector<Solid*>{
+      new AABB(Point(-0.9, 2, -4), Point(0.9, 13, 4), mat_white_plastic), // center
+      new AABB(Point(-1, 0, -6), Point(1, 2, 6), mat_mdf), // bottom
+      new AABB(Point(-1, 13, -6), Point(1, 15, 6), mat_mdf), // top
+      new AABB(Point(-1, 0, -6), Point(1, 15, -4), mat_mdf), // left
+      new AABB(Point(-1, 0, 4), Point(1, 15, 6), mat_mdf), // right
+    }
+  );
+  pic_frame->translate(Vector3(180, 118, 270));
+  pic_frame->rotate(15 * (M_PI/180), Vector3(0, 1, -1));
+
+    /* Garrafa BTG */
+  Object* btg_bottle = new Object(
+    "BTG Bottle",
+    OBB(Point(-3.5, 0, -3.5), Point(3.5, 22, 3.5)),
+    vector<Solid*>{
+      new Cylinder(Point(), Vector3(), 18.5, 3, mat_white_plastic),
+      new Cylinder(Point(0, 8, 0), Vector3(), 10.5, 3.2, mat_white_plastic),
+      new Cylinder(Point(0, 10, 0), Vector3(), 8.5, 3.4, mat_white_plastic),
+      new Cylinder(Point(0, 12, 0), Vector3(), 6.5, 3.5, mat_white_plastic),
+      new Cylinder(Point(0, 14, 0), Vector3(), 4.5, 3.5, mat_white_plastic),
+      new Cylinder(Point(0, 18.5, 0), Vector3(), 0.5, 3, mat_white_plastic),
+      new Cylinder(Point(0, 19, 0), Vector3(), 3, 3, mat_blue_chair)
+    }
+  );
+  btg_bottle->translate(Vector3(190, 118, 298));
+  Object* btg_bottle2 = btg_bottle->clone();
+  btg_bottle2->translate(Vector3(0, 0, -7.5));
+  Object* btg_bottle3 = btg_bottle2->clone();
+  btg_bottle3->translate(Vector3(0, 0, -7.5));
+
+    /* Copo vermelho */
+  Object* red_cup = new Object(
+    "Red cup",
+    OBB(Point(-3, 0, -3), Point(3, 15, 3)),
+    vector<Solid*>{
+      new Cylinder(Point(), Vector3(), 15, 3, new Material(
+        RGB(0.4588, 0.1803, 0.1960),
+        RGB(0.6117, 0.1686, 0.2470),
+        RGB(0.5, 0.5, 0.5),
+        32
+      ))
+    }
+  );
+  red_cup->translate(Vector3(190, 118, 306));
+
+    /* Copo turquesa */
+  Object* turquoise_cup = new Object(
+    "Turquoise cup",
+    OBB(Point(-3.5, 0, -3.5), Point(3.5, 12, 3.5)),
+    vector<Solid*>{
+      new Cone(Point(), Vector3(), 40, 3.5, new Material(
+        RGB(0.0666, 0.6078, 0.6196),
+        RGB(0.0627, 0.6274, 0.6274),
+        RGB()
+      ))
+    }
+  );
+  turquoise_cup->translate(Vector3(190, 118, 306+6.5));
+
+    /* Copo branco */
+  Object* white_cup = new Object(
+    "White cup",
+    OBB(Point(-3.5, 0, -3.5), Point(3.5, 15, 3.5)),
+    vector<Solid*>{
+      new Cone(Point(0, 15, 0), Vector3(0, -1, 0), 70, 3.5, new Material(
+        RGB(0.9294, 0.9058, 0.8470),
+        RGB(1, 0.9803, 0.9294),
+        RGB()
+      ))
+    }
+  );
+  white_cup->translate(Vector3(190, 118, 327));
+
+    /* Apagador */
+  Object* board_eraser = new Object(
+    "Eraser",
+    OBB(Point(-7.5, 0, -3), Point(7.5, 4, 3)),
+    vector<Solid*>{
+      new AABB(Point(-6.5, 0, -2), Point(6.5, 3, 2), mat_black_plastic),
+      new AABB(Point(-7, 2.5, -2.5), Point(7, 3, 2.5), mat_black_plastic),
+      new AABB(Point(-6.5, 3, -2), Point(6.5, 3.5, 2), mat_black_plastic),
+    }
+  );
+  board_eraser->translate(Vector3(176, 118, 340));
+  board_eraser->rotate(7 * (M_PI/180), Vector3(0, 1, 0));
+
+    /* Caneca */
+  Object* white_mug = new Object(
+    "White mug",
+    OBB(Point(-3.5, 0, -3.5), Point(3.5, 12, 6.5)),
+    vector<Solid*>{
+      new Cylinder(Point(), Vector3(), 12, 3.5, mat_white_plastic),
+      new AABB(Point(-0.5, 9, 3.5), Point(0.5, 9.5, 6), mat_white_plastic), // handle_t
+      new AABB(Point(-0.5, 3, 3.5), Point(0.5, 3.5, 6), mat_white_plastic), // handle_b
+      new AABB(Point(-0.5, 2.5, 6), Point(0.5, 10, 6.5), mat_white_plastic), // handle_m
+    }
+  );
+  white_mug->translate(Vector3(178, 118, 332));
+  white_mug->rotate(-M_PI_4, Vector3(0, 1, 0));
 
   /* Mesa central */
   float t_support = 3;
@@ -766,7 +918,7 @@ int main(int argc, char *argv[])
     OBB(Point(-110/2, 0, -60-t_support), Point(110/2, table_height, 60+t_support)),
     vector<Solid*>{table_supf, table_supfh, table_mid_rect, table_supn, table_supnh}
   );
-  table->include("./obj/Table_top.obj", mat_mdf);
+  table->include("./models/obj/Table_top.obj", mat_mdf);
   table->translate(Vector3(0, 0, 180));
 
   /* Lâmpadas
@@ -847,11 +999,11 @@ int main(int argc, char *argv[])
 
   Object* chair1 = new Object(
     "Chair 1",
-    "./obj/Chair/Chair_Frame.obj",
+    "./models/obj/Chair/Chair_Frame.obj",
     mat_black_plastic
   );
-  chair1->include("./obj/Chair/Chair_Back.obj", mat_blue_chair);
-  chair1->include("./obj/Chair/Chair_Seat.obj", mat_blue_chair);
+  chair1->include("./models/obj/Chair/Chair_Back.obj", mat_blue_chair);
+  chair1->include("./models/obj/Chair/Chair_Seat.obj", mat_blue_chair);
   Object* chair2 = chair1->clone("Chair 2");
   Object* chair3 = chair1->clone("Chair 3");
   Object* chair4 = chair1->clone("Chair 4");
@@ -871,6 +1023,111 @@ int main(int argc, char *argv[])
   chair5->translate(Vector3(70, 0, 220));
   chair5->rotate(-M_PI_2, Vector3(0, 1, 0));
 
+  /* Monitores */
+  float baseRadius = 10.0f;
+  float monitorNeckRadius = 2.0f;
+  float monitorNeckHeight = 6.0f;
+  float monitorScreenHeight = 33.0f;
+  float monitorScreenWidth = 50.0f;
+  float monitorBorderWidth = 2.0f;
+  //float monitorScreenDepth = 5.0f;
+
+  AABB* monitorBase = new AABB(Point(-baseRadius,0,-baseRadius),Point(baseRadius,1,baseRadius), mat_black_plastic);
+  Cone* monitorNeck = new Cone(Point(0,0,0), Vector3(0,1,0), monitorNeckHeight+2, monitorNeckRadius,  mat_black_plastic);
+  AABB* monitorBorderBottom = new AABB(Point(-monitorBorderWidth/2,monitorNeckHeight, -monitorScreenWidth/2),Point(monitorBorderWidth/2,monitorNeckHeight+monitorBorderWidth, monitorScreenWidth/2), mat_black_plastic);
+  AABB* monitorBorderTop = new AABB(Point(-monitorBorderWidth/2,monitorNeckHeight+monitorBorderWidth+monitorScreenHeight, -monitorScreenWidth/2),Point(monitorBorderWidth/2,monitorNeckHeight+2*monitorBorderWidth+monitorScreenHeight, monitorScreenWidth/2), mat_black_plastic);
+  AABB* monitorBorderLeft = new AABB(Point(-monitorBorderWidth/2,monitorNeckHeight+monitorBorderWidth, -monitorScreenWidth/2),Point(monitorBorderWidth/2,monitorNeckHeight+monitorBorderWidth+monitorScreenHeight, -monitorScreenWidth/2+monitorBorderWidth), mat_black_plastic);
+  AABB* monitorBorderRight = new AABB(Point(-monitorBorderWidth/2,monitorNeckHeight+monitorBorderWidth, monitorScreenWidth/2),Point(monitorBorderWidth/2,monitorNeckHeight+monitorBorderWidth+monitorScreenHeight, monitorScreenWidth/2-monitorBorderWidth), mat_black_plastic);
+  AABB* monitorScreen = new AABB(Point(-0.5,monitorNeckHeight+monitorBorderWidth, -monitorScreenWidth/2),Point(monitorBorderWidth/2-0.5,monitorNeckHeight+monitorBorderWidth+monitorScreenHeight, monitorScreenWidth/2-monitorBorderWidth), mat_white_lamp);
+  AABB* monitorBack = new AABB(Point(monitorBorderWidth/2-1,monitorNeckHeight+monitorBorderWidth, -monitorScreenWidth/2),Point(monitorBorderWidth/2,monitorNeckHeight+monitorBorderWidth+monitorScreenHeight, monitorScreenWidth/2-monitorBorderWidth),  mat_black_plastic);
+
+  Object* monitor = new Object(
+    "Monitor",
+    OBB(Point(-baseRadius,0, -monitorScreenWidth/2),Point(baseRadius,monitorNeckHeight+2*monitorBorderWidth+monitorScreenHeight, monitorScreenWidth/2)),
+    vector<Solid*>{monitorBase, monitorNeck, monitorBorderBottom, monitorBorderTop, monitorBorderLeft, monitorBorderRight, monitorScreen, monitorBack}
+  );
+  monitor->translate(Vector3(215-30, 75, 100.5));
+  Object* monitor2 = monitor->clone();
+  monitor2->translate(Vector3(0, 0, 80.5));
+
+  /* Teclados */
+  AABB* tecladoBase = new AABB(Point(-6.0f,0.0f,-21.5f), Point(6.0f,2.0f,21.5f), mat_white_plastic);
+  AABB* tecladoTecla1 = new AABB(Point(5.5f,2.0f,-20.5f), Point(4.5f,2.5f,-19.5f), mat_old_plastic);
+  AABB* tecladoTecla2= new AABB(Point(5.5f,2.0f,-18.5f), Point(4.5f,2.5f,5.0f), mat_old_plastic);
+  AABB* tecladoTecla3= new AABB(Point(5.5f,2.0f, 6.0f), Point(0.0f,2.5f, 11.5f), mat_old_plastic);
+  AABB* tecladoTecla4= new AABB(Point(-5.5,2.0f, -20.5), Point(3.5,2.5f, 5.0f), mat_old_plastic);
+  AABB* tecladoTecla5= new AABB(Point(-5.5,2.0f, 6.0f), Point(-4.0f,2.5f, 11.0f), mat_old_plastic);
+  AABB* tecladoTecla6= new AABB(Point(-4.0,2.0f, 7.6f), Point(-2.5f,2.5f, 9.2f), mat_old_plastic);
+  AABB* tecladoTecla7= new AABB(Point(-5.5f,2.0f, 12.5f), Point(3.5f,2.5f, 20.5f), mat_old_plastic);
+
+  Object* teclado = new Object(
+    "Teclado",
+    OBB(Point(-6.0f,0.0f,-21.5f), Point(6.0f,2.5f,21.5f)),
+    vector<Solid*>{tecladoBase, tecladoTecla1, tecladoTecla2, tecladoTecla3, tecladoTecla4, tecladoTecla5, tecladoTecla6, tecladoTecla7}
+  );
+
+  teclado->translate(Vector3(215-52.5, 75, 100.5));
+  Object* teclado2 = teclado->clone();
+  teclado2->translate(Vector3(0, 0, 80.5));
+  teclado2->rotate(5 * (M_PI/180), Vector3(0, 1, 0));
+
+  float pct_h = 75;
+  Object* pc_table = new Object(
+    "PC Table",
+    OBB(Point(-30, 0, -40), Point(30, pct_h, 40)),
+    vector<Solid*>{
+      new AABB(Point(-29, pct_h-1, -39), Point(29, pct_h-0.1, 39), mat_table_top),
+      new Sphere(Point(-29, pct_h-1, -39), 1, mat_table_border), // lb corner
+      new Sphere(Point(-29, pct_h-1, 39), 1, mat_table_border), // rb corner
+      new Sphere(Point(29, pct_h-1, -39), 1, mat_table_border), // lt corner
+      new Sphere(Point(29, pct_h-1, 39), 1, mat_table_border), // rt corner
+      new Cylinder(Point(-29, pct_h-1, -39), Vector3(0, 0, 1), 78, 1, mat_table_border), // bottom border
+      new Cylinder(Point(29, pct_h-1, -39), Vector3(0, 0, 1), 78, 1, mat_table_border), // top border
+      new Cylinder(Point(-29, pct_h-1, -39), Vector3(1, 0, 0), 58, 1, mat_table_border), // left border
+      new Cylinder(Point(-29, pct_h-1, 39), Vector3(1, 0, 0), 58, 1, mat_table_border), // right border
+
+      new AABB(Point(-29.5, pct_h-10, -25), Point(0, pct_h-2, -23), mat_white_concrete), // kb holder left
+      new AABB(Point(-29.5, pct_h-10, 23), Point(0, pct_h-2, 25), mat_white_concrete), // kb holder right
+      new AABB(Point(-29.5, pct_h-4, -23), Point(0, pct_h-2, 23), mat_white_concrete), //kb holder top
+      new AABB(Point(-28.5, pct_h-10, -23), Point(0, pct_h-8, 23), mat_table_top), //kb holder bottom
+      new AABB(Point(-29.5, pct_h-10, -23), Point(-28.5, pct_h-8, 23), mat_white_concrete), //kb holder bottom border
+
+      new AABB(Point(5, 0, -39), Point(9, pct_h-2, -35), mat_table_sup), // left_sp height
+      new AABB(Point(-20, 0, -39), Point(29, 4, -35), mat_table_sup), // left_sp bottom
+      new AABB(Point(5, 0, 35), Point(9, pct_h-2, 39), mat_table_sup), // right_sp height
+      new AABB(Point(-20, 0, 35), Point(29, 4, 39), mat_table_sup), // right_sp bottom
+    }
+  );
+  pc_table->translate(Vector3(215-45, 0, 100.5));
+
+  Object* pc_table2 = pc_table->clone();
+  pc_table2->translate(Vector3(0, 0, 80.5));
+
+  Object* sw_pc_table = new Object(
+    "PC Table",
+    OBB(Point(-60, 0, -30), Point(60, pct_h, 30)),
+    vector<Solid*>{
+      new AABB(Point(-59, pct_h-1, -29), Point(59, pct_h-0.1, 29), mat_table_top),
+
+      new Sphere(Point(-59, pct_h-1, 29), 1, mat_table_border), // lb corner
+      new Sphere(Point(59, pct_h-1, 29), 1, mat_table_border), // rb corner
+      new Sphere(Point(-59, pct_h-1, -29), 1, mat_table_border), // lt corner
+      new Sphere(Point(59, pct_h-1, 29), 1, mat_table_border), // rt corner
+
+      new Cylinder(Point(-59, pct_h-1, 29), Vector3(1, 0, 0), 158, 1, mat_table_border), // bottom border
+      new Cylinder(Point(-59, pct_h-1, -29), Vector3(1, 0, 0), 158, 1, mat_table_border), // top border
+      new Cylinder(Point(-59, pct_h-1, 29), Vector3(0, 0, -1), 58, 1, mat_table_border), // left border
+      new Cylinder(Point(59, pct_h-1, 29), Vector3(0, 0, -1), 58, 1, mat_table_border), // right border
+
+      new AABB(Point(-59, 0, -9), Point(-55, pct_h-2, -5), mat_table_sup), // left_sp height
+      new AABB(Point(-59, 0, -29), Point(-55, 4, 20), mat_table_sup), // left_sp bottom
+      new AABB(Point(55, 0, -9), Point(59, pct_h-2, -5), mat_table_sup), // right_sp height
+      new AABB(Point(55, 0, -29), Point(59, 4, 20), mat_table_sup), // right_sp bottom
+    }
+  );
+  sw_pc_table->translate(Vector3(215-60-15, 0, 30));
+
+
   /* Paredes frontais */
   objects.push_back(back_wall);
   objects.push_back(new_ac);
@@ -880,32 +1137,49 @@ int main(int argc, char *argv[])
   objects.push_back(right_wall);
   objects.push_back(window);
   objects.push_back(grid);
-  objects.push_back(locker);
-  /* Parede esquerda */
+  objects.push_back(sw_pc_table);
+  objects.push_back(pc_table);
+  objects.push_back(pc_table2);
+  /* Monitores e Teclados */
+  objects.push_back(monitor);
+  objects.push_back(monitor2);
+  objects.push_back(teclado);
+  objects.push_back(teclado2);
+  /* Objetos em cima do armário */
+  objects.push_back(pic_frame);
+  objects.push_back(btg_bottle);
+  objects.push_back(btg_bottle2);
+  objects.push_back(btg_bottle3);
+  objects.push_back(red_cup);
+  objects.push_back(turquoise_cup);
+  objects.push_back(white_cup);
+  objects.push_back(white_mug);
+  objects.push_back(board_eraser);
+  /* Parede esquerda*/
   objects.push_back(left_wall);
   objects.push_back(left_nwindow);
   objects.push_back(left_fwindow);
   objects.push_back(hall_door);
   objects.push_back(old_ac);
   objects.push_back(light_switch_t);
-  objects.push_back(light_switch_b);
+  objects.push_back(light_switch_b); 
   /* Piso */
   objects.push_back(floor);
   objects.push_back(footer);
   objects.push_back(table);
-
   objects.push_back(chair1);
   objects.push_back(chair2);
   objects.push_back(chair3);
   objects.push_back(chair4);
   objects.push_back(chair5);
-
   /* Teto */
   objects.push_back(ceiling);
   objects.push_back(lampObj);
   objects.push_back(lampObj2);
   objects.push_back(lampObj3);
   objects.push_back(lampObj4);
+  /* Armáro TEM QUE SER O ÚLTIMO */
+  objects.push_back(closed_locker);
 
   scene = new Scene(resolution, camera, objects, lights);
   scene->print(PixelBuffer);

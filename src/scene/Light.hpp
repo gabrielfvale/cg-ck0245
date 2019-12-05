@@ -28,9 +28,9 @@ class Light
     void set_position(Vector3 position);
     void set_spot(float* pos, float angle, float falloff, float focus);
     bool* active();
-    RGB* get_intensity(Point& point);
-    Vector3* get_position();
-    Point* get_spotpos();
+    RGB get_intensity(Point& point);
+    Vector3 get_position();
+    Point get_spotpos();
     LightType type();
 };
 

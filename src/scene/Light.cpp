@@ -56,9 +56,9 @@ void Light::set_intensity(float* rgb)
   intensity_.b = rgb[2];
 }
 
-RGB* Light::get_intensity(Point& point)
+RGB Light::get_intensity(Point& point)
 {
-  if(!active_) return new RGB();
+  if(!active_) return RGB();
 
   if(l_type == SPOT)
   {
@@ -67,19 +67,19 @@ RGB* Light::get_intensity(Point& point)
 
     float angle = std::acos(lpos_p.dot_product(&position_));
     if(angle > spot_angle + spot_falloff)
-      return new RGB();
+      return RGB();
     if(angle > spot_angle)
     {
       float gradient = 1 - (spot_focus*(angle - spot_angle)) / spot_falloff;
-      return new RGB(intensity_.r * gradient, intensity_.r * gradient, intensity_.r * gradient);
+      return RGB(intensity_.r * gradient, intensity_.r * gradient, intensity_.r * gradient);
     }
   }
 
-  return &intensity_;
+  return intensity_;
 }
 void Light::set_position(Vector3 position) { position_ = position; }
 bool* Light::active() { return &active_; }
-Vector3* Light::get_position() { return &position_; }
+Vector3 Light::get_position() { return position_; }
 void Light::set_spot(float* pos, float angle, float falloff, float focus)
 {
   this->spot_pos = Point(pos);
@@ -87,11 +87,11 @@ void Light::set_spot(float* pos, float angle, float falloff, float focus)
   this->spot_falloff = falloff;
   this->spot_focus = focus;
 }
-Point* Light::get_spotpos()
+Point Light::get_spotpos()
 {
   if (l_type == SPOT)
-    return &spot_pos;
+    return spot_pos;
   else
-    return new Point();
+    return Point();
 }
 LightType Light::type() { return l_type; }
