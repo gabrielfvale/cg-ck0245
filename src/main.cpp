@@ -122,6 +122,10 @@ void CreateObjects()
 	Mesh *obj3 = new Mesh();
 	obj3->CreateMesh(floorVertices, floorIndices, 32, 6);
 	meshList.push_back(obj3);
+
+	Mesh *obj4 = new Mesh();
+	obj4->CreateMesh("/media/sf_VirtualBox/LearningOpenGL/1-Introduction/Models/src/Models/Cadeira.obj");
+	meshList.push_back(obj4);
 }
 
 void CreateShaders()
@@ -260,6 +264,14 @@ int main()
 		shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		meshList[2]->RenderMesh();
 
+		model = glm::mat4(1.0);
+    model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.0f));
+    model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
+    model = glm::rotate(model, now, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		plainTexture.UseTexture();
+		shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		meshList[3]->RenderMesh();
 
 		glUseProgram(0);
 
