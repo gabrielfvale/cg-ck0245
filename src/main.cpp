@@ -1,7 +1,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <string>
 #include <cmath>
 #include <vector>
 
@@ -139,7 +139,6 @@ int main()
 		exit(1);
 	}*/	
 
-
 	mainWindow = Window(800, 600);
 	mainWindow.Initialise();
 
@@ -150,14 +149,14 @@ int main()
 
 	//brickTexture = Texture("/home/ceos/Documents/Batista/LearningOpenGL/1-Introduction/Models/src/Textures/brick.png");
 	brickTexture = Texture("/media/sf_VirtualBox/LearningOpenGL/1-Introduction/Models/src/Textures/brick.png");
-	brickTexture.LoadTextureA();
+	brickTexture.LoadTexture();
 	//dirtTexture = Texture("/home/ceos/Documents/Batista/LearningOpenGL/1-Introduction/Models/src/Textures/dirt.png");
 	dirtTexture = Texture("/media/sf_VirtualBox/LearningOpenGL/1-Introduction/Models/src/Textures/dirt.png");
-	dirtTexture.LoadTextureA();
+	dirtTexture.LoadTexture();
 
 	//plainTexture = Texture("/home/ceos/Documents/Batista/LearningOpenGL/1-Introduction/Models/src/Textures/plain.png");
 	plainTexture = Texture("/media/sf_VirtualBox/LearningOpenGL/1-Introduction/Models/src/Textures/plain.png");
-	plainTexture.LoadTextureA();
+	plainTexture.LoadTexture();
 
 
 	shinyMaterial = Material(4.0f, 256);

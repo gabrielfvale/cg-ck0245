@@ -5,7 +5,7 @@ SRC_DIR := src
 
 CC := g++
 CFLAGS := -std=c++11 -O -Wall -g
-LDFLAGS := -lGL -lGLU -lglut -lpthread -lglfw -lGLEW
+LDFLAGS := -lGL -lGLU -lglfw -lGLEW -lpthread
 
 SRC_FILES := $(shell find $(SRC_DIR)/ -name "*.cpp")
 OBJ_FILES := $(SRC_FILES:%=$(BUILD_DIR)/%.o)

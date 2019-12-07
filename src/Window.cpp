@@ -77,6 +77,8 @@ int Window::Initialise()
 	glViewport(0, 0, bufferWidth, bufferHeight);
 
 	glfwSetWindowUserPointer(mainWindow, this);
+
+  return 0;
 }
 
 void Window::createCallbacks()

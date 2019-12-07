@@ -1,6 +1,5 @@
 #include "Texture.h"
-
-
+#include <iostream>
 
 Texture::Texture()
 {
@@ -11,7 +10,7 @@ Texture::Texture()
 	fileLocation = "";
 }
 
-Texture::Texture(char* fileLoc)
+Texture::Texture(const char* fileLoc)
 {
 	textureID = 0;
 	width = 0;
@@ -22,7 +21,7 @@ Texture::Texture(char* fileLoc)
 
 bool Texture::LoadTexture()
 {
-	unsigned char *texData = stbi_load(fileLocation, &width, &height, &bitDepth, 0);
+	unsigned char *texData = stbi_load(fileLocation, &width, &height, &bitDepth, STBI_rgb);
 	if (!texData)
 	{
 		printf("Failed to find: %s\n", fileLocation);
@@ -49,7 +48,7 @@ bool Texture::LoadTexture()
 
 bool Texture::LoadTextureA()
 {
-	unsigned char *texData = stbi_load(fileLocation, &width, &height, &bitDepth, 0);
+	unsigned char *texData = stbi_load(fileLocation, &width, &height, &bitDepth, STBI_rgb_alpha);
 	if (!texData)
 	{
 		printf("Failed to find: %s\n", fileLocation);

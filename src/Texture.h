@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GL/glew.h>
+#include <string>
 
 #include "stb_image.h"
 
@@ -8,7 +9,8 @@ class Texture
 {
 public:
 	Texture();
-	Texture(char* fileLoc);
+	Texture(const char* fileLoc);
+  Texture(std::string fileLoc);
 
 	bool LoadTexture();
 	bool LoadTextureA();
@@ -22,6 +24,5 @@ private:
 	GLuint textureID;
 	int width, height, bitDepth;
 
-	char* fileLocation;
+	const char* fileLocation;
 };
-
