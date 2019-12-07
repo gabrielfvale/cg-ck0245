@@ -45,11 +45,10 @@ SpotLight spotLights[MAX_SPOT_LIGHTS];
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
 
-//static const char* vShader = "/home/ceos/Documents/Batista/LearningOpenGL/1-Introduction/Models/src/Shaders/shader.vert";
+// Vertex shader
 static const char* vShader = "/media/sf_VirtualBox/LearningOpenGL/1-Introduction/Models/src/Shaders/shader.vert";
 
 // Fragment Shader
-//static const char* fShader = "/home/ceos/Documents/Batista/LearningOpenGL/1-Introduction/Models/src/Shaders/shader.frag";
 static const char* fShader = "/media/sf_VirtualBox/LearningOpenGL/1-Introduction/Models/src/Shaders/shader.frag";
 
 void calcAverageNormals(unsigned int * indices, unsigned int indiceCount, GLfloat * vertices, unsigned int verticeCount, 
@@ -124,7 +123,7 @@ void CreateObjects()
 	meshList.push_back(obj3);
 
 	Mesh *obj4 = new Mesh();
-	obj4->CreateMesh("/media/sf_VirtualBox/LearningOpenGL/1-Introduction/Models/src/Models/Cadeira.obj");
+	obj4->CreateMesh("/media/sf_VirtualBox/LearningOpenGL/1-Introduction/Models/src/Models/Chair.obj");
 	meshList.push_back(obj4);
 }
 
@@ -257,7 +256,6 @@ int main()
 		meshList[1]->RenderMesh();
 
 		model = glm::mat4(1.0);	
-		model = glm::translate(model, glm::vec3(0.0f, -2.0f, 2.5f));
 		//model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.8f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		plainTexture.UseTexture();
@@ -265,12 +263,10 @@ int main()
 		meshList[2]->RenderMesh();
 
 		model = glm::mat4(1.0);
-    model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.0f));
-    model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
     model = glm::rotate(model, now, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		plainTexture.UseTexture();
-		shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		meshList[3]->RenderMesh();
 
 		glUseProgram(0);
