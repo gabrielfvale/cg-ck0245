@@ -266,5 +266,7 @@ int main()
 		mainWindow.swapBuffers();
 	}
 
+  glfwTerminate();
+
 	return 0;
 }
