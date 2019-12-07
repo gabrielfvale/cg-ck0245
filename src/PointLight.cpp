@@ -1,22 +1,40 @@
-#include "PointLight.hpp"
+#include "PointLight.h"
+
+
 
 PointLight::PointLight() : Light()
 {
-  p0_ = Point(0, 0, 0);
+	position = glm::vec3(0.0f, 0.0f, 0.0f);
+	constant = 1.0f;
+	linear = 0.0f;
+	exponent = 0.0f;
 }
-PointLight::PointLight(RGB intensity, Point p0) : Light(intensity)
+
+PointLight::PointLight(GLfloat red, GLfloat green, GLfloat blue, 
+						GLfloat aIntensity, GLfloat dIntensity, 
+						GLfloat xPos, GLfloat yPos, GLfloat zPos, 
+						GLfloat con, GLfloat lin, GLfloat exp) : Light(red, green, blue, aIntensity, dIntensity)
 {
-  p0_ = p0;
+	position = glm::vec3(xPos, yPos, zPos);
+	constant = con;
+	linear = lin;
+	exponent = exp;
 }
-PointLight::PointLight(float r, float g, float b, Point p0) : Light(r, g, b)
+
+void PointLight::UseLight(GLuint ambientIntensityLocation, GLuint ambientColourLocation,
+	GLuint diffuseIntensityLocation, GLuint positionLocation,
+	GLuint constantLocation, GLuint linearLocation, GLuint exponentLocation)
 {
-  p0_ = p0;
+	glUniform3f(ambientColourLocation, colour.x, colour.y, colour.z);
+	glUniform1f(ambientIntensityLocation, ambientIntensity);
+	glUniform1f(diffuseIntensityLocation, diffuseIntensity);
+
+	glUniform3f(positionLocation, position.x, position.y, position.z);
+	glUniform1f(constantLocation, constant);
+	glUniform1f(linearLocation, linear);
+	glUniform1f(exponentLocation, exponent);
 }
-void PointLight::set_point(Point* p0)
+
+PointLight::~PointLight()
 {
-  p0_ = *p0;
-}
-Point* PointLight::get_point()
-{
-  return &p0_;
 }

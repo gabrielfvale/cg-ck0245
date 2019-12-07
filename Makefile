@@ -1,23 +1,23 @@
+TARGET := program.out
+
+BUILD_DIR := build
+SRC_DIR := src
+
 CC := g++
 CFLAGS := -std=c++11 -O -Wall -g
-TARGET := program.out
-SRC_FILES := $(wildcard src/*.cpp)
-OBJ_FILES := $(patsubst src/%.cpp, obj/%.o, $(SRC_FILES))
+LDFLAGS := -lGL -lGLU -lglut -lpthread -lglfw -lGLEW
 
-all: checkdir $(TARGET)
+SRC_FILES := $(shell find $(SRC_DIR)/ -name "*.cpp")
+OBJ_FILES := $(SRC_FILES:%=$(BUILD_DIR)/%.o)
 
-fresh: clean checkdir $(TARGET)
+$(BUILD_DIR)/$(TARGET): $(OBJ_FILES)
+	$(CC) $(OBJ_FILES) -o $@ $(LDFLAGS)
 
-checkdir: obj/
+$(BUILD_DIR)/%.cpp.o: %.cpp
+	mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-$(TARGET): $(OBJ_FILES)
-	$(CC) -o $@ $^ -lGL -lGLU -lglut
-
-obj/:
-	mkdir -p $@
-
-obj/%.o: src/%.cpp
-	$(CC) $(CFLAGS) -c -o $@ $<
+fresh: clean $(BUILD_DIR)/$(TARGET)
 
 clean:
-	rm -rf $(TARGET) obj/*.o
+	rm -rf $(BUILD_DIR)

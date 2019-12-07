@@ -1,0 +1,4 @@
+Links de instalação Linux:
+https://www.reddit.com/r/learnprogramming/comments/51u1bg/how_to_install_glew_on_ubuntu/
+https://community.khronos.org/t/installing-glfw-on-ubuntu-16-04/76258/3
+sudo apt install libglm-dev

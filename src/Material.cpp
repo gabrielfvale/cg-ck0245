@@ -1,36 +1,25 @@
-#include "Material.hpp"
+#include "Material.h"
+
+
 
 Material::Material()
 {
-  ambient = RGB(0, 0, 0);
-  diffuse = RGB(0, 0, 0);
-  specular = RGB(0, 0, 0);
-  shine = 0;
-}
-Material::Material(RGB ambient, RGB diffuse, RGB specular)
-{
-  this->ambient = ambient;
-  this->diffuse = diffuse;
-  this->specular = specular;
-  this->shine = 1;
+	specularIntensity = 0.0f;
+	shininess = 0.0f;
 }
 
-void Material::set_ambient(float r, float g, float b)
+Material::Material(GLfloat sIntensity, GLfloat shine)
 {
-  this->ambient.r = r;
-  this->ambient.g = g;
-  this->ambient.b = b;
+	specularIntensity = sIntensity;
+	shininess = shine;
 }
-void Material::set_diffuse(float r, float g, float b)
+
+void Material::UseMaterial(GLuint specularIntensityLocation, GLuint shininessLocation)
 {
-  this->diffuse.r = r;
-  this->diffuse.g = g;
-  this->diffuse.b = b;
+	glUniform1f(specularIntensityLocation, specularIntensity);
+	glUniform1f(shininessLocation, shininess);
 }
-void Material::set_specular(float r, float g, float b)
+
+Material::~Material()
 {
-  this->specular.r = r;
-  this->specular.g = g;
-  this->specular.b = b;
 }
-void Material::set_shine(float s) { shine = s; }

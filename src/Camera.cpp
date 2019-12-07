@@ -1,78 +1,101 @@
-#include "Camera.hpp"
+#include "Camera.h"
 
-Camera::Camera(Point eye, Point lookat, Vector3 up)
+Camera::Camera() {}
+
+Camera::Camera(glm::vec3 startPosition, glm::vec3 startUp, GLfloat startYaw, GLfloat startPitch, GLfloat startMoveSpeed, GLfloat startTurnSpeed)
 {
-  eye_ = eye;
-  lookat_ = lookat;
-  up_ = up;
-  cz_ = Vector3(&lookat_, &eye_);
+	position = startPosition;
+	worldUp = startUp;
+	yaw = startYaw;
+	pitch = startPitch;
+	front = glm::vec3(0.0f, 0.0f, -1.0f);
 
-  Point up_point = Point(up_.get_x(), up_.get_y(), up_.get_z());
-  Vector3 v = Vector3(&eye_, &up_point);
-  cx_ = v.cross_product(&cz_);
+	moveSpeed = startMoveSpeed;
+	turnSpeed = startTurnSpeed;
 
-  cx_.normalize();
-  cz_.normalize();
-  cy_ = cz_.cross_product(&cx_);
+	update();
 }
 
-Matrix4 Camera::world_to_camera()
+void Camera::keyControl(bool* keys, GLfloat deltaTime)
 {
-  float ex, ey, ez;
-  eye_.get_coordinates(&ex, &ey, &ez);
-  Vector3 eye_vector = Vector3(ex, ey, ez);
-  Matrix4 matrix = Matrix4();
+	GLfloat velocity = moveSpeed * deltaTime;
 
-  matrix(0, 0) = cx_.get_x();
-  matrix(0, 1) = cx_.get_y();
-  matrix(0, 2) = cx_.get_z();
-  matrix(0, 3) = -1 * eye_vector.dot_product(&cx_);
+	if (keys[GLFW_KEY_W])
+	{
+		position += front * velocity;
+	}
 
-  matrix(1, 0) = cy_.get_x();
-  matrix(1, 1) = cy_.get_y();
-  matrix(1, 2) = cy_.get_z();
-  matrix(1, 3) = -1 * eye_vector.dot_product(&cy_);
+	if (keys[GLFW_KEY_S])
+	{
+		position -= front * velocity;
+	}
 
-  matrix(2, 0) = cz_.get_x();
-  matrix(2, 1) = cz_.get_y();
-  matrix(2, 2) = cz_.get_z();
-  matrix(2, 3) = -1 * eye_vector.dot_product(&cz_);
+	if (keys[GLFW_KEY_A])
+	{
+		position -= right * velocity;
+	}
 
-  matrix(3, 0) = 0;
-  matrix(3, 1) = 0;
-  matrix(3, 2) = 0;
-  matrix(3, 3) = 1;
-
-  return matrix;
+	if (keys[GLFW_KEY_D])
+	{
+		position += right * velocity;
+	}
+	if (keys[GLFW_KEY_Q])
+	{
+		position -= up * velocity;
+	}
+	if (keys[GLFW_KEY_E])
+	{
+		position += up * velocity;
+	}
 }
 
-Matrix4 Camera::camera_to_world()
+void Camera::mouseControl(GLfloat xChange, GLfloat yChange)
 {
-  Matrix4 matrix = Matrix4();
+	xChange *= turnSpeed;
+	yChange *= turnSpeed;
 
-  matrix(0, 0) = cx_.get_x();
-  matrix(1, 0) = cx_.get_y();
-  matrix(2, 0) = cx_.get_z();
-  matrix(3, 0) = 0;
+	yaw += xChange;
+	pitch += yChange;
 
-  matrix(0, 1) = cy_.get_x();
-  matrix(1, 1) = cy_.get_y();
-  matrix(2, 1) = cy_.get_z();
-  matrix(3, 1) = 0;
+	if (pitch > 89.0f)
+	{
+		pitch = 89.0f;
+	}
 
-  matrix(0, 2) = cz_.get_x();
-  matrix(1, 2) = cz_.get_y();
-  matrix(2, 2) = cz_.get_z();
-  matrix(3, 2) = 0;
+	if (pitch < -89.0f)
+	{
+		pitch = -89.0f;
+	}
 
-  matrix(0, 3) = eye_.get_x();
-  matrix(1, 3) = eye_.get_y();
-  matrix(2, 3) = eye_.get_z();
-  matrix(3, 3) = 1;
-
-  return matrix;
+	update();
 }
 
-Vector3* Camera::x_axis() { return &cx_; }
-Vector3* Camera::y_axis() { return &cy_; }
-Vector3* Camera::z_axis() { return &cz_; }
+glm::mat4 Camera::calculateViewMatrix()
+{
+	return glm::lookAt(position, position + front, up);
+}
+
+glm::vec3 Camera::getCameraPosition()
+{
+	return position;
+}
+glm::vec3 Camera::getCameraDirection()
+{
+	return glm::normalize(front);
+}
+
+void Camera::update()
+{
+	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	front.y = sin(glm::radians(pitch));
+	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	front = glm::normalize(front);
+
+	right = glm::normalize(glm::cross(front, worldUp));
+	up = glm::normalize(glm::cross(right, front));
+}
+
+
+Camera::~Camera()
+{
+}
