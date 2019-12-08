@@ -34,6 +34,7 @@ Camera camera;
 Texture brickTexture;
 Texture dirtTexture;
 Texture plainTexture;
+Texture beigePaint;
 
 Material shinyMaterial;
 Material dullMaterial;
@@ -46,10 +47,10 @@ GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
 
 // Vertex shader
-static const char* vShader = "/media/sf_VirtualBox/LearningOpenGL/1-Introduction/Models/src/Shaders/shader.vert";
+static const char* vShader = "/media/sf_VirtualBox/cg-ck0245/src/Shaders/shader.vert";
 
 // Fragment Shader
-static const char* fShader = "/media/sf_VirtualBox/LearningOpenGL/1-Introduction/Models/src/Shaders/shader.frag";
+static const char* fShader = "/media/sf_VirtualBox/cg-ck0245/src/Shaders/shader.frag";
 
 void calcAverageNormals(unsigned int * indices, unsigned int indiceCount, GLfloat * vertices, unsigned int verticeCount, 
 						unsigned int vLength, unsigned int normalOffset)
@@ -110,6 +111,7 @@ void CreateObjects()
 
 	calcAverageNormals(indices, 12, vertices, 32, 8, 5);
 
+	/*
 	Mesh *obj1 = new Mesh();
 	obj1->CreateMesh(vertices, indices, 32, 12);
 	meshList.push_back(obj1);
@@ -122,9 +124,15 @@ void CreateObjects()
 	obj3->CreateMesh(floorVertices, floorIndices, 32, 6);
 	meshList.push_back(obj3);
 
-	Mesh *obj4 = new Mesh();
-	obj4->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/Walter.obj");
-	meshList.push_back(obj4);
+	*/
+	
+	Mesh *obj1 = new Mesh();
+	obj1->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/RoomWindow.obj");
+	meshList.push_back(obj1);
+
+	Mesh *obj2 = new Mesh();
+	obj2->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/lampFlat.obj");
+	meshList.push_back(obj2);
 }
 
 void CreateShaders()
@@ -151,34 +159,55 @@ int main()
 	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, 0.0f, 5.0f, 0.5f);
 
 	//brickTexture = Texture("/home/ceos/Documents/Batista/LearningOpenGL/1-Introduction/Models/src/Textures/brick.png");
-	brickTexture = Texture("/media/sf_VirtualBox/LearningOpenGL/1-Introduction/Models/src/Textures/brick.png");
-	brickTexture.LoadTexture();
+	brickTexture = Texture("/media/sf_VirtualBox/cg-ck0245/src/Textures/brick.png");
+	brickTexture.LoadTextureA();
 	//dirtTexture = Texture("/home/ceos/Documents/Batista/LearningOpenGL/1-Introduction/Models/src/Textures/dirt.png");
-	dirtTexture = Texture("/media/sf_VirtualBox/LearningOpenGL/1-Introduction/Models/src/Textures/dirt.png");
-	dirtTexture.LoadTexture();
+	dirtTexture = Texture("/media/sf_VirtualBox/cg-ck0245/src/Textures/dirt.png");
+	dirtTexture.LoadTextureA();
 
 	//plainTexture = Texture("/home/ceos/Documents/Batista/LearningOpenGL/1-Introduction/Models/src/Textures/plain.png");
-	plainTexture = Texture("/media/sf_VirtualBox/LearningOpenGL/1-Introduction/Models/src/Textures/plain.png");
-	plainTexture.LoadTexture();
+	plainTexture = Texture("/media/sf_VirtualBox/cg-ck0245/src/Textures/plain.png");
+	plainTexture.LoadTextureA();
 
+	beigePaint = Texture("/media/sf_VirtualBox/cg-ck0245/src/Textures/beigePaint.PNG");
+	beigePaint.LoadTexture();
 
 	shinyMaterial = Material(4.0f, 256);
 	dullMaterial = Material(0.3f, 4);
 	
 
 	mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 
-								0.2f, 0.3f, 
+								0.1f, 0.1f, 
 					  			0.0f, 0.0f, -1.0f);
 
 	unsigned int pointLightCount = 0;
 
-	pointLights[0] = PointLight(0.0f, 0.0f, 1.0f, 
-								0.1f, 1.0f,
-								-4.0f, 0.0f, 0.0f,
-								0.3f, 0.2f, 0.1f);
+	pointLights[0] = PointLight(1.0f, 1.0f, 1.0f, 
+								0.1f, 0.1f,
+								-1.5f, 3.0f, -1.0f,
+								0.2f, 0.1f, 0.1f);
 	pointLightCount++;
 
 
+	pointLights[1] = PointLight(1.0f, 1.0f, 1.0f, 
+								0.1f, 0.1f,
+								1.5f, 3.0f, -1.0f,
+								0.2f, 0.1f, 0.1f);
+	pointLightCount++;
+
+	pointLights[2] = PointLight(1.0f, 1.0f, 1.0f, 
+								0.1f, 0.1f,
+								1.5f, 3.0f, 1.0f,
+								0.2f, 0.1f, 0.1f);
+	pointLightCount++;
+
+	pointLights[3] = PointLight(1.0f, 1.0f, 1.0f, 
+								0.1f, 0.1f,
+								-1.5f, 3.0f, 1.0f,
+								0.2f, 0.1f, 0.1f);
+	pointLightCount++;
+
+	/*
 	pointLights[1] = PointLight(0.0f, 1.0f, 0.0f, 
 								0.1f, 1.0f,
 								4.0f, 0.0f, 0.0f,
@@ -190,13 +219,14 @@ int main()
 								0.0f, 2.5f, 0.0f,
 								0.3f, 0.2f, 0.1f);
 	pointLightCount++;
+	*/
 
 	unsigned int spotLightCount = 0;
-	spotLights[0] = SpotLight(1.0f, 1.0f, 1.0f,
-						0.0f, 2.0f,
-						0.0f, 0.0f, 0.0f,
+	spotLights[0] = SpotLight(1.0f, 0.0f, 0.0f,
+						0.0f, 0.0f,
+						0.0f, 3.0f, 0.0f,
 						0.0f, -1.0f, 0.0f,
-						1.0f, 0.0f, 0.0f,
+						0.3f, 0.2f, 0.1f,
 						20.0f);
 	spotLightCount++;
 
@@ -239,14 +269,44 @@ int main()
 
 		glm::mat4 model = glm::mat4(1.0);	
 
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 2.5f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
 		//model = glm::scale(model, glm::vec3(1.0f, 1.0f, 2.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		
-		brickTexture.UseTexture();
-		shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		beigePaint.UseTexture();
+		dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		meshList[0]->RenderMesh();
 
+		model = glm::translate(model, glm::vec3(-1.5f, 3.0f, -1.0f));
+		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		
+		plainTexture.UseTexture();
+		dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		meshList[1]->RenderMesh();
+
+		model = glm::translate(model, glm::vec3(6.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		
+		plainTexture.UseTexture();
+		dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		meshList[1]->RenderMesh();
+
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 4.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		
+		plainTexture.UseTexture();
+		dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		meshList[1]->RenderMesh();
+
+		model = glm::translate(model, glm::vec3(-6.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		
+		plainTexture.UseTexture();
+		dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		meshList[1]->RenderMesh();
+
+		/*
 		model = glm::mat4(1.0);	
 		model = glm::translate(model, glm::vec3(0.0f, 3.0f, 2.5f));
 		//model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.8f));
@@ -263,13 +323,13 @@ int main()
 		meshList[2]->RenderMesh();
 
 		model = glm::mat4(1.0);
-		// model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-    model = glm::rotate(model, now, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 1.0f, 0.0f));
+    	model = glm::rotate(model, now, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		plainTexture.UseTexture();
 		dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		meshList[3]->RenderMesh();
-
+		*/
 		glUseProgram(0);
 
 		mainWindow.swapBuffers();
