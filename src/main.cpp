@@ -35,6 +35,7 @@ Texture brickTexture;
 Texture dirtTexture;
 Texture plainTexture;
 Texture beigePaint;
+Texture whitePlastic;
 
 Material shinyMaterial;
 Material dullMaterial;
@@ -133,6 +134,10 @@ void CreateObjects()
 	Mesh *obj2 = new Mesh();
 	obj2->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/lampFlat.obj");
 	meshList.push_back(obj2);
+
+	Mesh *obj3 = new Mesh();
+	obj3->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/AC.obj");
+	meshList.push_back(obj3);
 }
 
 void CreateShaders()
@@ -171,6 +176,9 @@ int main()
 
 	beigePaint = Texture("/media/sf_VirtualBox/cg-ck0245/src/Textures/beigePaint.PNG");
 	beigePaint.LoadTexture();
+
+	whitePlastic = Texture("/media/sf_VirtualBox/cg-ck0245/src/Textures/whitePlastic.PNG");
+	whitePlastic.LoadTextureA();
 
 	shinyMaterial = Material(4.0f, 256);
 	dullMaterial = Material(0.3f, 4);
@@ -305,6 +313,15 @@ int main()
 		plainTexture.UseTexture();
 		dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		meshList[1]->RenderMesh();
+
+		model = glm::mat4(1.0);	
+
+		model = glm::translate(model, glm::vec3(-1.5f, 2.5f, -1.5f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		
+		whitePlastic.UseTexture();
+		dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		meshList[2]->RenderMesh();
 
 		/*
 		model = glm::mat4(1.0);	
