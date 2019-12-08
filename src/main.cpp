@@ -123,7 +123,7 @@ void CreateObjects()
 	meshList.push_back(obj3);
 
 	Mesh *obj4 = new Mesh();
-	obj4->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/tecladoFlat.obj");
+	obj4->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/Walter.obj");
 	meshList.push_back(obj4);
 }
 
@@ -263,8 +263,8 @@ int main()
 		meshList[2]->RenderMesh();
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.0f, 1.0f, 0.0f));
-    	model = glm::rotate(model, now, glm::vec3(0.0f, 1.0f, 0.0f));
+		// model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+    model = glm::rotate(model, now, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		plainTexture.UseTexture();
 		dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
