@@ -44,6 +44,7 @@ Texture grayPlastic;
 Texture oldPlastic;
 Texture woodTexture;
 Texture panetoneTexture;
+Texture walterTexture;
 
 Material shinyMaterial;
 Material dullMaterial;
@@ -200,7 +201,13 @@ void CreateObjects()
 	obj15->CreateMesh("/home/gabrielfvale/Projects/cg-ck0245/src/Models/Panetone.obj");
 	meshList.push_back(obj15);
 
-	
+  Mesh *obj16 = new Mesh();
+  obj16->CreateMesh("src/Models/PCTableSideways.obj");
+  meshList.push_back(obj16);
+
+  Mesh *obj17 = new Mesh();
+  obj17->CreateMesh("src/Models/Walter.obj");
+  meshList.push_back(obj17);
 }
 
 void CreateShaders()
@@ -271,7 +278,7 @@ void RenderScene(GLfloat deltaTime)
 
   model = glm::mat4(1.0); 
 
-  model = glm::translate(model, glm::vec3(1.7f, 0.15f, 0.05f));
+  model = glm::translate(model, glm::vec3(1.7f, 0.15f, 0.07f));
   model = glm::rotate(model, -90*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
   glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
@@ -282,13 +289,24 @@ void RenderScene(GLfloat deltaTime)
   //mesa do PC2
   model = glm::mat4(1.0); 
 
-  model = glm::translate(model, glm::vec3(1.7f, 0.15f, -0.8f));
+  model = glm::translate(model, glm::vec3(1.7f, 0.15f, -0.75f));
   model = glm::rotate(model, -90*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
   glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
   blueTexture.UseTexture();
   dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
   meshList[3]->RenderMesh();
+
+  //Mesa lateral dos pcs
+  model = glm::mat4(1.0); 
+
+  model = glm::translate(model, glm::vec3(1.35f, 0.13f, -1.48f));
+  model = glm::rotate(model, -90*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+
+  blueTexture.UseTexture();
+  dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[15]->RenderMesh();
 
 
   //Monitor do PC1
@@ -317,8 +335,8 @@ void RenderScene(GLfloat deltaTime)
   //Teclado do PC1
   model = glm::mat4(1.0); 
 
-  model = glm::translate(model, glm::vec3(1.5f, 0.91f, 0.0f));
-  model = glm::rotate(model, 85*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  model = glm::translate(model, glm::vec3(1.55f, 0.91f, 0.0f));
+  model = glm::rotate(model, -85*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
   model = glm::scale(model, glm::vec3(0.45f, 0.6f, 0.55f));
   glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
@@ -329,8 +347,8 @@ void RenderScene(GLfloat deltaTime)
   //Teclado do PC2
   model = glm::mat4(1.0); 
 
-  model = glm::translate(model, glm::vec3(1.5f, 0.91f, -0.8f));
-  model = glm::rotate(model, 100*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  model = glm::translate(model, glm::vec3(1.55f, 0.91f, -0.8f));
+  model = glm::rotate(model, -100*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
   model = glm::scale(model, glm::vec3(0.45f, 0.6f, 0.55f));
   glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
@@ -497,7 +515,7 @@ void RenderScene(GLfloat deltaTime)
   //Quadro 1
   model = glm::mat4(1.0); 
 
-  model = glm::translate(model, glm::vec3(0.2f, 1.5f, 1.0f));
+  model = glm::translate(model, glm::vec3(0.3f, 1.5f, 1.1f));
   model = glm::scale(model, glm::vec3(1.2f, 0.6f, 0.63f));
   model = glm::rotate(model, 90*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
   glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -505,7 +523,24 @@ void RenderScene(GLfloat deltaTime)
   whitePlastic.UseTexture();
   dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
   meshList[13]->RenderMesh();
-		
+
+  //Walter
+  model = glm::mat4(1.0); 
+  model = glm::translate(model, glm::vec3(0.2f, 1.5f, -1.75f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+  walterTexture.UseTexture();
+  dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[16]->RenderMesh();
+
+  //Panetone
+  model = glm::mat4(1.0); 
+  model = glm::translate(model, glm::vec3(0.0f, 1.0f, 0.0f));
+  model = glm::rotate(model, deltaTime, glm::vec3(0.0f, 1.0f, 0.0f));
+  //model = glm::scale(model, glm::vec3(1.0f, 1.0f, 0.5f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+  panetoneTexture.UseTexture();
+  shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[14]->RenderMesh();
 }
 
 void DirectionalShadowMapPass(DirectionalLight* light, GLfloat deltaTime)
@@ -605,6 +640,9 @@ int main()
 
 	panetoneTexture = Texture("/home/gabrielfvale/Projects/cg-ck0245/src/Textures/Panetone.png");
 	panetoneTexture.LoadTextureA();
+
+	walterTexture = Texture("/home/gabrielfvale/Projects/cg-ck0245/src/Textures/walter.jpg");
+	walterTexture.LoadTexture();
 
 	shinyMaterial = Material(4.0f, 256);
 	dullMaterial = Material(0.0f, 4);
