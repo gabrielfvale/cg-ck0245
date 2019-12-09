@@ -193,8 +193,12 @@ void CreateObjects()
 	meshList.push_back(obj13);
 
 	Mesh *obj14 = new Mesh();
-	obj14->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/Panetone.obj");
+	obj14->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/quadro1.obj");
 	meshList.push_back(obj14);
+
+	Mesh *obj15 = new Mesh();
+	obj15->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/Panetone.obj");
+	meshList.push_back(obj15);
 
 	
 }
@@ -468,6 +472,40 @@ void RenderScene(GLfloat deltaTime)
         dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
         meshList[10]->RenderMesh();
 
+		//Quadro 2
+        model = glm::mat4(1.0); 
+
+        model = glm::translate(model, glm::vec3(-2.5f, 1.0f, -0.9f));
+        model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.7f));
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        
+        whitePlastic.UseTexture();
+        dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+        meshList[11]->RenderMesh();
+
+        //Quadro 3
+        model = glm::mat4(1.0); 
+
+        model = glm::translate(model, glm::vec3(-2.65f, 1.0f, 0.8f));
+        model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.63f));
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+    
+        whitePlastic.UseTexture();
+        dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+        meshList[12]->RenderMesh();
+
+        //Quadro 1
+        model = glm::mat4(1.0); 
+
+        model = glm::translate(model, glm::vec3(0.2f, 1.5f, 1.0f));
+        model = glm::scale(model, glm::vec3(1.2f, 0.6f, 0.63f));
+        model = glm::rotate(model, 90*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+    
+        whitePlastic.UseTexture();
+        dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+        meshList[13]->RenderMesh();
+		
 }
 
 void DirectionalShadowMapPass(DirectionalLight* light, GLfloat deltaTime)
