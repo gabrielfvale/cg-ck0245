@@ -535,7 +535,7 @@ void RenderPass(glm::mat4 projectionMatrix, glm::mat4 viewMatrix, GLfloat deltaT
   uniformShininess = shaderList[0].GetShininessLocation();
 
   glViewport(0, 0, mainWindow.getBufferWidth(), mainWindow.getBufferHeight());
-  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+  glClearColor(0.98f, 0.72f, 0.43f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
@@ -607,7 +607,7 @@ int main()
 	panetoneTexture.LoadTextureA();
 
 	shinyMaterial = Material(4.0f, 256);
-	dullMaterial = Material(0.3f, 4);
+	dullMaterial = Material(0.0f, 4);
 
 	mainLight = DirectionalLight(
     1024, 1024,
@@ -617,26 +617,26 @@ int main()
 
 	pointLights[0] = PointLight(1.0f, 1.0f, 1.0f, 
 								0.1f, 0.1f,
-								-1.5f, 3.0f, -1.0f,
+								-1.5f, 2.8f, -1.0f,
 								0.2f, 0.1f, 0.1f);
 	pointLightCount++;
 
 
 	pointLights[1] = PointLight(1.0f, 1.0f, 1.0f, 
 								0.1f, 0.1f,
-								1.5f, 3.0f, -1.0f,
+								1.5f, 2.8f, -1.0f,
 								0.2f, 0.1f, 0.1f);
 	pointLightCount++;
 
 	pointLights[2] = PointLight(1.0f, 1.0f, 1.0f, 
 								0.1f, 0.1f,
-								1.5f, 3.0f, 1.0f,
+								1.5f, 2.8f, 1.0f,
 								0.2f, 0.1f, 0.1f);
 	pointLightCount++;
 
 	pointLights[3] = PointLight(1.0f, 1.0f, 1.0f, 
 								0.1f, 0.1f,
-								-1.5f, 3.0f, 1.0f,
+								-1.5f, 2.8f, 1.0f,
 								0.2f, 0.1f, 0.1f);
 	pointLightCount++;
 
@@ -654,7 +654,7 @@ int main()
 	pointLightCount++;
 	*/
 
-	spotLights[0] = SpotLight(1.0f, 0.0f, 0.0f,
+	spotLights[0] = SpotLight(0.0f, 0.0f, 0.0f,
 						0.0f, 0.0f,
 						0.0f, 3.0f, 0.0f,
 						0.0f, -1.0f, 0.0f,
