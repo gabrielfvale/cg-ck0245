@@ -38,6 +38,7 @@ Texture dirtTexture;
 Texture plainTexture;
 Texture beigePaint;
 Texture whitePlastic;
+Texture panetoneTexture;
 
 Material shinyMaterial;
 Material dullMaterial;
@@ -144,6 +145,10 @@ void CreateObjects()
 	Mesh *obj3 = new Mesh();
 	obj3->CreateMesh("/home/gabrielfv/Projects/cg-ck0245/src/Models/AC.obj");
 	meshList.push_back(obj3);
+
+	Mesh *obj4 = new Mesh();
+	obj4->CreateMesh("/home/gabrielfv/Projects/cg-ck0245/src/Models/Panetone.obj");
+	meshList.push_back(obj4);
 }
 
 void CreateShaders()
@@ -209,6 +214,14 @@ void RenderScene(GLfloat deltaTime)
   dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
   meshList[2]->RenderMesh();
 
+  model = glm::mat4(1.0);	
+  model = glm::translate(model, glm::vec3(0.0f, 0.125f, 0.0f));
+  model = glm::rotate(model, 90 * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+  panetoneTexture.UseTexture();
+  dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[3]->RenderMesh();
+
   /*
   model = glm::mat4(1.0);	
   model = glm::translate(model, glm::vec3(0.0f, 3.0f, 2.5f));
@@ -227,7 +240,7 @@ void RenderScene(GLfloat deltaTime)
 
   model = glm::mat4(1.0);
   model = glm::translate(model, glm::vec3(0.0f, 1.0f, 0.0f));
-    model = glm::rotate(model, now, glm::vec3(0.0f, 1.0f, 0.0f));
+  model = glm::rotate(model, now, glm::vec3(0.0f, 1.0f, 0.0f));
   glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
   plainTexture.UseTexture();
   dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
@@ -314,6 +327,9 @@ int main()
 
 	whitePlastic = Texture("/home/gabrielfv/Projects/cg-ck0245/src/Textures/whitePlastic.PNG");
 	whitePlastic.LoadTextureA();
+
+	panetoneTexture = Texture("/home/gabrielfv/Projects/cg-ck0245/src/Textures/Panetone.png");
+	panetoneTexture.LoadTextureA();
 
 	shinyMaterial = Material(4.0f, 256);
 	dullMaterial = Material(0.3f, 4);
