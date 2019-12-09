@@ -648,7 +648,7 @@ int main()
 	CreateObjects();
 	CreateShaders();
 
-	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, 0.0f, 5.0f, 0.5f);
+	camera = Camera(glm::vec3(0.0f, 1.8f, 0.0f), glm::vec3(0.0f, 1.9f, 0.0f), 90.0f, 0.0f, 5.0f, 0.5f);
 
 	//brickTexture = Texture("/home/ceos/Documents/Batista/LearningOpenGL/1-Introduction/Models/src/Textures/brick.png");
 	brickTexture = Texture("/home/gabrielfvale/Projects/cg-ck0245/src/Textures/brick.png");
