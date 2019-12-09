@@ -70,7 +70,7 @@ float CalcDirectionalShadowFactor(DirectionalLight light)
   vec3 normal = normalize(Normal);
   vec3 lightDir = normalize(light.direction);
 
-  float bias = max(0.5 * (1 - dot(normal, lightDir)), 0.005);
+  float bias = max(0.005 * (1 - dot(normal, lightDir)), 0.0005);
   
   float shadow = 0.0;
   vec2 texelSize = 1.0 / textureSize(directionalShadowMap, 0);

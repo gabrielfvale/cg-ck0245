@@ -146,6 +146,7 @@ void Mesh::loadObj(const char* objPath)
     {
       glm::vec3 normal;
       fscanf(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
+      normal.x *= -1; normal.y *= -1; normal.z *= -1;
       normals.push_back(normal);
     } else if(strcmp(header, "f") == 0) // Faces
     {
