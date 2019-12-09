@@ -60,10 +60,10 @@ GLfloat lastTime = 0.0f;
 GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0,uniformSpecularIntensity = 0, uniformShininess = 0;
 
 // Vertex shader
-static const char* vShader = "/media/sf_VirtualBox/cg-ck0245/src/Shaders/shader.vert";
+static const char* vShader = "/home/gabrielfvale/Projects/cg-ck0245/src/Shaders/shader.vert";
 
 // Fragment Shader
-static const char* fShader = "/media/sf_VirtualBox/cg-ck0245/src/Shaders/shader.frag";
+static const char* fShader = "/home/gabrielfvale/Projects/cg-ck0245/src/Shaders/shader.frag";
 
 void calcAverageNormals(unsigned int * indices, unsigned int indiceCount, GLfloat * vertices, unsigned int verticeCount, 
 						unsigned int vLength, unsigned int normalOffset)
@@ -140,64 +140,64 @@ void CreateObjects()
 	*/
 	
 	Mesh *obj1 = new Mesh();
-	obj1->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/RoomWindow.obj");
+	obj1->CreateMesh("/home/gabrielfvale/Projects/cg-ck0245/src/Models/roomwindowclosed.obj");
 	meshList.push_back(obj1);
 
 	Mesh *obj2 = new Mesh();
-	obj2->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/lampFlat.obj");
+	obj2->CreateMesh("/home/gabrielfvale/Projects/cg-ck0245/src/Models/lampFlat.obj");
 	meshList.push_back(obj2);
 
 	Mesh *obj3 = new Mesh();
-	obj3->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/AC.obj");
+	obj3->CreateMesh("/home/gabrielfvale/Projects/cg-ck0245/src/Models/AC.obj");
 	meshList.push_back(obj3);
 
 	
 	Mesh *obj4 = new Mesh();
-	obj4->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/PCTable1.obj");
+	obj4->CreateMesh("/home/gabrielfvale/Projects/cg-ck0245/src/Models/PCTable1.obj");
 	meshList.push_back(obj4);
 
 	Mesh *obj5 = new Mesh();
-	obj5->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/monitorFlat.obj");
+	obj5->CreateMesh("/home/gabrielfvale/Projects/cg-ck0245/src/Models/monitorFlat.obj");
 	meshList.push_back(obj5);
 
 	Mesh *obj6 = new Mesh();
-	obj6->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/tecladoFlat.obj");
+	obj6->CreateMesh("/home/gabrielfvale/Projects/cg-ck0245/src/Models/tecladoFlat.obj");
 	meshList.push_back(obj6);
 
 	Mesh *obj7 = new Mesh();
-	obj7->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/mouse.obj");
+	obj7->CreateMesh("/home/gabrielfvale/Projects/cg-ck0245/src/Models/mouse.obj");
 	meshList.push_back(obj7);
 
 	Mesh *obj8 = new Mesh();
-	obj8->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/PC.obj");
+	obj8->CreateMesh("/home/gabrielfvale/Projects/cg-ck0245/src/Models/PC.obj");
 	meshList.push_back(obj8);
 
 	Mesh *obj9 = new Mesh();
-	obj9->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/lockerFlat.obj");
+	obj9->CreateMesh("/home/gabrielfvale/Projects/cg-ck0245/src/Models/lockerFlat.obj");
 	meshList.push_back(obj9);
 
 	Mesh *obj10 = new Mesh();
-	obj10->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/Table.obj");
+	obj10->CreateMesh("/home/gabrielfvale/Projects/cg-ck0245/src/Models/Table.obj");
 	meshList.push_back(obj10);
 
 	Mesh *obj11 = new Mesh();
-	obj11->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/Chair.obj");
+	obj11->CreateMesh("/home/gabrielfvale/Projects/cg-ck0245/src/Models/Chair.obj");
 	meshList.push_back(obj11);
 
 	Mesh *obj12 = new Mesh();
-	obj12->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/quadro2.obj");
+	obj12->CreateMesh("/home/gabrielfvale/Projects/cg-ck0245/src/Models/quadro2.obj");
 	meshList.push_back(obj12);
 
 	Mesh *obj13 = new Mesh();
-	obj13->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/quadro3.obj");
+	obj13->CreateMesh("/home/gabrielfvale/Projects/cg-ck0245/src/Models/quadro3.obj");
 	meshList.push_back(obj13);
 
 	Mesh *obj14 = new Mesh();
-	obj14->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/quadro1.obj");
+	obj14->CreateMesh("/home/gabrielfvale/Projects/cg-ck0245/src/Models/quadro1.obj");
 	meshList.push_back(obj14);
 
 	Mesh *obj15 = new Mesh();
-	obj15->CreateMesh("/media/sf_VirtualBox/cg-ck0245/src/Models/Panetone.obj");
+	obj15->CreateMesh("/home/gabrielfvale/Projects/cg-ck0245/src/Models/Panetone.obj");
 	meshList.push_back(obj15);
 
 	
@@ -211,300 +211,300 @@ void CreateShaders()
 
   directionalShadowShader = Shader();
   directionalShadowShader.CreateFromFiles(
-    "/media/sf_VirtualBox/cg-ck0245/src/Shaders/directional_shadowmap.vert",
-    "/media/sf_VirtualBox/cg-ck0245/src/Shaders/directional_shadowmap.frag"
+    "/home/gabrielfvale/Projects/cg-ck0245/src/Shaders/directional_shadowmap.vert",
+    "/home/gabrielfvale/Projects/cg-ck0245/src/Shaders/directional_shadowmap.frag"
   );
 }
 
 void RenderScene(GLfloat deltaTime)
 {
-	glm::mat4 model = glm::mat4(1.0);	
+  glm::mat4 model = glm::mat4(1.0);	
 
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-		//model = glm::scale(model, glm::vec3(1.0f, 1.0f, 2.0f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		
-		beigePaint.UseTexture();
-		dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-		meshList[0]->RenderMesh();
+  model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+  //model = glm::scale(model, glm::vec3(1.0f, 1.0f, 2.0f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
-		model = glm::translate(model, glm::vec3(-1.5f, 3.0f, -1.0f));
-		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		
-		plainTexture.UseTexture();
-		dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-		meshList[1]->RenderMesh();
+  beigePaint.UseTexture();
+  dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[0]->RenderMesh();
 
-		model = glm::translate(model, glm::vec3(6.0f, 0.0f, 0.0f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		
-		plainTexture.UseTexture();
-		dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-		meshList[1]->RenderMesh();
+  model = glm::translate(model, glm::vec3(-1.5f, 3.0f, -1.0f));
+  model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 4.0f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		
-		plainTexture.UseTexture();
-		dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-		meshList[1]->RenderMesh();
+  plainTexture.UseTexture();
+  dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[1]->RenderMesh();
 
-		model = glm::translate(model, glm::vec3(-6.0f, 0.0f, 0.0f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		
-		plainTexture.UseTexture();
-		dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-		meshList[1]->RenderMesh();
+  model = glm::translate(model, glm::vec3(6.0f, 0.0f, 0.0f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
-		model = glm::mat4(1.0);	
+  plainTexture.UseTexture();
+  dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[1]->RenderMesh();
 
-		model = glm::translate(model, glm::vec3(-1.5f, 2.5f, -1.77f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		
-		whitePlastic.UseTexture();
-		dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-		meshList[2]->RenderMesh();
+  model = glm::translate(model, glm::vec3(0.0f, 0.0f, 4.0f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
-// ---------------------Mesas e PCS-------------------------------------
+  plainTexture.UseTexture();
+  dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[1]->RenderMesh();
 
+  model = glm::translate(model, glm::vec3(-6.0f, 0.0f, 0.0f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
-		model = glm::mat4(1.0); 
+  plainTexture.UseTexture();
+  dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[1]->RenderMesh();
 
-        model = glm::translate(model, glm::vec3(1.7f, 0.15f, 0.05f));
-        model = glm::rotate(model, -90*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        
-        blueTexture.UseTexture();
-        dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[3]->RenderMesh();
+  model = glm::mat4(1.0);	
 
-        //mesa do PC2
-        model = glm::mat4(1.0); 
+  model = glm::translate(model, glm::vec3(-1.5f, 2.5f, -1.77f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
-        model = glm::translate(model, glm::vec3(1.7f, 0.15f, -0.8f));
-        model = glm::rotate(model, -90*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        
-        blueTexture.UseTexture();
-        dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[3]->RenderMesh();
+  whitePlastic.UseTexture();
+  dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[2]->RenderMesh();
+
+  // ---------------------Mesas e PCS-------------------------------------
 
 
-        //Monitor do PC1
-        model = glm::mat4(1.0); 
+  model = glm::mat4(1.0); 
 
-        model = glm::translate(model, glm::vec3(1.8f, 0.93f, 0.0f));
-        model = glm::rotate(model, 90*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        
-        grayPlastic.UseTexture();
-        shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[4]->RenderMesh();
+  model = glm::translate(model, glm::vec3(1.7f, 0.15f, 0.05f));
+  model = glm::rotate(model, -90*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
+  blueTexture.UseTexture();
+  dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[3]->RenderMesh();
 
-        //Monitor do PC2
-        model = glm::mat4(1.0); 
+  //mesa do PC2
+  model = glm::mat4(1.0); 
 
-        model = glm::translate(model, glm::vec3(1.8f, 0.93f, -0.8f));
-        model = glm::rotate(model, 90*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        
-        grayPlastic.UseTexture();
-        shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[4]->RenderMesh();
+  model = glm::translate(model, glm::vec3(1.7f, 0.15f, -0.8f));
+  model = glm::rotate(model, -90*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
-		//Teclado do PC1
-        model = glm::mat4(1.0); 
-
-        model = glm::translate(model, glm::vec3(1.5f, 0.91f, 0.0f));
-        model = glm::rotate(model, 85*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(0.45f, 0.6f, 0.55f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        
-        oldPlastic.UseTexture();
-        dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[5]->RenderMesh();
-
-        //Teclado do PC2
-        model = glm::mat4(1.0); 
-
-        model = glm::translate(model, glm::vec3(1.5f, 0.91f, -0.8f));
-        model = glm::rotate(model, 100*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(0.45f, 0.6f, 0.55f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        
-        oldPlastic.UseTexture();
-        dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[5]->RenderMesh();
-
-		//Mouse do PC1
-        model = glm::mat4(1.0); 
-
-        model = glm::translate(model, glm::vec3(1.7f, 0.92f, 0.3f));
-        model = glm::rotate(model, 80*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(0.42f, 0.6f, 0.42f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        
-        oldPlastic.UseTexture();
-        shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[6]->RenderMesh();
-
-        //Mouse do PC2
-        model = glm::mat4(1.0); 
-
-        model = glm::translate(model, glm::vec3(1.7f, 0.92f, -0.5f));
-        model = glm::rotate(model, 100*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(0.42f, 0.6f, 0.42f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        
-        oldPlastic.UseTexture();
-        shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[6]->RenderMesh();
-
-		//PC1
-        model = glm::mat4(1.0); 
-
-        model = glm::translate(model, glm::vec3(1.7f, 0.0f, -0.2f));
-        model = glm::rotate(model, 0*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 0.5f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        
-      	grayPlastic.UseTexture();
-        shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[7]->RenderMesh();
+  blueTexture.UseTexture();
+  dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[3]->RenderMesh();
 
 
-        //PC2
-        model = glm::mat4(1.0); 
+  //Monitor do PC1
+  model = glm::mat4(1.0); 
 
-        model = glm::translate(model, glm::vec3(1.7f, 0.0f, -1.1f));
-        model = glm::rotate(model, 0*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 0.5f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        
-        grayPlastic.UseTexture();
-        shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[7]->RenderMesh();
+  model = glm::translate(model, glm::vec3(1.8f, 0.93f, 0.0f));
+  model = glm::rotate(model, 90*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
-		//Armario
-        model = glm::mat4(1.0); 
-
-        model = glm::translate(model, glm::vec3(1.82f, 0.17f, 1.27f));
-          model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
-        model = glm::rotate(model, 90*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        
-        oldPlastic.UseTexture();
-        shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[8]->RenderMesh();
+  grayPlastic.UseTexture();
+  shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[4]->RenderMesh();
 
 
-		//Mesa
-		model = glm::mat4(1.0); 
+  //Monitor do PC2
+  model = glm::mat4(1.0); 
 
-        model = glm::translate(model, glm::vec3(0.0f, 0.2f, 0.0f));
-        //model = glm::rotate(model, 0*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-        //model = glm::scale(model, glm::vec3(1.0f, 1.0f, 0.5f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        
-        woodTexture.UseTexture();
-        shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[9]->RenderMesh();
+  model = glm::translate(model, glm::vec3(1.8f, 0.93f, -0.8f));
+  model = glm::rotate(model, 90*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
-		//Cadeira 1
-        model = glm::mat4(1.0); 
+  grayPlastic.UseTexture();
+  shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[4]->RenderMesh();
 
-        model = glm::translate(model, glm::vec3(-0.35f, 0.1f, 0.0f));
-        model = glm::rotate(model, 100*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(1.2f, 1.2f, 1.2f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        
-        blueTexture.UseTexture();
-        dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[10]->RenderMesh();
+  //Teclado do PC1
+  model = glm::mat4(1.0); 
 
-        //Cadeira 2
-        model = glm::mat4(1.0); 
+  model = glm::translate(model, glm::vec3(1.5f, 0.91f, 0.0f));
+  model = glm::rotate(model, 85*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  model = glm::scale(model, glm::vec3(0.45f, 0.6f, 0.55f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
-        model = glm::translate(model, glm::vec3(-0.4f, 0.1f, 0.6f));
-        model = glm::rotate(model, 120*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(1.2f, 1.2f, 1.2f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        
-        blueTexture.UseTexture();
-        dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[10]->RenderMesh();
+  oldPlastic.UseTexture();
+  dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[5]->RenderMesh();
 
-        //Cadeira 3
-        model = glm::mat4(1.0); 
+  //Teclado do PC2
+  model = glm::mat4(1.0); 
 
-        model = glm::translate(model, glm::vec3(-0.35f, 0.1f, -0.7f));
-        model = glm::rotate(model, 75*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(1.2f, 1.2f, 1.2f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        
-        blueTexture.UseTexture();
-        dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[10]->RenderMesh();
+  model = glm::translate(model, glm::vec3(1.5f, 0.91f, -0.8f));
+  model = glm::rotate(model, 100*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  model = glm::scale(model, glm::vec3(0.45f, 0.6f, 0.55f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
-        //Cadeira 4
-        model = glm::mat4(1.0); 
+  oldPlastic.UseTexture();
+  dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[5]->RenderMesh();
 
-        model = glm::translate(model, glm::vec3(0.46f, 0.1f, 0.5f));
-        model = glm::rotate(model, -90*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(1.2f, 1.2f, 1.2f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        
-        blueTexture.UseTexture();
-        dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[10]->RenderMesh();
+  //Mouse do PC1
+  model = glm::mat4(1.0); 
 
-        //Cadeira 5
-        model = glm::mat4(1.0); 
+  model = glm::translate(model, glm::vec3(1.7f, 0.92f, 0.3f));
+  model = glm::rotate(model, 80*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  model = glm::scale(model, glm::vec3(0.42f, 0.6f, 0.42f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
-        model = glm::translate(model, glm::vec3(0.46f, 0.1f, -0.2f));
-        model = glm::rotate(model, -75*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(1.2f, 1.2f, 1.2f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        
-        blueTexture.UseTexture();
-        dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[10]->RenderMesh();
+  oldPlastic.UseTexture();
+  shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[6]->RenderMesh();
 
-		//Quadro 2
-        model = glm::mat4(1.0); 
+  //Mouse do PC2
+  model = glm::mat4(1.0); 
 
-        model = glm::translate(model, glm::vec3(-2.5f, 1.0f, -0.9f));
-        model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.7f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-        
-        whitePlastic.UseTexture();
-        dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[11]->RenderMesh();
+  model = glm::translate(model, glm::vec3(1.7f, 0.92f, -0.5f));
+  model = glm::rotate(model, 100*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  model = glm::scale(model, glm::vec3(0.42f, 0.6f, 0.42f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
-        //Quadro 3
-        model = glm::mat4(1.0); 
+  oldPlastic.UseTexture();
+  shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[6]->RenderMesh();
 
-        model = glm::translate(model, glm::vec3(-2.65f, 1.0f, 0.8f));
-        model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.63f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-    
-        whitePlastic.UseTexture();
-        dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[12]->RenderMesh();
+  //PC1
+  model = glm::mat4(1.0); 
 
-        //Quadro 1
-        model = glm::mat4(1.0); 
+  model = glm::translate(model, glm::vec3(1.7f, 0.0f, -0.2f));
+  model = glm::rotate(model, 0*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  model = glm::scale(model, glm::vec3(1.0f, 1.0f, 0.5f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
-        model = glm::translate(model, glm::vec3(0.2f, 1.5f, 1.0f));
-        model = glm::scale(model, glm::vec3(1.2f, 0.6f, 0.63f));
-        model = glm::rotate(model, 90*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-    
-        whitePlastic.UseTexture();
-        dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        meshList[13]->RenderMesh();
+  grayPlastic.UseTexture();
+  shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[7]->RenderMesh();
+
+
+  //PC2
+  model = glm::mat4(1.0); 
+
+  model = glm::translate(model, glm::vec3(1.7f, 0.0f, -1.1f));
+  model = glm::rotate(model, 0*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  model = glm::scale(model, glm::vec3(1.0f, 1.0f, 0.5f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+
+  grayPlastic.UseTexture();
+  shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[7]->RenderMesh();
+
+  //Armario
+  model = glm::mat4(1.0); 
+
+  model = glm::translate(model, glm::vec3(1.82f, 0.17f, 1.27f));
+  model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+  model = glm::rotate(model, 90*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+
+  oldPlastic.UseTexture();
+  shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[8]->RenderMesh();
+
+
+  //Mesa
+  model = glm::mat4(1.0); 
+
+  model = glm::translate(model, glm::vec3(0.0f, 0.2f, 0.0f));
+  //model = glm::rotate(model, 0*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  //model = glm::scale(model, glm::vec3(1.0f, 1.0f, 0.5f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+
+  woodTexture.UseTexture();
+  shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[9]->RenderMesh();
+
+  //Cadeira 1
+  model = glm::mat4(1.0); 
+
+  model = glm::translate(model, glm::vec3(-0.35f, 0.1f, 0.0f));
+  model = glm::rotate(model, 100*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  model = glm::scale(model, glm::vec3(1.2f, 1.2f, 1.2f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+
+  blueTexture.UseTexture();
+  dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[10]->RenderMesh();
+
+  //Cadeira 2
+  model = glm::mat4(1.0); 
+
+  model = glm::translate(model, glm::vec3(-0.4f, 0.1f, 0.6f));
+  model = glm::rotate(model, 120*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  model = glm::scale(model, glm::vec3(1.2f, 1.2f, 1.2f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+
+  blueTexture.UseTexture();
+  dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[10]->RenderMesh();
+
+  //Cadeira 3
+  model = glm::mat4(1.0); 
+
+  model = glm::translate(model, glm::vec3(-0.35f, 0.1f, -0.7f));
+  model = glm::rotate(model, 75*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  model = glm::scale(model, glm::vec3(1.2f, 1.2f, 1.2f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+
+  blueTexture.UseTexture();
+  dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[10]->RenderMesh();
+
+  //Cadeira 4
+  model = glm::mat4(1.0); 
+
+  model = glm::translate(model, glm::vec3(0.46f, 0.1f, 0.5f));
+  model = glm::rotate(model, -90*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  model = glm::scale(model, glm::vec3(1.2f, 1.2f, 1.2f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+
+  blueTexture.UseTexture();
+  dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[10]->RenderMesh();
+
+  //Cadeira 5
+  model = glm::mat4(1.0); 
+
+  model = glm::translate(model, glm::vec3(0.46f, 0.1f, -0.2f));
+  model = glm::rotate(model, -75*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  model = glm::scale(model, glm::vec3(1.2f, 1.2f, 1.2f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+
+  blueTexture.UseTexture();
+  dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[10]->RenderMesh();
+
+  //Quadro 2
+  model = glm::mat4(1.0); 
+
+  model = glm::translate(model, glm::vec3(-2.5f, 1.0f, -0.9f));
+  model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.7f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+
+  whitePlastic.UseTexture();
+  dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[12]->RenderMesh();
+
+  //Quadro 3
+  model = glm::mat4(1.0); 
+
+  model = glm::translate(model, glm::vec3(-2.65f, 1.0f, 0.8f));
+  model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.63f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+
+  whitePlastic.UseTexture();
+  dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[11]->RenderMesh();
+
+  //Quadro 1
+  model = glm::mat4(1.0); 
+
+  model = glm::translate(model, glm::vec3(0.2f, 1.5f, 1.0f));
+  model = glm::scale(model, glm::vec3(1.2f, 0.6f, 0.63f));
+  model = glm::rotate(model, 90*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+
+  whitePlastic.UseTexture();
+  dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[13]->RenderMesh();
 		
 }
 
@@ -572,38 +572,38 @@ int main()
 	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, 0.0f, 5.0f, 0.5f);
 
 	//brickTexture = Texture("/home/ceos/Documents/Batista/LearningOpenGL/1-Introduction/Models/src/Textures/brick.png");
-	brickTexture = Texture("/media/sf_VirtualBox/cg-ck0245/src/Textures/brick.png");
+	brickTexture = Texture("/home/gabrielfvale/Projects/cg-ck0245/src/Textures/brick.png");
 	brickTexture.LoadTextureA();
 	//dirtTexture = Texture("/home/ceos/Documents/Batista/LearningOpenGL/1-Introduction/Models/src/Textures/dirt.png");
-	dirtTexture = Texture("/media/sf_VirtualBox/cg-ck0245/src/Textures/dirt.png");
+	dirtTexture = Texture("/home/gabrielfvale/Projects/cg-ck0245/src/Textures/dirt.png");
 	dirtTexture.LoadTextureA();
 
 	//plainTexture = Texture("/home/ceos/Documents/Batista/LearningOpenGL/1-Introduction/Models/src/Textures/plain.png");
-	plainTexture = Texture("/media/sf_VirtualBox/cg-ck0245/src/Textures/plain.png");
+	plainTexture = Texture("/home/gabrielfvale/Projects/cg-ck0245/src/Textures/plain.png");
 	plainTexture.LoadTextureA();
 
-	beigePaint = Texture("/media/sf_VirtualBox/cg-ck0245/src/Textures/beigePaint.PNG");
+	beigePaint = Texture("/home/gabrielfvale/Projects/cg-ck0245/src/Textures/beigePaint.PNG");
 	beigePaint.LoadTexture();
 
-	whitePlastic = Texture("/media/sf_VirtualBox/cg-ck0245/src/Textures/whitePlastic.PNG");
+	whitePlastic = Texture("/home/gabrielfvale/Projects/cg-ck0245/src/Textures/whitePlastic.PNG");
 	whitePlastic.LoadTextureA();
 
-	blueTexture = Texture("/media/sf_VirtualBox/cg-ck0245/src/Textures/blue.PNG");
+	blueTexture = Texture("/home/gabrielfvale/Projects/cg-ck0245/src/Textures/blue.PNG");
 	blueTexture.LoadTextureA();
 
-	blackPlastic = Texture("/media/sf_VirtualBox/cg-ck0245/src/Textures/blackPlastic.PNG");
+	blackPlastic = Texture("/home/gabrielfvale/Projects/cg-ck0245/src/Textures/blackPlastic.PNG");
 	blackPlastic.LoadTextureA();
 
-	grayPlastic = Texture("/media/sf_VirtualBox/cg-ck0245/src/Textures/grayPlastic.PNG");
+	grayPlastic = Texture("/home/gabrielfvale/Projects/cg-ck0245/src/Textures/grayPlastic.PNG");
 	grayPlastic.LoadTextureA();
 
-	oldPlastic = Texture("/media/sf_VirtualBox/cg-ck0245/src/Textures/oldPlastic.PNG");
+	oldPlastic = Texture("/home/gabrielfvale/Projects/cg-ck0245/src/Textures/oldPlastic.PNG");
 	oldPlastic.LoadTextureA();
 
-	woodTexture = Texture("/media/sf_VirtualBox/cg-ck0245/src/Textures/madera.jpg");
+	woodTexture = Texture("/home/gabrielfvale/Projects/cg-ck0245/src/Textures/madera.jpg");
 	woodTexture.LoadTextureA();
 
-	panetoneTexture = Texture("/media/sf_VirtualBox/cg-ck0245/src/Textures/Panetone.png");
+	panetoneTexture = Texture("/home/gabrielfvale/Projects/cg-ck0245/src/Textures/Panetone.png");
 	panetoneTexture.LoadTextureA();
 
 	shinyMaterial = Material(4.0f, 256);
