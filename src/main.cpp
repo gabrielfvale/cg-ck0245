@@ -208,6 +208,10 @@ void CreateObjects()
   Mesh *obj17 = new Mesh();
   obj17->CreateMesh("src/Models/Walter.obj");
   meshList.push_back(obj17);
+
+  Mesh *obj18 = new Mesh();
+  obj18->CreateMesh("src/Models/BTG.obj");
+  meshList.push_back(obj18);
 }
 
 void CreateShaders()
@@ -536,6 +540,46 @@ void RenderScene(GLfloat deltaTime)
   model = glm::mat4(1.0); 
   model = glm::translate(model, glm::vec3(0.0f, 1.0f, 0.0f));
   model = glm::rotate(model, deltaTime, glm::vec3(0.0f, 1.0f, 0.0f));
+  //model = glm::scale(model, glm::vec3(1.0f, 1.0f, 0.5f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+  panetoneTexture.UseTexture();
+  shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[14]->RenderMesh();
+
+  //BTG 1
+  model = glm::mat4(1.0); 
+  model = glm::translate(model, glm::vec3(1.82f, 1.2f, 0.96f));
+  model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+  model = glm::rotate(model, deltaTime, glm::vec3(0.0f, 1.0f, 0.0f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+  whitePlastic.UseTexture();
+  shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[17]->RenderMesh();
+
+  //BTG 2
+  model = glm::mat4(1.0); 
+  model = glm::translate(model, glm::vec3(1.82f, 1.2f, 1.3f));
+  model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+  model = glm::rotate(model, 90*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+  whitePlastic.UseTexture();
+  shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[17]->RenderMesh();
+
+  //BTG 3
+  model = glm::mat4(1.0); 
+  model = glm::translate(model, glm::vec3(1.82f, 1.2f, 1.6f));
+  model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+  model = glm::rotate(model, 90*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+  glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+  whitePlastic.UseTexture();
+  shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+  meshList[17]->RenderMesh();
+
+  //Panetone com btg 2
+  model = glm::mat4(1.0); 
+  model = glm::translate(model, glm::vec3(1.82f, 1.2f, 1.1f));
+  //model = glm::rotate(model, 0*toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
   //model = glm::scale(model, glm::vec3(1.0f, 1.0f, 0.5f));
   glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
   panetoneTexture.UseTexture();
